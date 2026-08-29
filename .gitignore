@@ -1,0 +1,88 @@
+# This .gitignore file should be placed at the root of your Unity project.
+# Based on: https://github.com/github/gitignore/blob/main/Unity.gitignore
+
+# Unity-generated directories
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+/[Mm]emoryCaptures/
+/[Rr]ecordings/
+
+# Asset Store and generated editor plugins
+/[Aa]ssets/AssetStoreTools*
+/[Aa]ssets/Plugins/Editor/JetBrains*
+
+# IDE and editor state
+.idea/
+.vscode/
+.vs/
+.gradle/
+.consulo/
+ExportedObj/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+*.DotSettings.user
+
+# Unity-generated metadata for debugging databases
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+
+# Crash and diagnostic output
+sysinfo.txt
+mono_crash.*
+crash_*.dmp
+
+# Build artifacts
+*.apk
+*.aab
+*.unitypackage
+*.app
+crashlytics-build.properties
+
+# Addressables-generated data
+/[Aa]ssets/[Aa]ddressable[Aa]ssets[Dd]ata/*/*.bin*
+/[Aa]ssets/[Ss]treamingAssets/aa.meta
+/[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# Temporary scene backups
+/[Aa]ssets/[Ss]cenes/*.unity.orig
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# Source assets that are intentionally kept outside version control
+/Assets/RawResources/
+/Assets/RawResources.meta
+
+# Luban local configuration and temporary workbook files
+/数据表/path.txt
+/数据表/Datas/~$*.xlsx
+/数据表/Datas/.~*.xlsx
+/数据表/Datas/*.xlsx~
+/数据表/**/*.log
+/数据表/.cache/
+/数据表/Temp/
+
+# Luban-generated outputs. Sources, schemas, templates, tools, and scripts stay tracked.
+/数据表/output/
+/数据表/output-server/
+/Assets/Scripts/Gen/
+/Assets/Scripts/Gen.meta

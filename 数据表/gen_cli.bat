@@ -38,38 +38,53 @@ for %%I in ("%SCRIPT_DIR%..") do set "PROJECT_ROOT=%%~fI"
 for %%I in ("%output_root_input%") do set "OUTPUT_ROOT=%%~fI"
 
 set "ASSET_ROOT=%PROJECT_ROOT%\Assets"
-set "PATH_GEN_CSHARP=%OUTPUT_ROOT%\CSharp"
-set "PATH_DATA_JSON=%OUTPUT_ROOT%\Json"
-set "PATH_DATA_BIN=%OUTPUT_ROOT%\Bin"
+set "PATH_DATA_ROOT=%OUTPUT_ROOT%\DataTables"
+set "PATH_GEN_CSHARP=%OUTPUT_ROOT%\Scripts\Base\Gen"
+set "PATH_DATA_JSON=%PATH_DATA_ROOT%"
+set "PATH_DATA_BIN=%PATH_DATA_ROOT%"
 
 if not exist "%PATH_GEN_CSHARP%" mkdir "%PATH_GEN_CSHARP%"
-if not exist "%PATH_DATA_JSON%" mkdir "%PATH_DATA_JSON%"
-if not exist "%PATH_DATA_BIN%" mkdir "%PATH_DATA_BIN%"
+if not exist "%PATH_DATA_ROOT%" mkdir "%PATH_DATA_ROOT%"
 
 echo [INFO] Project root: %PROJECT_ROOT%
 echo [INFO] C# output:   %PATH_GEN_CSHARP%
 echo [INFO] JSON output: %PATH_DATA_JSON%
 echo [INFO] Bin output:  %PATH_DATA_BIN%
 
+rem Gen contains only generated C# files, so Luban may clean stale outputs.
 dotnet "%LUBAN_DLL%" ^
     -t client ^
     -c cs-bin ^
-    -d json ^
-    -d bin ^
     --conf "%CONF_FILE%" ^
     --customTemplateDir "%CUSTOM_TEMPLATE_DIR%" ^
     -x "cs-bin.outputCodeDir=%PATH_GEN_CSHARP%" ^
-    -x "json.outputDataDir=%PATH_DATA_JSON%" ^
-    -x "bin.outputDataDir=%PATH_DATA_BIN%" ^
     -x "pathValidator.rootDir=%ASSET_ROOT%"
 
 set "exit_code=%ERRORLEVEL%"
 if not "%exit_code%"=="0" (
-    echo [ERROR] Luban export failed with exit code %exit_code%.
+    echo [ERROR] Luban C# export failed with exit code %exit_code%.
+    popd
+    exit /b %exit_code%
+)
+
+rem DataTables also contains UGF assets, so do not let Luban clean it.
+dotnet "%LUBAN_DLL%" ^
+    -t client ^
+    -d json ^
+    -d bin ^
+    --conf "%CONF_FILE%" ^
+    -x "json.outputDataDir=%PATH_DATA_JSON%" ^
+    -x "bin.outputDataDir=%PATH_DATA_BIN%" ^
+    -x "pathValidator.rootDir=%ASSET_ROOT%" ^
+    -x "cleanUpOutputDir=false"
+
+set "exit_code=%ERRORLEVEL%"
+if not "%exit_code%"=="0" (
+    echo [ERROR] Luban data export failed with exit code %exit_code%.
     popd
     exit /b %exit_code%
 )
 
 echo [INFO] Luban export completed.
 popd
-exit /b 0
+exit /b %exit_code%

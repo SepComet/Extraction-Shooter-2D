@@ -1,0 +1,122 @@
+[
+  {
+    "id": 5001,
+    "name": "旧硬币",
+    "itemType": 1,
+    "rarity": 1,
+    "stackLimit": 99,
+    "equipSlot": 0,
+    "maxHpBonus": 0,
+    "maxMpBonus": 0,
+    "atkBonus": 0,
+    "matBonus": 0
+  },
+  {
+    "id": 5002,
+    "name": "宝石碎片",
+    "itemType": 1,
+    "rarity": 2,
+    "stackLimit": 99,
+    "equipSlot": 0,
+    "maxHpBonus": 0,
+    "maxMpBonus": 0,
+    "atkBonus": 0,
+    "matBonus": 0
+  },
+  {
+    "id": 5003,
+    "name": "古代零件",
+    "itemType": 1,
+    "rarity": 3,
+    "stackLimit": 99,
+    "equipSlot": 0,
+    "maxHpBonus": 0,
+    "maxMpBonus": 0,
+    "atkBonus": 0,
+    "matBonus": 0
+  },
+  {
+    "id": 5004,
+    "name": "精致核心",
+    "itemType": 1,
+    "rarity": 4,
+    "stackLimit": 99,
+    "equipSlot": 0,
+    "maxHpBonus": 0,
+    "maxMpBonus": 0,
+    "atkBonus": 0,
+    "matBonus": 0
+  },
+  {
+    "id": 5005,
+    "name": "神秘遗物",
+    "itemType": 1,
+    "rarity": 5,
+    "stackLimit": 99,
+    "equipSlot": 0,
+    "maxHpBonus": 0,
+    "maxMpBonus": 0,
+    "atkBonus": 0,
+    "matBonus": 0
+  },
+  {
+    "id": 5101,
+    "name": "训练剑",
+    "itemType": 2,
+    "rarity": 1,
+    "stackLimit": 1,
+    "equipSlot": 1,
+    "maxHpBonus": 0,
+    "maxMpBonus": 0,
+    "atkBonus": 5,
+    "matBonus": 0
+  },
+  {
+    "id": 5102,
+    "name": "法杖",
+    "itemType": 2,
+    "rarity": 3,
+    "stackLimit": 1,
+    "equipSlot": 1,
+    "maxHpBonus": 0,
+    "maxMpBonus": 10,
+    "atkBonus": 0,
+    "matBonus": 8
+  },
+  {
+    "id": 5201,
+    "name": "布甲",
+    "itemType": 2,
+    "rarity": 2,
+    "stackLimit": 1,
+    "equipSlot": 2,
+    "maxHpBonus": 20,
+    "maxMpBonus": 0,
+    "atkBonus": 0,
+    "matBonus": 0
+  },
+  {
+    "id": 5202,
+    "name": "术士长袍",
+    "itemType": 2,
+    "rarity": 4,
+    "stackLimit": 1,
+    "equipSlot": 2,
+    "maxHpBonus": 10,
+    "maxMpBonus": 30,
+    "atkBonus": 0,
+    "matBonus": 5
+  },
+  {
+    "id": 5301,
+    "name": "恢复药",
+    "itemType": 3,
+    "rarity": 1,
+    "stackLimit": 10,
+    "equipSlot": 0,
+    "maxHpBonus": 0,
+    "maxMpBonus": 0,
+    "atkBonus": 0,
+    "matBonus": 0
+  }
+]

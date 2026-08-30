@@ -38,27 +38,36 @@ fi
 mkdir -p "$OUTPUT_ROOT"
 OUTPUT_ROOT=$(cd "$OUTPUT_ROOT" && pwd)
 
-PATH_GEN_CSHARP="$OUTPUT_ROOT/CSharp"
-PATH_DATA_JSON="$OUTPUT_ROOT/Json"
-PATH_DATA_BIN="$OUTPUT_ROOT/Bin"
+PATH_DATA_ROOT="$OUTPUT_ROOT/DataTables"
+PATH_GEN_CSHARP="$OUTPUT_ROOT/Scripts/Base/Gen"
+PATH_DATA_JSON="$PATH_DATA_ROOT"
+PATH_DATA_BIN="$PATH_DATA_ROOT"
 
-mkdir -p "$PATH_GEN_CSHARP" "$PATH_DATA_JSON" "$PATH_DATA_BIN"
+mkdir -p "$PATH_GEN_CSHARP" "$PATH_DATA_ROOT"
 
 echo "[INFO] Project root: $PROJECT_ROOT"
 echo "[INFO] C# output:   $PATH_GEN_CSHARP"
 echo "[INFO] JSON output: $PATH_DATA_JSON"
 echo "[INFO] Bin output:  $PATH_DATA_BIN"
 
+# Gen contains only generated C# files, so Luban may clean stale outputs.
 dotnet "$LUBAN_DLL" \
     -t client \
     -c cs-bin \
-    -d json \
-    -d bin \
     --conf "$CONF_FILE" \
     --customTemplateDir "$CUSTOM_TEMPLATE_DIR" \
     -x "cs-bin.outputCodeDir=$PATH_GEN_CSHARP" \
+    -x "pathValidator.rootDir=$ASSET_ROOT"
+
+# DataTables also contains UGF assets, so do not let Luban clean it.
+dotnet "$LUBAN_DLL" \
+    -t client \
+    -d json \
+    -d bin \
+    --conf "$CONF_FILE" \
     -x "json.outputDataDir=$PATH_DATA_JSON" \
     -x "bin.outputDataDir=$PATH_DATA_BIN" \
-    -x "pathValidator.rootDir=$ASSET_ROOT"
+    -x "pathValidator.rootDir=$ASSET_ROOT" \
+    -x "cleanUpOutputDir=false"
 
 echo "[INFO] Luban export completed."

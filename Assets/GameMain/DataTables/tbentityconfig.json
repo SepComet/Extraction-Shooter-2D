@@ -1,0 +1,34 @@
+[
+  {
+    "id": 10000,
+    "assetName": "PlayerShip"
+  },
+  {
+    "id": 10001,
+    "assetName": "EnemyShip"
+  },
+  {
+    "id": 20000,
+    "assetName": "PlayerEngine"
+  },
+  {
+    "id": 20001,
+    "assetName": "EnemyEngine"
+  },
+  {
+    "id": 30000,
+    "assetName": "DefaultWeapon"
+  },
+  {
+    "id": 40000,
+    "assetName": "DefaultArmor"
+  },
+  {
+    "id": 50000,
+    "assetName": "PlayerBolt"
+  },
+  {
+    "id": 50001,
+    "assetName": "EnemyBolt"
+  }
+]

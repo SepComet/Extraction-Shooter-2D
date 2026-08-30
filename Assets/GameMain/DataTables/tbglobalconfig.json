@@ -1,0 +1,28 @@
+[
+  {
+    "runTimeLimitMs": 1500000,
+    "extractionRevealTimeMs": 1200000,
+    "escapeProtectionMs": 2000,
+    "enemyLoseTargetMs": 3000,
+    "enemyFrontViewAngle": 180,
+    "alertMax": 1000,
+    "backpackSlotCount": 30,
+    "secureSlotCount": 5,
+    "minPlayerPartySize": 1,
+    "maxPlayerPartySize": 4,
+    "maxEnemyPartySize": 4,
+    "reviveHp": 1,
+    "reviveMp": 1,
+    "escapeSuccessPermille": 500,
+    "wallBlocksVision": false,
+    "battlePausesRunTimer": true,
+    "inventoryPausesRunTimer": false,
+    "pauseMenuPausesRunTimer": true,
+    "newGameCharacterIds": [
+      1001,
+      1002,
+      1003,
+      1004
+    ]
+  }
+]

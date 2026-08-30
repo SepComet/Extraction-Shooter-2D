@@ -1,0 +1,48 @@
+[
+  {
+    "id": 3001,
+    "name": "敌人1",
+    "maxHp": 50,
+    "maxMp": 0,
+    "atk": 8,
+    "mat": 0,
+    "speed": 8,
+    "threatLevelId": 1,
+    "aiType": 1,
+    "actionIds": [
+      201
+    ],
+    "dropTableId": 1
+  },
+  {
+    "id": 3002,
+    "name": "敌人2",
+    "maxHp": 80,
+    "maxMp": 0,
+    "atk": 12,
+    "mat": 0,
+    "speed": 10,
+    "threatLevelId": 2,
+    "aiType": 1,
+    "actionIds": [
+      201
+    ],
+    "dropTableId": 2
+  },
+  {
+    "id": 3003,
+    "name": "敌人3",
+    "maxHp": 60,
+    "maxMp": 30,
+    "atk": 6,
+    "mat": 12,
+    "speed": 12,
+    "threatLevelId": 3,
+    "aiType": 1,
+    "actionIds": [
+      201,
+      202
+    ],
+    "dropTableId": 3
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "rarity": 1,
+    "searchTimeMs": 200
+  },
+  {
+    "rarity": 2,
+    "searchTimeMs": 400
+  },
+  {
+    "rarity": 3,
+    "searchTimeMs": 600
+  },
+  {
+    "rarity": 4,
+    "searchTimeMs": 800
+  },
+  {
+    "rarity": 5,
+    "searchTimeMs": 1000
+  }
+]

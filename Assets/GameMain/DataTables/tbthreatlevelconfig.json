@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "name": "低威胁",
+    "maxViewDistanceMilli": 3000,
+    "alertDecayPerSecondMilli": 200,
+    "distanceBands": [
+      {
+        "maxDistanceMilli": 1000,
+        "alertPerSecondMilli": 600
+      },
+      {
+        "maxDistanceMilli": 2000,
+        "alertPerSecondMilli": 300
+      },
+      {
+        "maxDistanceMilli": 3000,
+        "alertPerSecondMilli": 150
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "中威胁",
+    "maxViewDistanceMilli": 5000,
+    "alertDecayPerSecondMilli": 150,
+    "distanceBands": [
+      {
+        "maxDistanceMilli": 1500,
+        "alertPerSecondMilli": 800
+      },
+      {
+        "maxDistanceMilli": 3000,
+        "alertPerSecondMilli": 400
+      },
+      {
+        "maxDistanceMilli": 5000,
+        "alertPerSecondMilli": 200
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "name": "高威胁",
+    "maxViewDistanceMilli": 7000,
+    "alertDecayPerSecondMilli": 100,
+    "distanceBands": [
+      {
+        "maxDistanceMilli": 2000,
+        "alertPerSecondMilli": 1000
+      },
+      {
+        "maxDistanceMilli": 4000,
+        "alertPerSecondMilli": 500
+      },
+      {
+        "maxDistanceMilli": 7000,
+        "alertPerSecondMilli": 250
+      }
+    ]
+  }
+]

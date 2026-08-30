@@ -1,0 +1,44 @@
+[
+  {
+    "tier": 1,
+    "name": "难度1",
+    "enemyParties": [
+      {
+        "partyId": 4001,
+        "weight": 70
+      },
+      {
+        "partyId": 4002,
+        "weight": 30
+      }
+    ]
+  },
+  {
+    "tier": 2,
+    "name": "难度2",
+    "enemyParties": [
+      {
+        "partyId": 4002,
+        "weight": 50
+      },
+      {
+        "partyId": 4003,
+        "weight": 50
+      }
+    ]
+  },
+  {
+    "tier": 3,
+    "name": "难度3",
+    "enemyParties": [
+      {
+        "partyId": 4003,
+        "weight": 50
+      },
+      {
+        "partyId": 4004,
+        "weight": 50
+      }
+    ]
+  }
+]

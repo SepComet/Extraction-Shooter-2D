@@ -8,7 +8,7 @@
   },
   {
     "id": 100,
-    "assetName": "MenuForm",
+    "assetName": "LobbyForm",
     "UIGroupName": "Default",
     "allowMultiInstance": false,
     "pauseCoveredUIForm": true

@@ -6,11 +6,11 @@ namespace SepCore.UI
     [DisallowMultipleComponent]
     public partial class LobbyView : MonoBehaviour
     {
-        [SerializeField] public global::UnityEngine.UI.Button homeButton;
+        [SerializeField] public global::UnityEngine.UI.Toggle homeToggle;
         [SerializeField] public global::UnityEngine.RectTransform selectionMarkerObject;
-        [SerializeField] public global::UnityEngine.UI.Button warehouseButton;
-        [SerializeField] public global::UnityEngine.UI.Button loadoutButton;
-        [SerializeField] public global::SepCore.UI.WarehouseView warehouseView;
-        [SerializeField] public global::SepCore.UI.CombatReadinessView combatRandinessView;
+        [SerializeField] public global::UnityEngine.UI.Toggle warehouseToggle;
+        [SerializeField] public global::UnityEngine.UI.Toggle loadoutToggle;
+        [SerializeField] public global::SepCore.UI.CombatReadinessForm combatRandinessForm;
+        [SerializeField] public global::SepCore.UI.WarehouseForm warehouseForm;
     }
 }

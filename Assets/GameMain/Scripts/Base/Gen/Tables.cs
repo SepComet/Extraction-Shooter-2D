@@ -14,9 +14,10 @@ namespace SepCore.Definition
 public partial class Tables
 {
     /// <summary>
-    /// 全局固定规则
+    /// 全局零散配置（单例）
     /// </summary>
     public TbGlobalConfig TbGlobalConfig {get; }
+    public TbFormatText TbFormatText {get; }
     /// <summary>
     /// 稀有度搜索时间
     /// </summary>
@@ -85,6 +86,7 @@ public partial class Tables
     public Tables(System.Func<string, ByteBuf> loader)
     {
         TbGlobalConfig = new TbGlobalConfig(loader("tbglobalconfig"));
+        TbFormatText = new TbFormatText(loader("tbformattext"));
         TbRarityConfig = new TbRarityConfig(loader("tbrarityconfig"));
         TbDifficultyConfig = new TbDifficultyConfig(loader("tbdifficultyconfig"));
         TbCharacterConfig = new TbCharacterConfig(loader("tbcharacterconfig"));
@@ -107,6 +109,7 @@ public partial class Tables
     private void ResolveRef()
     {
         TbGlobalConfig.ResolveRef(this);
+        TbFormatText.ResolveRef(this);
         TbRarityConfig.ResolveRef(this);
         TbDifficultyConfig.ResolveRef(this);
         TbCharacterConfig.ResolveRef(this);

@@ -6,6 +6,7 @@
     "enemyLoseTargetMs": 3000,
     "enemyFrontViewAngle": 180,
     "alertMax": 1000,
+    "warehouseSlotCount": 120,
     "backpackSlotCount": 30,
     "secureSlotCount": 5,
     "minPlayerPartySize": 1,

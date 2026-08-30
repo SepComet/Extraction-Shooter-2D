@@ -22,6 +22,7 @@ public sealed partial class GlobalConfig : Luban.BeanBase
         EnemyLoseTargetMs = _buf.ReadInt();
         EnemyFrontViewAngle = _buf.ReadInt();
         AlertMax = _buf.ReadInt();
+        WarehouseSlotCount = _buf.ReadInt();
         BackpackSlotCount = _buf.ReadInt();
         SecureSlotCount = _buf.ReadInt();
         MinPlayerPartySize = _buf.ReadInt();
@@ -66,6 +67,10 @@ public sealed partial class GlobalConfig : Luban.BeanBase
     /// 警惕值满值
     /// </summary>
     public readonly int AlertMax;
+    /// <summary>
+    /// 仓库格子数
+    /// </summary>
+    public readonly int WarehouseSlotCount;
     /// <summary>
     /// 共享背包格子数
     /// </summary>
@@ -143,6 +148,7 @@ public sealed partial class GlobalConfig : Luban.BeanBase
         
         
         
+        
     }
 
     public override string ToString()
@@ -154,6 +160,7 @@ public sealed partial class GlobalConfig : Luban.BeanBase
         + "enemyLoseTargetMs:" + EnemyLoseTargetMs + ","
         + "enemyFrontViewAngle:" + EnemyFrontViewAngle + ","
         + "alertMax:" + AlertMax + ","
+        + "warehouseSlotCount:" + WarehouseSlotCount + ","
         + "backpackSlotCount:" + BackpackSlotCount + ","
         + "secureSlotCount:" + SecureSlotCount + ","
         + "minPlayerPartySize:" + MinPlayerPartySize + ","

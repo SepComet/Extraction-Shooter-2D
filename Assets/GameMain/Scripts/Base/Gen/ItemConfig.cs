@@ -26,6 +26,7 @@ public sealed partial class ItemConfig : Luban.BeanBase
         MaxMpBonus = _buf.ReadInt();
         AtkBonus = _buf.ReadInt();
         MatBonus = _buf.ReadInt();
+        SpeedBonus = _buf.ReadInt();
     }
 
     public static ItemConfig DeserializeItemConfig(ByteBuf _buf)
@@ -73,12 +74,17 @@ public sealed partial class ItemConfig : Luban.BeanBase
     /// MAT修正
     /// </summary>
     public readonly int MatBonus;
+    /// <summary>
+    /// SPD修正
+    /// </summary>
+    public readonly int SpeedBonus;
    
     public const int __ID__ = -764023723;
     public override int GetTypeId() => __ID__;
 
     public  void ResolveRef(Tables tables)
     {
+        
         
         
         
@@ -104,6 +110,7 @@ public sealed partial class ItemConfig : Luban.BeanBase
         + "maxMpBonus:" + MaxMpBonus + ","
         + "atkBonus:" + AtkBonus + ","
         + "matBonus:" + MatBonus + ","
+        + "speedBonus:" + SpeedBonus + ","
         + "}";
     }
 }

@@ -9,7 +9,8 @@
     "maxHpBonus": 0,
     "maxMpBonus": 0,
     "atkBonus": 0,
-    "matBonus": 0
+    "matBonus": 0,
+    "speedBonus": 0
   },
   {
     "id": 5002,
@@ -21,7 +22,8 @@
     "maxHpBonus": 0,
     "maxMpBonus": 0,
     "atkBonus": 0,
-    "matBonus": 0
+    "matBonus": 0,
+    "speedBonus": 0
   },
   {
     "id": 5003,
@@ -33,7 +35,8 @@
     "maxHpBonus": 0,
     "maxMpBonus": 0,
     "atkBonus": 0,
-    "matBonus": 0
+    "matBonus": 0,
+    "speedBonus": 0
   },
   {
     "id": 5004,
@@ -45,7 +48,8 @@
     "maxHpBonus": 0,
     "maxMpBonus": 0,
     "atkBonus": 0,
-    "matBonus": 0
+    "matBonus": 0,
+    "speedBonus": 0
   },
   {
     "id": 5005,
@@ -57,7 +61,8 @@
     "maxHpBonus": 0,
     "maxMpBonus": 0,
     "atkBonus": 0,
-    "matBonus": 0
+    "matBonus": 0,
+    "speedBonus": 0
   },
   {
     "id": 5101,
@@ -69,7 +74,8 @@
     "maxHpBonus": 0,
     "maxMpBonus": 0,
     "atkBonus": 5,
-    "matBonus": 0
+    "matBonus": 0,
+    "speedBonus": 0
   },
   {
     "id": 5102,
@@ -81,7 +87,8 @@
     "maxHpBonus": 0,
     "maxMpBonus": 10,
     "atkBonus": 0,
-    "matBonus": 8
+    "matBonus": 8,
+    "speedBonus": 0
   },
   {
     "id": 5201,
@@ -93,7 +100,8 @@
     "maxHpBonus": 20,
     "maxMpBonus": 0,
     "atkBonus": 0,
-    "matBonus": 0
+    "matBonus": 0,
+    "speedBonus": 1
   },
   {
     "id": 5202,
@@ -105,7 +113,8 @@
     "maxHpBonus": 10,
     "maxMpBonus": 30,
     "atkBonus": 0,
-    "matBonus": 5
+    "matBonus": 5,
+    "speedBonus": 0
   },
   {
     "id": 5301,
@@ -117,6 +126,7 @@
     "maxHpBonus": 0,
     "maxMpBonus": 0,
     "atkBonus": 0,
-    "matBonus": 0
+    "matBonus": 0,
+    "speedBonus": 0
   }
 ]

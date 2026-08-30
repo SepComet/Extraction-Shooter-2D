@@ -6,16 +6,8 @@ namespace SepCore.UI
     [DisallowMultipleComponent]
     public partial class CombatReadinessView : MonoBehaviour
     {
-        [SerializeField] public global::TMPro.TextMeshProUGUI squadMemberText;
-        [SerializeField] public global::UnityEngine.RectTransform characterSlotRoot;
-        [SerializeField] public global::SepCore.UI.CharacterSlotItem characterSlotTemplate;
-        [SerializeField] public global::UnityEngine.UI.ToggleGroup difficultyTabsToggleGroup;
-        [SerializeField] public global::TMPro.TMP_InputField seedInput;
-        [SerializeField] public global::UnityEngine.UI.Button randomizeButton;
-        [SerializeField] public global::TMPro.TextMeshProUGUI partySizeText;
-        [SerializeField] public global::TMPro.TextMeshProUGUI mapIdText;
-        [SerializeField] public global::TMPro.TextMeshProUGUI timeLimitText;
-        [SerializeField] public global::UnityEngine.UI.Button beginRunButton;
         [SerializeField] public global::TMPro.TextMeshProUGUI storageText;
+        [SerializeField] public global::SepCore.UI.SquadForm squadForm;
+        [SerializeField] public global::SepCore.UI.DeploymentForm deploymentForm;
     }
 }

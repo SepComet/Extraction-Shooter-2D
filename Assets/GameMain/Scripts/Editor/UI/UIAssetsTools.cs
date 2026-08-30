@@ -326,14 +326,14 @@ namespace SepCore.Editor
             for (int i = 0; i < batch.entries.Count; i++)
             {
                 PendingGeneration pending = batch.entries[i];
-                Type viewType = FindViewType(pending.viewClassFullName);
+                Type viewType = FindGeneratedType(pending.viewClassFullName);
                 if (viewType == null)
                 {
                     Debug.LogError("Generated UI view type was not found after compilation: " + pending.viewClassFullName);
                     return;
                 }
 
-                Type formType = FindViewType(pending.formClassFullName);
+                Type formType = FindGeneratedType(pending.formClassFullName);
                 if (formType == null)
                 {
                     Debug.LogError("Generated UI form type was not found after compilation: " + pending.formClassFullName);
@@ -401,9 +401,9 @@ namespace SepCore.Editor
             }
 
             current.RefreshItems();
-            for (int i = 0; i < current.NestedViewReferences.Count; i++)
+            for (int i = 0; i < current.NestedFormReferences.Count; i++)
             {
-                UISerializationRoot nestedRoot = current.NestedViewReferences[i].Root;
+                UISerializationRoot nestedRoot = current.NestedFormReferences[i].Root;
                 if (nestedRoot != null)
                 {
                     CollectGenerationRootsRecursive(nestedRoot, persistentContext, visited, result);
@@ -519,9 +519,9 @@ namespace SepCore.Editor
                 }
             }
 
-            for (int i = 0; i < root.NestedViewReferences.Count; i++)
+            for (int i = 0; i < root.NestedFormReferences.Count; i++)
             {
-                UISerializationRoot.NestedViewReference reference = root.NestedViewReferences[i];
+                UISerializationRoot.NestedFormReference reference = root.NestedFormReferences[i];
                 if (reference == null || !reference.GenerateReference)
                 {
                     continue;
@@ -530,7 +530,7 @@ namespace SepCore.Editor
                 UISerializationRoot nestedRoot = reference.Root;
                 if (nestedRoot == null)
                 {
-                    throw new InvalidOperationException("A nested UI View reference is missing below " + GetHierarchyPath(root.transform) + ".");
+                    throw new InvalidOperationException("A nested UI Form reference is missing below " + GetHierarchyPath(root.transform) + ".");
                 }
 
                 string variableName = NormalizeAndValidateVariableName(reference.VariableName, nestedRoot.transform, names);
@@ -538,7 +538,7 @@ namespace SepCore.Editor
                 {
                     nestedRoot = nestedRoot,
                     variableName = variableName,
-                    csharpTypeName = "global::" + GeneratedNamespace + "." + GetViewClassName(nestedRoot)
+                    csharpTypeName = "global::" + GeneratedNamespace + "." + GetFormClassName(nestedRoot)
                 });
             }
 
@@ -679,17 +679,17 @@ namespace SepCore.Editor
             }
 
             root.RefreshItems();
-            for (int i = 0; i < root.NestedViewReferences.Count; i++)
+            for (int i = 0; i < root.NestedFormReferences.Count; i++)
             {
-                UISerializationRoot nestedRoot = root.NestedViewReferences[i].Root;
+                UISerializationRoot nestedRoot = root.NestedFormReferences[i].Root;
                 if (nestedRoot != null)
                 {
                     ApplyGeneratedComponentsToRoot(nestedRoot);
                 }
             }
 
-            Type viewType = FindViewType(GeneratedNamespace + "." + GetViewClassName(root));
-            Type formType = FindViewType(GeneratedNamespace + "." + GetFormClassName(root));
+            Type viewType = FindGeneratedType(GeneratedNamespace + "." + GetViewClassName(root));
+            Type formType = FindGeneratedType(GeneratedNamespace + "." + GetFormClassName(root));
             if (viewType == null || formType == null)
             {
                 return;
@@ -757,19 +757,19 @@ namespace SepCore.Editor
                 UnityEngine.Object target = binding.component;
                 if (binding.nestedRoot != null)
                 {
-                    string nestedViewFullName = GeneratedNamespace + "." + GetViewClassName(binding.nestedRoot);
-                    Type nestedViewType = FindViewType(nestedViewFullName);
-                    if (nestedViewType == null)
+                    string nestedFormFullName = GeneratedNamespace + "." + GetFormClassName(binding.nestedRoot);
+                    Type nestedFormType = FindGeneratedType(nestedFormFullName);
+                    if (nestedFormType == null)
                     {
-                        throw new InvalidOperationException("Nested UI view type was not found: " + nestedViewFullName + ".");
+                        throw new InvalidOperationException("Nested UI form type was not found: " + nestedFormFullName + ".");
                     }
 
-                    target = binding.nestedRoot.GetComponent(nestedViewType);
+                    target = binding.nestedRoot.GetComponent(nestedFormType);
                     if (target == null)
                     {
                         throw new InvalidOperationException(
                             "Nested UI root '" + GetHierarchyPath(binding.nestedRoot.transform) +
-                            "' does not have its generated View component '" + nestedViewFullName + "'.");
+                            "' does not have its generated Form component '" + nestedFormFullName + "'.");
                     }
                 }
 
@@ -786,7 +786,7 @@ namespace SepCore.Editor
             return view;
         }
 
-        private static Type FindViewType(string fullName)
+        private static Type FindGeneratedType(string fullName)
         {
             return TypeCache.GetTypesDerivedFrom<MonoBehaviour>()
                 .FirstOrDefault(type => type.FullName == fullName);

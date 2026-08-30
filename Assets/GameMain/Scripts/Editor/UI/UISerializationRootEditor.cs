@@ -40,10 +40,10 @@ namespace SepCore.Editor
                 }
             }
 
-            SerializedProperty nestedViews = serializedObject.FindProperty("nestedViewReferences");
-            for (int i = 0; i < nestedViews.arraySize; i++)
+            SerializedProperty nestedForms = serializedObject.FindProperty("nestedFormReferences");
+            for (int i = 0; i < nestedForms.arraySize; i++)
             {
-                SerializedProperty entry = nestedViews.GetArrayElementAtIndex(i);
+                SerializedProperty entry = nestedForms.GetArrayElementAtIndex(i);
                 if (entry.FindPropertyRelative("generateReference").boolValue)
                 {
                     referenceCount++;
@@ -53,7 +53,7 @@ namespace SepCore.Editor
             EditorGUILayout.LabelField("View Class", UIAssetsTools.GetViewClassName(root));
             EditorGUILayout.LabelField("Form Class", UIAssetsTools.GetFormClassName(root));
             EditorGUILayout.LabelField("Owned Items", root.SerializationItems.Count.ToString());
-            EditorGUILayout.LabelField("Nested Views", nestedViews.arraySize.ToString());
+            EditorGUILayout.LabelField("Nested Forms", nestedForms.arraySize.ToString());
             EditorGUILayout.LabelField("Generated References", referenceCount.ToString());
             EditorGUILayout.Space(4f);
 
@@ -77,15 +77,15 @@ namespace SepCore.Editor
             }
 
             EditorGUILayout.Space(4f);
-            EditorGUILayout.LabelField("Nested Views", EditorStyles.boldLabel);
-            if (nestedViews.arraySize == 0)
+            EditorGUILayout.LabelField("Nested Forms", EditorStyles.boldLabel);
+            if (nestedForms.arraySize == 0)
             {
-                EditorGUILayout.HelpBox("Nested UISerializationRoot components will appear here and form serialization boundaries.", MessageType.Info);
+                EditorGUILayout.HelpBox("Nested UISerializationRoot components will appear here as child Form references and form serialization boundaries.", MessageType.Info);
             }
 
-            for (int i = 0; i < nestedViews.arraySize; i++)
+            for (int i = 0; i < nestedForms.arraySize; i++)
             {
-                SerializedProperty entry = nestedViews.GetArrayElementAtIndex(i);
+                SerializedProperty entry = nestedForms.GetArrayElementAtIndex(i);
                 SerializedProperty nestedRootProperty = entry.FindPropertyRelative("root");
                 SerializedProperty generate = entry.FindPropertyRelative("generateReference");
                 SerializedProperty variableName = entry.FindPropertyRelative("variableName");
@@ -107,7 +107,7 @@ namespace SepCore.Editor
 
                 if (nestedRoot != null)
                 {
-                    EditorGUILayout.LabelField("View Class", UIAssetsTools.GetViewClassName(nestedRoot));
+                    EditorGUILayout.LabelField("Form Class", UIAssetsTools.GetFormClassName(nestedRoot));
                 }
 
                 if (generate.boolValue)

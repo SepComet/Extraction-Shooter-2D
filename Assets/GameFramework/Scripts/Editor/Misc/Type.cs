@@ -22,7 +22,8 @@ namespace UnityGameFramework.Editor
             "UnityGameFramework.Runtime",
             "SepCore.Runtime",
             "SepCore.Base",
-            "SepC.ResolutionAdapter",
+            "SepCore.Presentation",
+            "SepCore.Procedure",
 #endif
             "Assembly-CSharp",
         };
@@ -33,7 +34,8 @@ namespace UnityGameFramework.Editor
             "UnityGameFramework.Runtime",
             "SepCore.Runtime",
             "SepCore.Base",
-            "SepC.ResolutionAdapter",
+            "SepCore.Presentation",
+            "SepCore.Procedure",
 #endif
             "Assembly-CSharp",
 #if UNITY_2017_3_OR_NEWER

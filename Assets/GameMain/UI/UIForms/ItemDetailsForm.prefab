@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5179022712709264515}
   - component: {fileID: 4603291131071082870}
   - component: {fileID: 5541957776722386631}
+  - component: {fileID: 4259690326048787537}
   - component: {fileID: 6268341800112226897}
   m_Layer: 5
   m_Name: HP
@@ -65,9 +66,25 @@ MonoBehaviour:
   - component: {fileID: 4603291131071082870}
     generateReference: 0
     variableName: heathPointCanvasRenderer
-  - component: {fileID: 6268341800112226897}
+  - component: {fileID: 4259690326048787537}
     generateReference: 1
+    variableName: hpFormatText
+  - component: {fileID: 6268341800112226897}
+    generateReference: 0
     variableName: hpText
+--- !u!114 &4259690326048787537
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1392386864867888504}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6566a3a7cfd184008ab2282feea295f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  key: HPFormatText
 --- !u!114 &6268341800112226897
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -629,6 +646,7 @@ GameObject:
   - component: {fileID: 6890729440302644792}
   - component: {fileID: 4466095812049553661}
   - component: {fileID: 5082129055875375218}
+  - component: {fileID: 4475856547401226535}
   m_Layer: 5
   m_Name: Speed
   m_TagString: Untagged
@@ -683,8 +701,11 @@ MonoBehaviour:
     generateReference: 0
     variableName: speedCanvasRenderer
   - component: {fileID: 5082129055875375218}
-    generateReference: 1
+    generateReference: 0
     variableName: speedText
+  - component: {fileID: 4475856547401226535}
+    generateReference: 1
+    variableName: speedFormatText
 --- !u!114 &5082129055875375218
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -774,6 +795,19 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &4475856547401226535
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5554656631130595777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6566a3a7cfd184008ab2282feea295f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  key: SPDFormatText
 --- !u!1 &5636577195360049716
 GameObject:
   m_ObjectHideFlags: 0
@@ -943,6 +977,7 @@ GameObject:
   - component: {fileID: 3429655475238369945}
   - component: {fileID: 1457266653204841066}
   - component: {fileID: 7199095014524234339}
+  - component: {fileID: 5602765551548898199}
   m_Layer: 5
   m_Name: MP
   m_TagString: Untagged
@@ -997,8 +1032,11 @@ MonoBehaviour:
     generateReference: 0
     variableName: magicPointCanvasRenderer
   - component: {fileID: 7199095014524234339}
-    generateReference: 1
+    generateReference: 0
     variableName: mpText
+  - component: {fileID: 5602765551548898199}
+    generateReference: 1
+    variableName: mpFormatText
 --- !u!114 &7199095014524234339
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1088,6 +1126,19 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &5602765551548898199
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5800884976147209719}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6566a3a7cfd184008ab2282feea295f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  key: MPFormatText
 --- !u!1 &5872508313271883114
 GameObject:
   m_ObjectHideFlags: 0
@@ -1176,6 +1227,7 @@ GameObject:
   - component: {fileID: 7750730488031471318}
   - component: {fileID: 3521877656451895179}
   - component: {fileID: 2364253565218914047}
+  - component: {fileID: 8645169386155287837}
   m_Layer: 5
   m_Name: ATK
   m_TagString: Untagged
@@ -1230,8 +1282,11 @@ MonoBehaviour:
     generateReference: 0
     variableName: attackCanvasRenderer
   - component: {fileID: 2364253565218914047}
-    generateReference: 1
+    generateReference: 0
     variableName: atkText
+  - component: {fileID: 8645169386155287837}
+    generateReference: 1
+    variableName: atkFormatText
 --- !u!114 &2364253565218914047
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1321,6 +1376,19 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &8645169386155287837
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6274480402889662601}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6566a3a7cfd184008ab2282feea295f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  key: ATKFormatText
 --- !u!1 &7684641432980518872
 GameObject:
   m_ObjectHideFlags: 0
@@ -1490,6 +1558,7 @@ GameObject:
   - component: {fileID: 705417353461791088}
   - component: {fileID: 4612983467342126493}
   - component: {fileID: 331733076104099108}
+  - component: {fileID: 9129851160542363978}
   m_Layer: 5
   m_Name: Stack
   m_TagString: Untagged
@@ -1544,8 +1613,11 @@ MonoBehaviour:
     generateReference: 0
     variableName: stackCanvasRenderer
   - component: {fileID: 331733076104099108}
-    generateReference: 1
+    generateReference: 0
     variableName: stackText
+  - component: {fileID: 9129851160542363978}
+    generateReference: 1
+    variableName: stackFormatText
 --- !u!114 &331733076104099108
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1635,6 +1707,19 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &9129851160542363978
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7729281776506686622}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6566a3a7cfd184008ab2282feea295f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  key: STAFormatText
 --- !u!1 &8073443572417232674
 GameObject:
   m_ObjectHideFlags: 0
@@ -1709,8 +1794,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4284114287
-  m_fontColor: {r: 0.43529412, g: 0.39607844, b: 0.3529412, a: 1}
+    rgba: 4280625710
+  m_fontColor: {r: 0.18039216, g: 0.16470589, b: 0.14509805, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -1878,7 +1963,7 @@ MonoBehaviour:
   - {fileID: 4612983467342126493}
   - {fileID: 2182994179005144283}
   - {fileID: 4333080805884545520}
-  nestedViewReferences: []
+  nestedFormReferences: []
 --- !u!114 &4503514465556614152
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1894,12 +1979,12 @@ MonoBehaviour:
   itemDetailIcon: {fileID: 8440454067056108592}
   itemDetailNameText: {fileID: 8200098793786560031}
   itemDetailTypeText: {fileID: 295651969101943419}
-  hpText: {fileID: 6268341800112226897}
-  atkText: {fileID: 2364253565218914047}
-  mpText: {fileID: 7199095014524234339}
-  matText: {fileID: 2968830829387071799}
-  speedText: {fileID: 5082129055875375218}
-  stackText: {fileID: 331733076104099108}
+  hpFormatText: {fileID: 4259690326048787537}
+  atkFormatText: {fileID: 8645169386155287837}
+  mpFormatText: {fileID: 5602765551548898199}
+  matFormatText: {fileID: 6462182073069543566}
+  speedFormatText: {fileID: 4475856547401226535}
+  stackFormatText: {fileID: 9129851160542363978}
   itemDetailDescriptionText: {fileID: 6763892873351540802}
   openLoadoutButton: {fileID: 7433963947553117608}
 --- !u!114 &1610184350966444607
@@ -1927,6 +2012,7 @@ GameObject:
   - component: {fileID: 3541554982253813617}
   - component: {fileID: 7409970750903276901}
   - component: {fileID: 2968830829387071799}
+  - component: {fileID: 6462182073069543566}
   m_Layer: 5
   m_Name: MAT
   m_TagString: Untagged
@@ -1981,8 +2067,11 @@ MonoBehaviour:
     generateReference: 0
     variableName: magicAttackCanvasRenderer
   - component: {fileID: 2968830829387071799}
-    generateReference: 1
+    generateReference: 0
     variableName: matText
+  - component: {fileID: 6462182073069543566}
+    generateReference: 1
+    variableName: matFormatText
 --- !u!114 &2968830829387071799
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2072,6 +2161,19 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &6462182073069543566
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8759673320674337342}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6566a3a7cfd184008ab2282feea295f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  key: MATFormatText
 --- !u!1 &9038971682702625884
 GameObject:
   m_ObjectHideFlags: 0

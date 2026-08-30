@@ -68,6 +68,14 @@ namespace SepCore.Procedure
                 () =>
                 {
                     _loadedFlag[LubanTablesFlag] = true;
+
+                    // Load save data; create a new game if no save exists
+                    GameEntry.Save.Load();
+                    if (!GameEntry.Save.HasSave && !GameEntry.Save.IsReady)
+                    {
+                        GameEntry.Save.CreateNewGame();
+                    }
+
                     Log.Info("Load Luban data tables OK.");
                 },
                 errorMessage =>

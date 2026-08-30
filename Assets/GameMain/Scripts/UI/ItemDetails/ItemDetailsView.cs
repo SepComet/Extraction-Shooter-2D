@@ -9,12 +9,12 @@ namespace SepCore.UI
         [SerializeField] public global::UnityEngine.UI.Image itemDetailIcon;
         [SerializeField] public global::TMPro.TextMeshProUGUI itemDetailNameText;
         [SerializeField] public global::TMPro.TextMeshProUGUI itemDetailTypeText;
-        [SerializeField] public global::TMPro.TextMeshProUGUI hpText;
-        [SerializeField] public global::TMPro.TextMeshProUGUI atkText;
-        [SerializeField] public global::TMPro.TextMeshProUGUI mpText;
-        [SerializeField] public global::TMPro.TextMeshProUGUI matText;
-        [SerializeField] public global::TMPro.TextMeshProUGUI speedText;
-        [SerializeField] public global::TMPro.TextMeshProUGUI stackText;
+        [SerializeField] public global::SepCore.UI.FormatTextUI hpFormatText;
+        [SerializeField] public global::SepCore.UI.FormatTextUI atkFormatText;
+        [SerializeField] public global::SepCore.UI.FormatTextUI mpFormatText;
+        [SerializeField] public global::SepCore.UI.FormatTextUI matFormatText;
+        [SerializeField] public global::SepCore.UI.FormatTextUI speedFormatText;
+        [SerializeField] public global::SepCore.UI.FormatTextUI stackFormatText;
         [SerializeField] public global::TMPro.TextMeshProUGUI itemDetailDescriptionText;
         [SerializeField] public global::UnityEngine.UI.Button openLoadoutButton;
     }

@@ -17,12 +17,12 @@ namespace SepCore.Definition
 /// </summary>
 public partial class TbSceneConfig
 {
-    private readonly System.Collections.Generic.Dictionary<int, SceneConfig> _dataMap;
+    private readonly System.Collections.Generic.Dictionary<SceneType, SceneConfig> _dataMap;
     private readonly System.Collections.Generic.List<SceneConfig> _dataList;
     
     public TbSceneConfig(ByteBuf _buf)
     {
-        _dataMap = new System.Collections.Generic.Dictionary<int, SceneConfig>();
+        _dataMap = new System.Collections.Generic.Dictionary<SceneType, SceneConfig>();
         _dataList = new System.Collections.Generic.List<SceneConfig>();
         
         for(int n = _buf.ReadSize() ; n > 0 ; --n)
@@ -34,12 +34,12 @@ public partial class TbSceneConfig
         }
     }
 
-    public System.Collections.Generic.Dictionary<int, SceneConfig> DataMap => _dataMap;
+    public System.Collections.Generic.Dictionary<SceneType, SceneConfig> DataMap => _dataMap;
     public System.Collections.Generic.List<SceneConfig> DataList => _dataList;
 
-    public SceneConfig GetOrDefault(int key) => _dataMap.TryGetValue(key, out var v) ? v : null;
-    public SceneConfig Get(int key) => _dataMap[key];
-    public SceneConfig this[int key] => _dataMap[key];
+    public SceneConfig GetOrDefault(SceneType key) => _dataMap.TryGetValue(key, out var v) ? v : null;
+    public SceneConfig Get(SceneType key) => _dataMap[key];
+    public SceneConfig this[SceneType key] => _dataMap[key];
 
     public void ResolveRef(Tables tables)
     {

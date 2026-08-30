@@ -35,6 +35,7 @@ namespace SepCore.CustomComponent
             "tbsoundconfig",
             "tbuiformconfig",
             "tbuisoundconfig",
+            "tbformattext"
         };
 
         private sealed class TableAccessor
@@ -44,24 +45,88 @@ namespace SepCore.CustomComponent
         }
 
         private static readonly Dictionary<Type, TableAccessor> TableAccessors =
-            new Dictionary<Type, TableAccessor>
+            new()
             {
-                { typeof(CharacterConfig), Accessor(tables => id => tables.TbCharacterConfig.GetOrDefault(id), tables => tables.TbCharacterConfig.DataList) },
-                { typeof(BattleActionConfig), Accessor(tables => id => tables.TbBattleActionConfig.GetOrDefault(id), tables => tables.TbBattleActionConfig.DataList) },
-                { typeof(ThreatLevelConfig), Accessor(tables => id => tables.TbThreatLevelConfig.GetOrDefault(id), tables => tables.TbThreatLevelConfig.DataList) },
-                { typeof(EnemyConfig), Accessor(tables => id => tables.TbEnemyConfig.GetOrDefault(id), tables => tables.TbEnemyConfig.DataList) },
-                { typeof(EnemyPartyConfig), Accessor(tables => id => tables.TbEnemyPartyConfig.GetOrDefault(id), tables => tables.TbEnemyPartyConfig.DataList) },
-                { typeof(ItemConfig), Accessor(tables => id => tables.TbItemConfig.GetOrDefault(id), tables => tables.TbItemConfig.DataList) },
-                { typeof(ResourcePointConfig), Accessor(tables => id => tables.TbResourcePointConfig.GetOrDefault(id), tables => tables.TbResourcePointConfig.DataList) },
-                { typeof(EnemyDropConfig), Accessor(tables => id => tables.TbEnemyDropConfig.GetOrDefault(id), tables => tables.TbEnemyDropConfig.DataList) },
-                { typeof(RarityConfig), Accessor(tables => id => tables.TbRarityConfig.GetOrDefault((Rarity)id), tables => tables.TbRarityConfig.DataList) },
-                { typeof(DifficultyConfig), Accessor(tables => id => tables.TbDifficultyConfig.GetOrDefault((DifficultyTier)id), tables => tables.TbDifficultyConfig.DataList) },
-                { typeof(EntityConfig), Accessor(tables => id => tables.TbEntityConfig.GetOrDefault(id), tables => tables.TbEntityConfig.DataList) },
-                { typeof(MusicConfig), Accessor(tables => id => tables.TbMusicConfig.GetOrDefault(id), tables => tables.TbMusicConfig.DataList) },
-                { typeof(SceneConfig), Accessor(tables => id => tables.TbSceneConfig.GetOrDefault(id), tables => tables.TbSceneConfig.DataList) },
-                { typeof(SoundConfig), Accessor(tables => id => tables.TbSoundConfig.GetOrDefault(id), tables => tables.TbSoundConfig.DataList) },
-                { typeof(UIFormConfig), Accessor(tables => id => tables.TbUIFormConfig.GetOrDefault(id), tables => tables.TbUIFormConfig.DataList) },
-                { typeof(UISoundConfig), Accessor(tables => id => tables.TbUISoundConfig.GetOrDefault(id), tables => tables.TbUISoundConfig.DataList) },
+                {
+                    typeof(CharacterConfig),
+                    Accessor(tables => id => tables.TbCharacterConfig.GetOrDefault(id),
+                        tables => tables.TbCharacterConfig.DataList)
+                },
+                {
+                    typeof(BattleActionConfig),
+                    Accessor(tables => id => tables.TbBattleActionConfig.GetOrDefault(id),
+                        tables => tables.TbBattleActionConfig.DataList)
+                },
+                {
+                    typeof(ThreatLevelConfig),
+                    Accessor(tables => id => tables.TbThreatLevelConfig.GetOrDefault(id),
+                        tables => tables.TbThreatLevelConfig.DataList)
+                },
+                {
+                    typeof(EnemyConfig),
+                    Accessor(tables => id => tables.TbEnemyConfig.GetOrDefault(id),
+                        tables => tables.TbEnemyConfig.DataList)
+                },
+                {
+                    typeof(EnemyPartyConfig),
+                    Accessor(tables => id => tables.TbEnemyPartyConfig.GetOrDefault(id),
+                        tables => tables.TbEnemyPartyConfig.DataList)
+                },
+                {
+                    typeof(ItemConfig),
+                    Accessor(tables => id => tables.TbItemConfig.GetOrDefault(id),
+                        tables => tables.TbItemConfig.DataList)
+                },
+                {
+                    typeof(ResourcePointConfig),
+                    Accessor(tables => id => tables.TbResourcePointConfig.GetOrDefault(id),
+                        tables => tables.TbResourcePointConfig.DataList)
+                },
+                {
+                    typeof(EnemyDropConfig),
+                    Accessor(tables => id => tables.TbEnemyDropConfig.GetOrDefault(id),
+                        tables => tables.TbEnemyDropConfig.DataList)
+                },
+                {
+                    typeof(RarityConfig),
+                    Accessor(tables => id => tables.TbRarityConfig.GetOrDefault((Rarity)id),
+                        tables => tables.TbRarityConfig.DataList)
+                },
+                {
+                    typeof(DifficultyConfig),
+                    Accessor(tables => id => tables.TbDifficultyConfig.GetOrDefault((DifficultyTier)id),
+                        tables => tables.TbDifficultyConfig.DataList)
+                },
+                {
+                    typeof(EntityConfig),
+                    Accessor(tables => id => tables.TbEntityConfig.GetOrDefault(id),
+                        tables => tables.TbEntityConfig.DataList)
+                },
+                {
+                    typeof(MusicConfig),
+                    Accessor(tables => id => tables.TbMusicConfig.GetOrDefault(id),
+                        tables => tables.TbMusicConfig.DataList)
+                },
+                {
+                    typeof(SceneConfig),
+                    Accessor(tables => id => tables.TbSceneConfig.GetOrDefault((SceneType)id),
+                        tables => tables.TbSceneConfig.DataList)
+                },
+                {
+                    typeof(SoundConfig),
+                    Accessor(tables => id => tables.TbSoundConfig.GetOrDefault(id),
+                        tables => tables.TbSoundConfig.DataList)
+                },
+                {
+                    typeof(UIFormConfig),
+                    Accessor(tables => id => tables.TbUIFormConfig.GetOrDefault((UIFormType)id),
+                        tables => tables.TbUIFormConfig.DataList)
+                },
+                {
+                    typeof(UISoundConfig),
+                    Accessor(tables => id => tables.TbUISoundConfig.GetOrDefault(id),
+                        tables => tables.TbUISoundConfig.DataList)
+                },
             };
 
         private static TableAccessor Accessor<TValue>(Func<Tables, Func<int, object>> rowGetterFactory,
@@ -82,13 +147,15 @@ namespace SepCore.CustomComponent
         /// <summary>
         /// 获取 Luban 数据表管理器，加载完成后可用。
         /// </summary>
-        public SepCore.Definition.Tables Tables { get; private set; }
+        public Tables Tables { get; private set; }
 
         /// <summary>
         /// 获取数据表是否已加载完成。
         /// </summary>
         public bool IsReady => Tables != null;
 
+        public TbGlobalConfig Global => Tables.TbGlobalConfig;
+        
         /// <summary>
         /// 按 id 获取数据行，未找到时返回 null。
         /// </summary>
@@ -193,7 +260,8 @@ namespace SepCore.CustomComponent
             }
         }
 
-        private void OnLoadTableFailure(string assetName, LoadResourceStatus status, string errorMessage, object userData)
+        private void OnLoadTableFailure(string assetName, LoadResourceStatus status, string errorMessage,
+            object userData)
         {
             Log.Error("Can not load data table '{0}' from '{1}' with error message '{2}'.", (string)userData, assetName,
                 errorMessage);

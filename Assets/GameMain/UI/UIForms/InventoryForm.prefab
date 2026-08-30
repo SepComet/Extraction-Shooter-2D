@@ -421,7 +421,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: EQUIP
+  m_text: EQUIPMENT
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -735,6 +735,7 @@ GameObject:
   - component: {fileID: 3656593655061787957}
   - component: {fileID: 3684668006342424164}
   - component: {fileID: 504874783008793949}
+  - component: {fileID: 6885981868550451195}
   m_Layer: 5
   m_Name: ALLToggle
   m_TagString: Untagged
@@ -849,6 +850,31 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_IsOn: 1
+--- !u!114 &6885981868550451195
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2012170800474657973}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbaa237e23f7d4d3f85f73e0acd7eaec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  componentReferences:
+  - component: {fileID: 2298792640519324320}
+    generateReference: 0
+    variableName: aLLToggleRectTransform
+  - component: {fileID: 3656593655061787957}
+    generateReference: 0
+    variableName: aLLToggleCanvasRenderer
+  - component: {fileID: 3684668006342424164}
+    generateReference: 0
+    variableName: aLLToggleImage
+  - component: {fileID: 504874783008793949}
+    generateReference: 1
+    variableName: allToggle
 --- !u!1 &2410182165023352697
 GameObject:
   m_ObjectHideFlags: 0
@@ -1070,6 +1096,7 @@ GameObject:
   - component: {fileID: 2182984371689212479}
   - component: {fileID: 719600398423519262}
   - component: {fileID: 6987671810978141194}
+  - component: {fileID: 4515486992900572179}
   m_Layer: 5
   m_Name: CONSUMABLESToggle
   m_TagString: Untagged
@@ -1184,6 +1211,31 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_IsOn: 0
+--- !u!114 &4515486992900572179
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2426015379712864977}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbaa237e23f7d4d3f85f73e0acd7eaec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  componentReferences:
+  - component: {fileID: 3568616283438071469}
+    generateReference: 0
+    variableName: cONSUMABLESToggleRectTransform
+  - component: {fileID: 2182984371689212479}
+    generateReference: 0
+    variableName: cONSUMABLESToggleCanvasRenderer
+  - component: {fileID: 719600398423519262}
+    generateReference: 0
+    variableName: cONSUMABLESToggleImage
+  - component: {fileID: 6987671810978141194}
+    generateReference: 1
+    variableName: consumablesToggle
 --- !u!1 &2543501261547435484
 GameObject:
   m_ObjectHideFlags: 0
@@ -1196,6 +1248,7 @@ GameObject:
   - component: {fileID: 2336508420346240422}
   - component: {fileID: 3388294236041124274}
   - component: {fileID: 5193004823020364787}
+  - component: {fileID: 1784370410967477645}
   m_Layer: 5
   m_Name: EQUIPMENTToggle
   m_TagString: Untagged
@@ -1310,6 +1363,31 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_IsOn: 0
+--- !u!114 &1784370410967477645
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2543501261547435484}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbaa237e23f7d4d3f85f73e0acd7eaec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  componentReferences:
+  - component: {fileID: 3024079498947618077}
+    generateReference: 0
+    variableName: eQUIPMENTToggleRectTransform
+  - component: {fileID: 2336508420346240422}
+    generateReference: 0
+    variableName: eQUIPMENTToggleCanvasRenderer
+  - component: {fileID: 3388294236041124274}
+    generateReference: 0
+    variableName: eQUIPMENTToggleImage
+  - component: {fileID: 5193004823020364787}
+    generateReference: 1
+    variableName: equipmentToggle
 --- !u!1 &3167783107560700122
 GameObject:
   m_ObjectHideFlags: 0
@@ -1781,13 +1859,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serializationItems:
+  - {fileID: 6885981868550451195}
+  - {fileID: 4267461878544293663}
+  - {fileID: 1784370410967477645}
+  - {fileID: 4515486992900572179}
   - {fileID: 5400367523979904803}
   - {fileID: 4599698513164821803}
   - {fileID: 4303123679870252390}
   - {fileID: 8026264669779571601}
   - {fileID: 6133147552744604971}
   - {fileID: 98987023799537546}
-  nestedViewReferences: []
+  nestedFormReferences: []
 --- !u!114 &7335061425003396699
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1800,11 +1882,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21f832ef1e5da4b37b7754cca1ebf511, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  allToggle: {fileID: 504874783008793949}
+  lootToggle: {fileID: 4081444737083515221}
+  equipmentToggle: {fileID: 5193004823020364787}
+  consumablesToggle: {fileID: 6987671810978141194}
   searchInput: {fileID: 7413549355584395135}
   sortButton: {fileID: 6494309994204566134}
   itemScroll: {fileID: 5333695047041429650}
   warehouseSlotRoot: {fileID: 1154235044148803502}
   warehouseSlotTemplate: {fileID: 6835793265045693105}
+  itemCountFormatText: {fileID: 2683871990378197878}
 --- !u!114 &2133127681736051842
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2140,7 +2227,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 60, y: -30}
+  m_AnchoredPosition: {x: 75, y: -30}
   m_SizeDelta: {x: 650, y: 120}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &4294156976037642761
@@ -2603,6 +2690,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7852236294564041691}
   - component: {fileID: 3699701487496305451}
+  - component: {fileID: 2683871990378197878}
   - component: {fileID: 98987023799537546}
   - component: {fileID: 5416459995294760792}
   m_Layer: 5
@@ -2628,8 +2716,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 34, y: 25}
-  m_SizeDelta: {x: 400, y: 34}
+  m_AnchoredPosition: {x: 50, y: 20}
+  m_SizeDelta: {x: 800, y: 40}
   m_Pivot: {x: 0, y: 0}
 --- !u!222 &3699701487496305451
 CanvasRenderer:
@@ -2639,6 +2727,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7044390149887422498}
   m_CullTransparentMesh: 1
+--- !u!114 &2683871990378197878
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7044390149887422498}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6566a3a7cfd184008ab2282feea295f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  key: WarehouseCapacity
 --- !u!114 &98987023799537546
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2658,6 +2759,9 @@ MonoBehaviour:
   - component: {fileID: 3699701487496305451}
     generateReference: 0
     variableName: itemCountCanvasRenderer
+  - component: {fileID: 2683871990378197878}
+    generateReference: 1
+    variableName: itemCountFormatText
   - component: {fileID: 5416459995294760792}
     generateReference: 0
     variableName: itemCountTextMeshProUGUI
@@ -2708,8 +2812,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 15
-  m_fontSizeBase: 15
+  m_fontSize: 35
+  m_fontSizeBase: 35
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -2949,7 +3053,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: CONSUMPTION
+  m_text: CONSUMABLES
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3030,6 +3134,7 @@ GameObject:
   - component: {fileID: 3485495474144447458}
   - component: {fileID: 4091653412659532661}
   - component: {fileID: 4081444737083515221}
+  - component: {fileID: 4267461878544293663}
   m_Layer: 5
   m_Name: LOOTToggle
   m_TagString: Untagged
@@ -3144,6 +3249,31 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_IsOn: 0
+--- !u!114 &4267461878544293663
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8263617262501264373}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbaa237e23f7d4d3f85f73e0acd7eaec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  componentReferences:
+  - component: {fileID: 368081548635187151}
+    generateReference: 0
+    variableName: lOOTToggleRectTransform
+  - component: {fileID: 3485495474144447458}
+    generateReference: 0
+    variableName: lOOTToggleCanvasRenderer
+  - component: {fileID: 4091653412659532661}
+    generateReference: 0
+    variableName: lOOTToggleImage
+  - component: {fileID: 4081444737083515221}
+    generateReference: 1
+    variableName: lootToggle
 --- !u!1 &8965387801132203254
 GameObject:
   m_ObjectHideFlags: 0

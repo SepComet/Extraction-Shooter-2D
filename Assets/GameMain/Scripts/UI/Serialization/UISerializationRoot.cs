@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace SepCore.UI
 {
@@ -10,7 +11,7 @@ namespace SepCore.UI
     public sealed class UISerializationRoot : MonoBehaviour
     {
         [Serializable]
-        public sealed class NestedViewReference
+        public sealed class NestedFormReference
         {
             [SerializeField] private UISerializationRoot root;
             [SerializeField] private bool generateReference;
@@ -21,7 +22,7 @@ namespace SepCore.UI
             public string VariableName => variableName;
 
 #if UNITY_EDITOR
-            internal NestedViewReference(UISerializationRoot nestedRoot, string defaultVariableName)
+            internal NestedFormReference(UISerializationRoot nestedRoot, string defaultVariableName)
             {
                 root = nestedRoot;
                 generateReference = true;
@@ -33,6 +34,19 @@ namespace SepCore.UI
                 generateReference = shouldGenerate;
                 variableName = generatedVariableName;
             }
+
+            internal bool MigrateLegacyVariableName()
+            {
+                if (string.IsNullOrEmpty(variableName) ||
+                    !variableName.EndsWith("View", StringComparison.Ordinal) ||
+                    variableName.Length <= 4)
+                {
+                    return false;
+                }
+
+                variableName = variableName.Substring(0, variableName.Length - 4) + "Form";
+                return true;
+            }
 #endif
         }
 
@@ -40,10 +54,11 @@ namespace SepCore.UI
         private List<UISerializationItem> serializationItems = new List<UISerializationItem>();
 
         [SerializeField, HideInInspector]
-        private List<NestedViewReference> nestedViewReferences = new List<NestedViewReference>();
+        [FormerlySerializedAs("nestedViewReferences")]
+        private List<NestedFormReference> nestedFormReferences = new List<NestedFormReference>();
 
         public IReadOnlyList<UISerializationItem> SerializationItems => serializationItems;
-        public IReadOnlyList<NestedViewReference> NestedViewReferences => nestedViewReferences;
+        public IReadOnlyList<NestedFormReference> NestedFormReferences => nestedFormReferences;
 
 #if UNITY_EDITOR
         private bool refreshQueued;
@@ -76,8 +91,18 @@ namespace SepCore.UI
             }
 
             bool itemsChanged = !HasSameItems(ownedItems);
-            bool nestedViewsChanged = !HasSameNestedViews(directNestedRoots);
-            if (!itemsChanged && !nestedViewsChanged)
+            bool nestedFormsChanged = !HasSameNestedForms(directNestedRoots);
+            bool nestedNamesChanged = false;
+            for (int i = 0; i < directNestedRoots.Count; i++)
+            {
+                NestedFormReference existing = FindNestedForm(directNestedRoots[i]);
+                if (existing != null)
+                {
+                    nestedNamesChanged |= existing.MigrateLegacyVariableName();
+                }
+            }
+
+            if (!itemsChanged && !nestedFormsChanged && !nestedNamesChanged)
             {
                 return false;
             }
@@ -88,24 +113,24 @@ namespace SepCore.UI
                 serializationItems.AddRange(ownedItems);
             }
 
-            if (nestedViewsChanged)
+            if (nestedFormsChanged)
             {
-                var next = new List<NestedViewReference>(directNestedRoots.Count);
+                var next = new List<NestedFormReference>(directNestedRoots.Count);
                 for (int i = 0; i < directNestedRoots.Count; i++)
                 {
                     UISerializationRoot nestedRoot = directNestedRoots[i];
-                    NestedViewReference existing = FindNestedView(nestedRoot);
-                    next.Add(existing ?? new NestedViewReference(nestedRoot, CreateDefaultNestedViewVariableName(nestedRoot)));
+                    NestedFormReference existing = FindNestedForm(nestedRoot);
+                    next.Add(existing ?? new NestedFormReference(nestedRoot, CreateDefaultNestedFormVariableName(nestedRoot)));
                 }
 
-                nestedViewReferences = next;
+                nestedFormReferences = next;
             }
 
             UnityEditor.EditorUtility.SetDirty(this);
             return true;
         }
 
-        public bool SetNestedViewReference(UISerializationRoot nestedRoot, bool shouldGenerate, string variableName)
+        public bool SetNestedFormReference(UISerializationRoot nestedRoot, bool shouldGenerate, string variableName)
         {
             if (nestedRoot == null || FindNearestParentRoot(nestedRoot.transform) != this)
             {
@@ -113,7 +138,7 @@ namespace SepCore.UI
             }
 
             RefreshItems();
-            NestedViewReference reference = FindNestedView(nestedRoot);
+            NestedFormReference reference = FindNestedForm(nestedRoot);
             if (reference == null)
             {
                 throw new InvalidOperationException("The nested root is not registered.");
@@ -130,7 +155,7 @@ namespace SepCore.UI
             return true;
         }
 
-        public static string CreateDefaultNestedViewVariableName(UISerializationRoot nestedRoot)
+        public static string CreateDefaultNestedFormVariableName(UISerializationRoot nestedRoot)
         {
             string sourceName = nestedRoot == null ? "nested" : nestedRoot.gameObject.name.Replace("(Clone)", string.Empty).Trim();
             if (sourceName.EndsWith("Form", StringComparison.Ordinal) && sourceName.Length > 4)
@@ -148,7 +173,7 @@ namespace SepCore.UI
                 identifier = "Nested";
             }
 
-            return char.ToLowerInvariant(identifier[0]) + identifier.Substring(1) + "View";
+            return char.ToLowerInvariant(identifier[0]) + identifier.Substring(1) + "Form";
         }
 
         internal void QueueRefresh()
@@ -220,16 +245,16 @@ namespace SepCore.UI
             return true;
         }
 
-        private bool HasSameNestedViews(List<UISerializationRoot> found)
+        private bool HasSameNestedForms(List<UISerializationRoot> found)
         {
-            if (nestedViewReferences.Count != found.Count)
+            if (nestedFormReferences.Count != found.Count)
             {
                 return false;
             }
 
             for (int i = 0; i < found.Count; i++)
             {
-                if (nestedViewReferences[i] == null || nestedViewReferences[i].Root != found[i])
+                if (nestedFormReferences[i] == null || nestedFormReferences[i].Root != found[i])
                 {
                     return false;
                 }
@@ -238,11 +263,11 @@ namespace SepCore.UI
             return true;
         }
 
-        private NestedViewReference FindNestedView(UISerializationRoot nestedRoot)
+        private NestedFormReference FindNestedForm(UISerializationRoot nestedRoot)
         {
-            for (int i = 0; i < nestedViewReferences.Count; i++)
+            for (int i = 0; i < nestedFormReferences.Count; i++)
             {
-                NestedViewReference reference = nestedViewReferences[i];
+                NestedFormReference reference = nestedFormReferences[i];
                 if (reference != null && reference.Root == nestedRoot)
                 {
                     return reference;

@@ -1,5 +1,6 @@
 using GameFramework.Fsm;
 using GameFramework.Procedure;
+using SepCore.Definition;
 using SepCore.UI;
 
 namespace SepCore.Procedure
@@ -15,15 +16,7 @@ namespace SepCore.Procedure
         {
             base.OnEnter(procedureOwner);
 
-            DialogParams context = new DialogParams()
-            {
-                Message = "This is a test dialog.",
-                Title = "This is a test dialog.",
-                Mode = 2,
-                ConfirmText = "确认",
-                CancelText = "取消",
-            };
-            GameEntry.UI.OpenDialog(context);
+            GameEntry.UI.OpenUIForm(UIFormType.LobbyForm);
         }
 
         protected override void OnUpdate(IFsm<IProcedureManager> procedureOwner, float elapseSeconds,
@@ -34,6 +27,8 @@ namespace SepCore.Procedure
 
         protected override void OnLeave(IFsm<IProcedureManager> procedureOwner, bool isShutdown)
         {
+            GameEntry.UI.CloseAllLoadedUIForms();
+
             base.OnLeave(procedureOwner, isShutdown);
         }
 

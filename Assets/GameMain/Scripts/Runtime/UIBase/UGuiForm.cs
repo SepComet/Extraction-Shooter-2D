@@ -101,10 +101,6 @@ namespace SepCore.UI
                 foreach (var text in tmp_texts)
                 {
                     text.font = _mainTMPFont;
-                    if (!string.IsNullOrEmpty(text.text))
-                    {
-                        text.text = GameEntry.Localization.GetString(text.text);
-                    }
                 }
             }
 

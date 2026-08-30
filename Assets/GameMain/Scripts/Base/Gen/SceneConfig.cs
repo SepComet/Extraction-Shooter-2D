@@ -16,7 +16,7 @@ public sealed partial class SceneConfig : Luban.BeanBase
 {
     public SceneConfig(ByteBuf _buf) 
     {
-        Id = _buf.ReadInt();
+        Id = (SceneType)_buf.ReadInt();
         AssetName = _buf.ReadString();
         BackgroundMusicId = _buf.ReadInt();
     }
@@ -29,7 +29,7 @@ public sealed partial class SceneConfig : Luban.BeanBase
     /// <summary>
     /// 场景编号
     /// </summary>
-    public readonly int Id;
+    public readonly SceneType Id;
     /// <summary>
     /// 资源名称
     /// </summary>

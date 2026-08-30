@@ -13,7 +13,7 @@ using Luban;
 namespace SepCore.Definition
 {
 /// <summary>
-/// 全局固定规则
+/// 全局零散配置（单例）
 /// </summary>
 public partial class TbGlobalConfig
 {
@@ -54,6 +54,10 @@ public partial class TbGlobalConfig
     /// 警惕值满值
     /// </summary>
      public int AlertMax => _data.AlertMax;
+    /// <summary>
+    /// 仓库格子数
+    /// </summary>
+     public int WarehouseSlotCount => _data.WarehouseSlotCount;
     /// <summary>
     /// 共享背包格子数
     /// </summary>

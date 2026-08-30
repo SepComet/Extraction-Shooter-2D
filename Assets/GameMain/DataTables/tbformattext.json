@@ -1,0 +1,30 @@
+[
+  {
+    "name": "ATKFormatText",
+    "format": "ATK   {0}"
+  },
+  {
+    "name": "MATFormatText",
+    "format": "MAT   {0}"
+  },
+  {
+    "name": "SPDFormatText",
+    "format": "SPD   {0}"
+  },
+  {
+    "name": "HPFormatText",
+    "format": "HP   {0}"
+  },
+  {
+    "name": "MPFormatText",
+    "format": "MP   {0}"
+  },
+  {
+    "name": "STAFormatText",
+    "format": "STA   {0}"
+  },
+  {
+    "name": "WarehouseCapacity",
+    "format": "{0} ITEMS   /   {1} TOTAL UNITS"
+  }
+]

@@ -1,3 +1,5 @@
+using Cysharp.Threading.Tasks;
+using SepCore.AsyncTask;
 using SepCore.Definition;
 using UnityEngine;
 using UnityGameFramework.Runtime;
@@ -10,11 +12,14 @@ namespace SepCore.UI
     /// </summary>
     public partial class ItemDetailsForm : UGuiForm
     {
+        private int _iconVersion = 0;
+
         /// <summary>
         /// 按物品 ID 刷新详情界面；配置不存在时清空显示。
         /// </summary>
         public void Refresh(int itemId)
         {
+            _iconVersion++;
             ItemDetailsView view = View;
             if (view == null)
             {
@@ -79,6 +84,8 @@ namespace SepCore.UI
             {
                 view.itemDetailIcon.gameObject.SetActive(false);
             }
+
+            ShowIconAsync(config.Icon_Ref, _iconVersion).Forget();
         }
 
         private static void ClearDetails(ItemDetailsView view)
@@ -97,6 +104,31 @@ namespace SepCore.UI
             {
                 view.itemDetailDescriptionText.text = string.Empty;
             }
+
+            if (view.itemDetailIcon != null)
+            {
+                view.itemDetailIcon.gameObject.SetActive(false);
+            }
+        }
+
+        /// <summary>
+        /// 异步加载物品图标；iconVersion 用于防止连续刷新时旧加载结果覆盖新内容。
+        /// </summary>
+        private async UniTaskVoid ShowIconAsync(SpriteConfig iconConfig, int iconVersion)
+        {
+            if (iconConfig == null || View == null || View.itemDetailIcon == null)
+            {
+                return;
+            }
+
+            Sprite sprite = await SpriteLoader.LoadSpriteAsync(iconConfig);
+            if (sprite == null || _iconVersion != iconVersion)
+            {
+                return;
+            }
+
+            View.itemDetailIcon.sprite = sprite;
+            View.itemDetailIcon.gameObject.SetActive(true);
         }
 
         private static string GetItemTypeName(ItemType itemType)

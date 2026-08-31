@@ -1,3 +1,5 @@
+using Cysharp.Threading.Tasks;
+using SepCore.AsyncTask;
 using SepCore.Base;
 using SepCore.Definition;
 using TMPro;
@@ -26,6 +28,7 @@ namespace SepCore.UI
         private int _slotId = 0;
         private bool _filled = false;
         private bool _clickBound = false;
+        private int _iconVersion = 0;
 
         /// <summary>
         /// 设置格子在固定网格中的索引，点击事件以此作为唯一标识。
@@ -49,9 +52,10 @@ namespace SepCore.UI
             }
 
             _filled = true;
+            _iconVersion++;
             rarity.color = GetRarityColor(config.Rarity);
             quantityText.text = stack.count.ToString();
-            HideIcon();
+            ShowIconAsync(config.Icon_Ref, _iconVersion).Forget();
             BindClick();
             if (button != null)
             {
@@ -65,6 +69,7 @@ namespace SepCore.UI
         public void SetEmpty()
         {
             _filled = false;
+            _iconVersion++;
             rarity.color = RarityEmpty;
             quantityText.text = string.Empty;
             HideIcon();
@@ -115,6 +120,26 @@ namespace SepCore.UI
 
             icon.sprite = null;
             icon.gameObject.SetActive(false);
+        }
+
+        /// <summary>
+        /// 异步加载物品图标；iconVersion 用于防止复用格子时旧加载结果覆盖新内容。
+        /// </summary>
+        private async UniTaskVoid ShowIconAsync(SpriteConfig iconConfig, int iconVersion)
+        {
+            if (iconConfig == null || icon == null)
+            {
+                return;
+            }
+
+            Sprite sprite = await SpriteLoader.LoadSpriteAsync(iconConfig);
+            if (sprite == null || _iconVersion != iconVersion)
+            {
+                return;
+            }
+
+            icon.sprite = sprite;
+            icon.gameObject.SetActive(true);
         }
 
         private static Color GetRarityColor(Rarity rarity)

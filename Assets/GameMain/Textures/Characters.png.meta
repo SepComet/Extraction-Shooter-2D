@@ -231,8 +231,8 @@ TextureImporter:
       name: rogues_5
       rect:
         serializedVersion: 2
-        x: 0
-        y: 160
+        x: 160
+        y: 192
         width: 32
         height: 32
       alignment: 0
@@ -252,8 +252,8 @@ TextureImporter:
       name: rogues_6
       rect:
         serializedVersion: 2
-        x: 32
-        y: 160
+        x: 192
+        y: 192
         width: 32
         height: 32
       alignment: 0
@@ -273,7 +273,7 @@ TextureImporter:
       name: rogues_7
       rect:
         serializedVersion: 2
-        x: 64
+        x: 0
         y: 160
         width: 32
         height: 32
@@ -294,7 +294,7 @@ TextureImporter:
       name: rogues_8
       rect:
         serializedVersion: 2
-        x: 96
+        x: 32
         y: 160
         width: 32
         height: 32
@@ -315,7 +315,7 @@ TextureImporter:
       name: rogues_9
       rect:
         serializedVersion: 2
-        x: 128
+        x: 64
         y: 160
         width: 32
         height: 32
@@ -336,8 +336,8 @@ TextureImporter:
       name: rogues_10
       rect:
         serializedVersion: 2
-        x: 0
-        y: 128
+        x: 96
+        y: 160
         width: 32
         height: 32
       alignment: 0
@@ -357,8 +357,8 @@ TextureImporter:
       name: rogues_11
       rect:
         serializedVersion: 2
-        x: 32
-        y: 128
+        x: 128
+        y: 160
         width: 32
         height: 32
       alignment: 0
@@ -378,8 +378,8 @@ TextureImporter:
       name: rogues_12
       rect:
         serializedVersion: 2
-        x: 64
-        y: 128
+        x: 160
+        y: 160
         width: 32
         height: 32
       alignment: 0
@@ -399,8 +399,8 @@ TextureImporter:
       name: rogues_13
       rect:
         serializedVersion: 2
-        x: 96
-        y: 128
+        x: 192
+        y: 160
         width: 32
         height: 32
       alignment: 0
@@ -420,7 +420,7 @@ TextureImporter:
       name: rogues_14
       rect:
         serializedVersion: 2
-        x: 128
+        x: 0
         y: 128
         width: 32
         height: 32
@@ -441,7 +441,7 @@ TextureImporter:
       name: rogues_15
       rect:
         serializedVersion: 2
-        x: 160
+        x: 32
         y: 128
         width: 32
         height: 32
@@ -462,7 +462,7 @@ TextureImporter:
       name: rogues_16
       rect:
         serializedVersion: 2
-        x: 192
+        x: 64
         y: 128
         width: 32
         height: 32
@@ -483,8 +483,8 @@ TextureImporter:
       name: rogues_17
       rect:
         serializedVersion: 2
-        x: 0
-        y: 96
+        x: 96
+        y: 128
         width: 32
         height: 32
       alignment: 0
@@ -504,8 +504,8 @@ TextureImporter:
       name: rogues_18
       rect:
         serializedVersion: 2
-        x: 32
-        y: 96
+        x: 128
+        y: 128
         width: 32
         height: 32
       alignment: 0
@@ -525,8 +525,8 @@ TextureImporter:
       name: rogues_19
       rect:
         serializedVersion: 2
-        x: 64
-        y: 96
+        x: 160
+        y: 128
         width: 32
         height: 32
       alignment: 0
@@ -546,8 +546,8 @@ TextureImporter:
       name: rogues_20
       rect:
         serializedVersion: 2
-        x: 96
-        y: 96
+        x: 192
+        y: 128
         width: 32
         height: 32
       alignment: 0
@@ -567,7 +567,7 @@ TextureImporter:
       name: rogues_21
       rect:
         serializedVersion: 2
-        x: 128
+        x: 0
         y: 96
         width: 32
         height: 32
@@ -588,7 +588,7 @@ TextureImporter:
       name: rogues_22
       rect:
         serializedVersion: 2
-        x: 160
+        x: 32
         y: 96
         width: 32
         height: 32
@@ -609,8 +609,8 @@ TextureImporter:
       name: rogues_23
       rect:
         serializedVersion: 2
-        x: 0
-        y: 64
+        x: 64
+        y: 96
         width: 32
         height: 32
       alignment: 0
@@ -630,8 +630,8 @@ TextureImporter:
       name: rogues_24
       rect:
         serializedVersion: 2
-        x: 32
-        y: 64
+        x: 96
+        y: 96
         width: 32
         height: 32
       alignment: 0
@@ -651,8 +651,8 @@ TextureImporter:
       name: rogues_25
       rect:
         serializedVersion: 2
-        x: 64
-        y: 64
+        x: 128
+        y: 96
         width: 32
         height: 32
       alignment: 0
@@ -672,8 +672,8 @@ TextureImporter:
       name: rogues_26
       rect:
         serializedVersion: 2
-        x: 96
-        y: 64
+        x: 160
+        y: 96
         width: 32
         height: 32
       alignment: 0
@@ -693,8 +693,8 @@ TextureImporter:
       name: rogues_27
       rect:
         serializedVersion: 2
-        x: 128
-        y: 64
+        x: 192
+        y: 96
         width: 32
         height: 32
       alignment: 0
@@ -714,7 +714,7 @@ TextureImporter:
       name: rogues_28
       rect:
         serializedVersion: 2
-        x: 160
+        x: 0
         y: 64
         width: 32
         height: 32
@@ -735,8 +735,8 @@ TextureImporter:
       name: rogues_29
       rect:
         serializedVersion: 2
-        x: 0
-        y: 32
+        x: 32
+        y: 64
         width: 32
         height: 32
       alignment: 0
@@ -756,8 +756,8 @@ TextureImporter:
       name: rogues_30
       rect:
         serializedVersion: 2
-        x: 32
-        y: 32
+        x: 64
+        y: 64
         width: 32
         height: 32
       alignment: 0
@@ -777,8 +777,8 @@ TextureImporter:
       name: rogues_31
       rect:
         serializedVersion: 2
-        x: 64
-        y: 32
+        x: 96
+        y: 64
         width: 32
         height: 32
       alignment: 0
@@ -798,8 +798,8 @@ TextureImporter:
       name: rogues_32
       rect:
         serializedVersion: 2
-        x: 96
-        y: 32
+        x: 128
+        y: 64
         width: 32
         height: 32
       alignment: 0
@@ -819,8 +819,8 @@ TextureImporter:
       name: rogues_33
       rect:
         serializedVersion: 2
-        x: 128
-        y: 32
+        x: 160
+        y: 64
         width: 32
         height: 32
       alignment: 0
@@ -840,8 +840,8 @@ TextureImporter:
       name: rogues_34
       rect:
         serializedVersion: 2
-        x: 160
-        y: 32
+        x: 192
+        y: 64
         width: 32
         height: 32
       alignment: 0
@@ -862,7 +862,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
+        y: 32
         width: 32
         height: 32
       alignment: 0
@@ -883,7 +883,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 32
-        y: 0
+        y: 32
         width: 32
         height: 32
       alignment: 0
@@ -904,7 +904,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 64
-        y: 0
+        y: 32
         width: 32
         height: 32
       alignment: 0
@@ -925,7 +925,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 96
-        y: 0
+        y: 32
         width: 32
         height: 32
       alignment: 0
@@ -946,7 +946,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 128
-        y: 0
+        y: 32
         width: 32
         height: 32
       alignment: 0
@@ -958,6 +958,195 @@ TextureImporter:
       bones: []
       spriteID: 0b9907815227b41d4a39860f7113f72f
       internalID: -196351770
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rogues_40
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 32
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9dc77ad50c57d4ee6a00d02537fea671
+      internalID: -1917637240
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rogues_41
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 32
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6eabea64129754dbb9402231aab117a8
+      internalID: 2117134290
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rogues_42
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 51d729838650041b5869b82d67f7960d
+      internalID: 393383766
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rogues_43
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1ec0c2233b92c47ad8d0af1960754aa9
+      internalID: -251761591
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rogues_44
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: eec4a1f769cac47299eddbc2f164bb24
+      internalID: 55273946
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rogues_45
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 232182ca68b1c4c6ea0a2ce40461d3ea
+      internalID: 425358794
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rogues_46
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 88fce9116947647659688ae1fb0efacf
+      internalID: 1590564456
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rogues_47
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 634f6b5dee85e4fd286e79334572413d
+      internalID: 1587879998
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rogues_48
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5a62b9770e66c4ae580e53347da77f0f
+      internalID: -639973697
       vertices: []
       indices: 
       edges: []
@@ -1008,6 +1197,15 @@ TextureImporter:
       rogues_38: -1914401805
       rogues_39: -196351770
       rogues_4: 1329153914
+      rogues_40: -1917637240
+      rogues_41: 2117134290
+      rogues_42: 393383766
+      rogues_43: -251761591
+      rogues_44: 55273946
+      rogues_45: 425358794
+      rogues_46: 1590564456
+      rogues_47: 1587879998
+      rogues_48: -639973697
       rogues_5: 629075895
       rogues_6: 1295761824
       rogues_7: -1685225826

@@ -588,7 +588,7 @@ TextureImporter:
       name: autotiles_22
       rect:
         serializedVersion: 2
-        x: 352
+        x: 320
         y: 192
         width: 32
         height: 32
@@ -609,8 +609,8 @@ TextureImporter:
       name: autotiles_23
       rect:
         serializedVersion: 2
-        x: 0
-        y: 160
+        x: 352
+        y: 192
         width: 32
         height: 32
       alignment: 0
@@ -630,7 +630,7 @@ TextureImporter:
       name: autotiles_24
       rect:
         serializedVersion: 2
-        x: 32
+        x: 0
         y: 160
         width: 32
         height: 32
@@ -651,7 +651,7 @@ TextureImporter:
       name: autotiles_25
       rect:
         serializedVersion: 2
-        x: 64
+        x: 32
         y: 160
         width: 32
         height: 32
@@ -672,7 +672,7 @@ TextureImporter:
       name: autotiles_26
       rect:
         serializedVersion: 2
-        x: 96
+        x: 64
         y: 160
         width: 32
         height: 32
@@ -693,7 +693,7 @@ TextureImporter:
       name: autotiles_27
       rect:
         serializedVersion: 2
-        x: 128
+        x: 96
         y: 160
         width: 32
         height: 32
@@ -714,7 +714,7 @@ TextureImporter:
       name: autotiles_28
       rect:
         serializedVersion: 2
-        x: 160
+        x: 128
         y: 160
         width: 32
         height: 32
@@ -735,7 +735,7 @@ TextureImporter:
       name: autotiles_29
       rect:
         serializedVersion: 2
-        x: 192
+        x: 160
         y: 160
         width: 32
         height: 32
@@ -756,7 +756,7 @@ TextureImporter:
       name: autotiles_30
       rect:
         serializedVersion: 2
-        x: 224
+        x: 192
         y: 160
         width: 32
         height: 32
@@ -777,7 +777,7 @@ TextureImporter:
       name: autotiles_31
       rect:
         serializedVersion: 2
-        x: 256
+        x: 224
         y: 160
         width: 32
         height: 32
@@ -798,7 +798,7 @@ TextureImporter:
       name: autotiles_32
       rect:
         serializedVersion: 2
-        x: 288
+        x: 256
         y: 160
         width: 32
         height: 32
@@ -819,7 +819,7 @@ TextureImporter:
       name: autotiles_33
       rect:
         serializedVersion: 2
-        x: 320
+        x: 288
         y: 160
         width: 32
         height: 32
@@ -840,7 +840,7 @@ TextureImporter:
       name: autotiles_34
       rect:
         serializedVersion: 2
-        x: 352
+        x: 320
         y: 160
         width: 32
         height: 32
@@ -861,8 +861,8 @@ TextureImporter:
       name: autotiles_35
       rect:
         serializedVersion: 2
-        x: 0
-        y: 128
+        x: 352
+        y: 160
         width: 32
         height: 32
       alignment: 0
@@ -882,7 +882,7 @@ TextureImporter:
       name: autotiles_36
       rect:
         serializedVersion: 2
-        x: 32
+        x: 0
         y: 128
         width: 32
         height: 32
@@ -903,7 +903,7 @@ TextureImporter:
       name: autotiles_37
       rect:
         serializedVersion: 2
-        x: 64
+        x: 32
         y: 128
         width: 32
         height: 32
@@ -924,7 +924,7 @@ TextureImporter:
       name: autotiles_38
       rect:
         serializedVersion: 2
-        x: 96
+        x: 64
         y: 128
         width: 32
         height: 32
@@ -945,7 +945,7 @@ TextureImporter:
       name: autotiles_39
       rect:
         serializedVersion: 2
-        x: 128
+        x: 96
         y: 128
         width: 32
         height: 32
@@ -966,7 +966,7 @@ TextureImporter:
       name: autotiles_40
       rect:
         serializedVersion: 2
-        x: 160
+        x: 128
         y: 128
         width: 32
         height: 32
@@ -987,7 +987,7 @@ TextureImporter:
       name: autotiles_41
       rect:
         serializedVersion: 2
-        x: 192
+        x: 160
         y: 128
         width: 32
         height: 32
@@ -1008,7 +1008,7 @@ TextureImporter:
       name: autotiles_42
       rect:
         serializedVersion: 2
-        x: 224
+        x: 192
         y: 128
         width: 32
         height: 32
@@ -1029,7 +1029,7 @@ TextureImporter:
       name: autotiles_43
       rect:
         serializedVersion: 2
-        x: 256
+        x: 224
         y: 128
         width: 32
         height: 32
@@ -1050,7 +1050,7 @@ TextureImporter:
       name: autotiles_44
       rect:
         serializedVersion: 2
-        x: 288
+        x: 256
         y: 128
         width: 32
         height: 32
@@ -1071,7 +1071,7 @@ TextureImporter:
       name: autotiles_45
       rect:
         serializedVersion: 2
-        x: 320
+        x: 288
         y: 128
         width: 32
         height: 32
@@ -1092,7 +1092,7 @@ TextureImporter:
       name: autotiles_46
       rect:
         serializedVersion: 2
-        x: 352
+        x: 320
         y: 128
         width: 32
         height: 32
@@ -1113,8 +1113,8 @@ TextureImporter:
       name: autotiles_47
       rect:
         serializedVersion: 2
-        x: 0
-        y: 96
+        x: 352
+        y: 128
         width: 32
         height: 32
       alignment: 0
@@ -1134,7 +1134,7 @@ TextureImporter:
       name: autotiles_48
       rect:
         serializedVersion: 2
-        x: 32
+        x: 0
         y: 96
         width: 32
         height: 32
@@ -1155,7 +1155,7 @@ TextureImporter:
       name: autotiles_49
       rect:
         serializedVersion: 2
-        x: 64
+        x: 32
         y: 96
         width: 32
         height: 32
@@ -1176,7 +1176,7 @@ TextureImporter:
       name: autotiles_50
       rect:
         serializedVersion: 2
-        x: 96
+        x: 64
         y: 96
         width: 32
         height: 32
@@ -1197,7 +1197,7 @@ TextureImporter:
       name: autotiles_51
       rect:
         serializedVersion: 2
-        x: 128
+        x: 96
         y: 96
         width: 32
         height: 32
@@ -1218,7 +1218,7 @@ TextureImporter:
       name: autotiles_52
       rect:
         serializedVersion: 2
-        x: 160
+        x: 128
         y: 96
         width: 32
         height: 32
@@ -1239,7 +1239,7 @@ TextureImporter:
       name: autotiles_53
       rect:
         serializedVersion: 2
-        x: 192
+        x: 160
         y: 96
         width: 32
         height: 32
@@ -1260,7 +1260,7 @@ TextureImporter:
       name: autotiles_54
       rect:
         serializedVersion: 2
-        x: 224
+        x: 192
         y: 96
         width: 32
         height: 32
@@ -1281,7 +1281,7 @@ TextureImporter:
       name: autotiles_55
       rect:
         serializedVersion: 2
-        x: 256
+        x: 224
         y: 96
         width: 32
         height: 32
@@ -1302,7 +1302,7 @@ TextureImporter:
       name: autotiles_56
       rect:
         serializedVersion: 2
-        x: 288
+        x: 256
         y: 96
         width: 32
         height: 32
@@ -1323,7 +1323,7 @@ TextureImporter:
       name: autotiles_57
       rect:
         serializedVersion: 2
-        x: 320
+        x: 288
         y: 96
         width: 32
         height: 32
@@ -1344,7 +1344,7 @@ TextureImporter:
       name: autotiles_58
       rect:
         serializedVersion: 2
-        x: 352
+        x: 320
         y: 96
         width: 32
         height: 32
@@ -1365,8 +1365,8 @@ TextureImporter:
       name: autotiles_59
       rect:
         serializedVersion: 2
-        x: 0
-        y: 64
+        x: 352
+        y: 96
         width: 32
         height: 32
       alignment: 0
@@ -1386,7 +1386,7 @@ TextureImporter:
       name: autotiles_60
       rect:
         serializedVersion: 2
-        x: 32
+        x: 0
         y: 64
         width: 32
         height: 32
@@ -1407,7 +1407,7 @@ TextureImporter:
       name: autotiles_61
       rect:
         serializedVersion: 2
-        x: 64
+        x: 32
         y: 64
         width: 32
         height: 32
@@ -1428,7 +1428,7 @@ TextureImporter:
       name: autotiles_62
       rect:
         serializedVersion: 2
-        x: 96
+        x: 64
         y: 64
         width: 32
         height: 32
@@ -1449,7 +1449,7 @@ TextureImporter:
       name: autotiles_63
       rect:
         serializedVersion: 2
-        x: 128
+        x: 96
         y: 64
         width: 32
         height: 32
@@ -1470,7 +1470,7 @@ TextureImporter:
       name: autotiles_64
       rect:
         serializedVersion: 2
-        x: 160
+        x: 128
         y: 64
         width: 32
         height: 32
@@ -1491,7 +1491,7 @@ TextureImporter:
       name: autotiles_65
       rect:
         serializedVersion: 2
-        x: 192
+        x: 160
         y: 64
         width: 32
         height: 32
@@ -1512,7 +1512,7 @@ TextureImporter:
       name: autotiles_66
       rect:
         serializedVersion: 2
-        x: 224
+        x: 192
         y: 64
         width: 32
         height: 32
@@ -1533,7 +1533,7 @@ TextureImporter:
       name: autotiles_67
       rect:
         serializedVersion: 2
-        x: 256
+        x: 224
         y: 64
         width: 32
         height: 32
@@ -1554,7 +1554,7 @@ TextureImporter:
       name: autotiles_68
       rect:
         serializedVersion: 2
-        x: 288
+        x: 256
         y: 64
         width: 32
         height: 32
@@ -1575,7 +1575,7 @@ TextureImporter:
       name: autotiles_69
       rect:
         serializedVersion: 2
-        x: 352
+        x: 288
         y: 64
         width: 32
         height: 32
@@ -1596,8 +1596,8 @@ TextureImporter:
       name: autotiles_70
       rect:
         serializedVersion: 2
-        x: 0
-        y: 32
+        x: 320
+        y: 64
         width: 32
         height: 32
       alignment: 0
@@ -1617,8 +1617,8 @@ TextureImporter:
       name: autotiles_71
       rect:
         serializedVersion: 2
-        x: 32
-        y: 32
+        x: 352
+        y: 64
         width: 32
         height: 32
       alignment: 0
@@ -1638,7 +1638,7 @@ TextureImporter:
       name: autotiles_72
       rect:
         serializedVersion: 2
-        x: 64
+        x: 0
         y: 32
         width: 32
         height: 32
@@ -1659,7 +1659,7 @@ TextureImporter:
       name: autotiles_73
       rect:
         serializedVersion: 2
-        x: 96
+        x: 32
         y: 32
         width: 32
         height: 32
@@ -1680,7 +1680,7 @@ TextureImporter:
       name: autotiles_74
       rect:
         serializedVersion: 2
-        x: 128
+        x: 64
         y: 32
         width: 32
         height: 32
@@ -1701,7 +1701,7 @@ TextureImporter:
       name: autotiles_75
       rect:
         serializedVersion: 2
-        x: 160
+        x: 96
         y: 32
         width: 32
         height: 32
@@ -1722,7 +1722,7 @@ TextureImporter:
       name: autotiles_76
       rect:
         serializedVersion: 2
-        x: 192
+        x: 128
         y: 32
         width: 32
         height: 32
@@ -1743,7 +1743,7 @@ TextureImporter:
       name: autotiles_77
       rect:
         serializedVersion: 2
-        x: 224
+        x: 160
         y: 32
         width: 32
         height: 32
@@ -1764,7 +1764,7 @@ TextureImporter:
       name: autotiles_78
       rect:
         serializedVersion: 2
-        x: 256
+        x: 192
         y: 32
         width: 32
         height: 32
@@ -1785,7 +1785,7 @@ TextureImporter:
       name: autotiles_79
       rect:
         serializedVersion: 2
-        x: 288
+        x: 224
         y: 32
         width: 32
         height: 32
@@ -1806,7 +1806,7 @@ TextureImporter:
       name: autotiles_80
       rect:
         serializedVersion: 2
-        x: 320
+        x: 256
         y: 32
         width: 32
         height: 32
@@ -1827,7 +1827,7 @@ TextureImporter:
       name: autotiles_81
       rect:
         serializedVersion: 2
-        x: 352
+        x: 288
         y: 32
         width: 32
         height: 32
@@ -1848,8 +1848,8 @@ TextureImporter:
       name: autotiles_82
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
+        x: 320
+        y: 32
         width: 32
         height: 32
       alignment: 0
@@ -1869,8 +1869,8 @@ TextureImporter:
       name: autotiles_83
       rect:
         serializedVersion: 2
-        x: 32
-        y: 0
+        x: 352
+        y: 32
         width: 32
         height: 32
       alignment: 0
@@ -1890,7 +1890,7 @@ TextureImporter:
       name: autotiles_84
       rect:
         serializedVersion: 2
-        x: 64
+        x: 0
         y: 0
         width: 32
         height: 32
@@ -1911,7 +1911,7 @@ TextureImporter:
       name: autotiles_85
       rect:
         serializedVersion: 2
-        x: 96
+        x: 32
         y: 0
         width: 32
         height: 32
@@ -1932,7 +1932,7 @@ TextureImporter:
       name: autotiles_86
       rect:
         serializedVersion: 2
-        x: 128
+        x: 64
         y: 0
         width: 32
         height: 32
@@ -1953,7 +1953,7 @@ TextureImporter:
       name: autotiles_87
       rect:
         serializedVersion: 2
-        x: 160
+        x: 96
         y: 0
         width: 32
         height: 32
@@ -1974,7 +1974,7 @@ TextureImporter:
       name: autotiles_88
       rect:
         serializedVersion: 2
-        x: 192
+        x: 128
         y: 0
         width: 32
         height: 32
@@ -1995,7 +1995,7 @@ TextureImporter:
       name: autotiles_89
       rect:
         serializedVersion: 2
-        x: 224
+        x: 160
         y: 0
         width: 32
         height: 32
@@ -2016,7 +2016,7 @@ TextureImporter:
       name: autotiles_90
       rect:
         serializedVersion: 2
-        x: 256
+        x: 192
         y: 0
         width: 32
         height: 32
@@ -2037,7 +2037,7 @@ TextureImporter:
       name: autotiles_91
       rect:
         serializedVersion: 2
-        x: 288
+        x: 224
         y: 0
         width: 32
         height: 32
@@ -2058,7 +2058,7 @@ TextureImporter:
       name: autotiles_92
       rect:
         serializedVersion: 2
-        x: 320
+        x: 256
         y: 0
         width: 32
         height: 32
@@ -2079,7 +2079,7 @@ TextureImporter:
       name: autotiles_93
       rect:
         serializedVersion: 2
-        x: 352
+        x: 288
         y: 0
         width: 32
         height: 32
@@ -2092,6 +2092,48 @@ TextureImporter:
       bones: []
       spriteID: 4cc162d2f6e9f4fe7ba926702745d868
       internalID: -1781644614
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: autotiles_94
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8f3e8f32ec8214bdb92060105fc2c831
+      internalID: 139804532
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: autotiles_95
+      rect:
+        serializedVersion: 2
+        x: 352
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0c0061e5075b14bd8905042f924edb85
+      internalID: -132204191
       vertices: []
       indices: 
       edges: []
@@ -2201,6 +2243,8 @@ TextureImporter:
       autotiles_91: -919255568
       autotiles_92: -797383252
       autotiles_93: -1781644614
+      autotiles_94: 139804532
+      autotiles_95: -132204191
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -11,7 +11,8 @@
     "attackActionId": 1,
     "skillActionId": 101,
     "weaponItemId": 0,
-    "armorItemId": 0
+    "armorItemId": 0,
+    "icon": "角色1"
   },
   {
     "id": 1002,
@@ -25,7 +26,8 @@
     "attackActionId": 1,
     "skillActionId": 102,
     "weaponItemId": 0,
-    "armorItemId": 0
+    "armorItemId": 0,
+    "icon": "角色2"
   },
   {
     "id": 1003,
@@ -39,7 +41,8 @@
     "attackActionId": 1,
     "skillActionId": 103,
     "weaponItemId": 0,
-    "armorItemId": 0
+    "armorItemId": 0,
+    "icon": "角色3"
   },
   {
     "id": 1004,
@@ -53,6 +56,7 @@
     "attackActionId": 1,
     "skillActionId": 104,
     "weaponItemId": 0,
-    "armorItemId": 0
+    "armorItemId": 0,
+    "icon": "角色4"
   }
 ]

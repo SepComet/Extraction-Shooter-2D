@@ -35,12 +35,14 @@ namespace SepCore.CustomComponent
             "tbsoundconfig",
             "tbuiformconfig",
             "tbuisoundconfig",
-            "tbformattext"
+            "tbformattext",
+            "tbspriteconfig"
         };
 
         private sealed class TableAccessor
         {
             public Func<Tables, int, object> RowGetter;
+            public Func<Tables, string, object> StringRowGetter;
             public Func<Tables, object> ListGetter;
         }
 
@@ -127,6 +129,11 @@ namespace SepCore.CustomComponent
                     Accessor(tables => id => tables.TbUISoundConfig.GetOrDefault(id),
                         tables => tables.TbUISoundConfig.DataList)
                 },
+                {
+                    typeof(SpriteConfig),
+                    StringAccessor(tables => key => tables.TbSpriteConfig.GetOrDefault(key),
+                        tables => tables.TbSpriteConfig.DataList)
+                },
             };
 
         private static TableAccessor Accessor<TValue>(Func<Tables, Func<int, object>> rowGetterFactory,
@@ -135,6 +142,16 @@ namespace SepCore.CustomComponent
             return new TableAccessor
             {
                 RowGetter = (tables, id) => rowGetterFactory(tables)(id),
+                ListGetter = tables => listGetter(tables)
+            };
+        }
+
+        private static TableAccessor StringAccessor<TValue>(Func<Tables, Func<string, object>> rowGetterFactory,
+            Func<Tables, List<TValue>> listGetter) where TValue : BeanBase
+        {
+            return new TableAccessor
+            {
+                StringRowGetter = (tables, key) => rowGetterFactory(tables)(key),
                 ListGetter = tables => listGetter(tables)
             };
         }
@@ -176,6 +193,33 @@ namespace SepCore.CustomComponent
             }
 
             return (T)accessor.RowGetter(Tables, id);
+        }
+
+        /// <summary>
+        /// 按字符串主键获取数据行，未找到时返回 null。
+        /// </summary>
+        /// <typeparam name="T">数据行类型（对应生成的 xxxConfig 类）。</typeparam>
+        /// <param name="key">数据行字符串主键。</param>
+        /// <returns>数据行，未找到时返回 null。</returns>
+        public T Get<T>(string key) where T : class
+        {
+            if (Tables == null)
+            {
+                throw new InvalidOperationException("Luban data tables are not loaded yet.");
+            }
+
+            TableAccessor accessor;
+            if (!TableAccessors.TryGetValue(typeof(T), out accessor))
+            {
+                throw new NotSupportedException("No table getter is registered for type '" + typeof(T).FullName + "'.");
+            }
+
+            if (accessor.StringRowGetter == null)
+            {
+                throw new NotSupportedException("Table for type '" + typeof(T).FullName + "' does not use a string key.");
+            }
+
+            return (T)accessor.StringRowGetter(Tables, key);
         }
 
         /// <summary>

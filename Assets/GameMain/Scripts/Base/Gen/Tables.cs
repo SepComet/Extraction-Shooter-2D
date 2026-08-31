@@ -82,6 +82,10 @@ public partial class Tables
     /// 界面音效配置
     /// </summary>
     public TbUISoundConfig TbUISoundConfig {get; }
+    /// <summary>
+    /// 图片资源配置
+    /// </summary>
+    public TbSpriteConfig TbSpriteConfig {get; }
 
     public Tables(System.Func<string, ByteBuf> loader)
     {
@@ -103,6 +107,7 @@ public partial class Tables
         TbSoundConfig = new TbSoundConfig(loader("tbsoundconfig"));
         TbUIFormConfig = new TbUIFormConfig(loader("tbuiformconfig"));
         TbUISoundConfig = new TbUISoundConfig(loader("tbuisoundconfig"));
+        TbSpriteConfig = new TbSpriteConfig(loader("tbspriteconfig"));
         ResolveRef();
     }
     
@@ -126,6 +131,7 @@ public partial class Tables
         TbSoundConfig.ResolveRef(this);
         TbUIFormConfig.ResolveRef(this);
         TbUISoundConfig.ResolveRef(this);
+        TbSpriteConfig.ResolveRef(this);
     }
 }
 

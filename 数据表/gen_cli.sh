@@ -4,7 +4,7 @@ set -euo pipefail
 
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 PROJECT_ROOT=$(cd "$SCRIPT_DIR/.." && pwd)
-ASSET_ROOT="$PROJECT_ROOT/Assets"
+ASSET_ROOT="$PROJECT_ROOT/Assets/GameMain/Textures"
 PATH_FILE="$SCRIPT_DIR/path.txt"
 LUBAN_DLL="$SCRIPT_DIR/Tools/Luban/Luban.dll"
 CONF_FILE="$SCRIPT_DIR/luban.conf"

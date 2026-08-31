@@ -61,5 +61,13 @@ namespace SepCore.Utility
         {
             return GameFramework.Utility.Text.Format("Assets/GameMain/UI/UISounds/{0}.wav", assetName);
         }
+
+        /// <summary>
+        /// 获取图片资源路径，assetName 为相对 Assets/GameMain/Textures 的路径，需包含扩展名
+        /// </summary>
+        public static string GetSpriteAsset(string assetName)
+        {
+            return GameFramework.Utility.Text.Format("Assets/GameMain/Textures/{0}", assetName);
+        }
     }
 }

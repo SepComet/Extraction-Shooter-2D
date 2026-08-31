@@ -28,6 +28,8 @@ public sealed partial class CharacterConfig : Luban.BeanBase
         SkillActionId = _buf.ReadInt();
         WeaponItemId = _buf.ReadInt();
         ArmorItemId = _buf.ReadInt();
+        Icon = _buf.ReadString();
+        Icon_Ref = null;
     }
 
     public static CharacterConfig DeserializeCharacterConfig(ByteBuf _buf)
@@ -83,6 +85,11 @@ public sealed partial class CharacterConfig : Luban.BeanBase
     /// 初始防具ID，0为空
     /// </summary>
     public readonly int ArmorItemId;
+    /// <summary>
+    /// 图标资源配置
+    /// </summary>
+    public readonly string Icon;
+    public SpriteConfig Icon_Ref;
    
     public const int __ID__ = 676994987;
     public override int GetTypeId() => __ID__;
@@ -101,6 +108,7 @@ public sealed partial class CharacterConfig : Luban.BeanBase
         
         
         
+        Icon_Ref = tables.TbSpriteConfig.GetOrDefault(Icon);
     }
 
     public override string ToString()
@@ -118,6 +126,7 @@ public sealed partial class CharacterConfig : Luban.BeanBase
         + "skillActionId:" + SkillActionId + ","
         + "weaponItemId:" + WeaponItemId + ","
         + "armorItemId:" + ArmorItemId + ","
+        + "icon:" + Icon + ","
         + "}";
     }
 }

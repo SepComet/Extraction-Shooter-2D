@@ -27,6 +27,8 @@ public sealed partial class ItemConfig : Luban.BeanBase
         AtkBonus = _buf.ReadInt();
         MatBonus = _buf.ReadInt();
         SpeedBonus = _buf.ReadInt();
+        Icon = _buf.ReadString();
+        Icon_Ref = null;
     }
 
     public static ItemConfig DeserializeItemConfig(ByteBuf _buf)
@@ -78,6 +80,11 @@ public sealed partial class ItemConfig : Luban.BeanBase
     /// SPD修正
     /// </summary>
     public readonly int SpeedBonus;
+    /// <summary>
+    /// 图标资源配置
+    /// </summary>
+    public readonly string Icon;
+    public SpriteConfig Icon_Ref;
    
     public const int __ID__ = -764023723;
     public override int GetTypeId() => __ID__;
@@ -95,6 +102,7 @@ public sealed partial class ItemConfig : Luban.BeanBase
         
         
         
+        Icon_Ref = tables.TbSpriteConfig.GetOrDefault(Icon);
     }
 
     public override string ToString()
@@ -111,6 +119,7 @@ public sealed partial class ItemConfig : Luban.BeanBase
         + "atkBonus:" + AtkBonus + ","
         + "matBonus:" + MatBonus + ","
         + "speedBonus:" + SpeedBonus + ","
+        + "icon:" + Icon + ","
         + "}";
     }
 }

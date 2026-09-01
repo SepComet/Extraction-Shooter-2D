@@ -1,8 +1,6 @@
 using System.Collections.Generic;
-using SepCore.Base;
 using SepCore.Definition;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityGameFramework.Runtime;
 
 namespace SepCore.UI

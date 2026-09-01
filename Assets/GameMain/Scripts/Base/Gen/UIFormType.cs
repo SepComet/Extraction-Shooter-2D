@@ -36,6 +36,10 @@ namespace SepCore.Definition
         /// 关于
         /// </summary>
         AboutForm = 102,
+        /// <summary>
+        /// 战斗界面
+        /// </summary>
+        BattleForm = 103,
     }
 
 } 

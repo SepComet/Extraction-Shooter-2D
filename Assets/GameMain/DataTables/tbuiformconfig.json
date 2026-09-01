@@ -26,5 +26,12 @@
     "UIGroupName": "Default",
     "allowMultiInstance": false,
     "pauseCoveredUIForm": true
+  },
+  {
+    "id": 103,
+    "assetName": "BattleForm",
+    "UIGroupName": "Default",
+    "allowMultiInstance": false,
+    "pauseCoveredUIForm": true
   }
 ]

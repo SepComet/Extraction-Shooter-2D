@@ -8,6 +8,7 @@
 using GameFramework.Localization;
 using System;
 using SepCore.Sound;
+using SepCore.Debugger;
 using SepCore.Definition;
 using UnityGameFramework.Runtime;
 using ProcedureOwner = GameFramework.Fsm.IFsm<GameFramework.Procedure.IProcedureManager>;
@@ -19,6 +20,11 @@ namespace SepCore.Procedure
         protected override void OnEnter(ProcedureOwner procedureOwner)
         {
             base.OnEnter(procedureOwner);
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            // 战斗壳层调试入口：仅编辑器与开发构建注册，正式构建不可见
+            GameEntry.Debugger.RegisterDebuggerWindow("Battle/Shell", new BattleDebuggerWindow());
+#endif
 
             // 构建信息：发布版本时，把一些数据以 Json 的格式写入 Assets/GameMain/Configs/BuildInfo.txt，供游戏逻辑读取
             GameEntry.BuiltinData.InitBuildInfo();

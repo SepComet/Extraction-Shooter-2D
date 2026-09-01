@@ -26,5 +26,9 @@
   {
     "name": "WarehouseCapacity",
     "format": "{0} ITEMS   /   {1} TOTAL UNITS"
+  },
+  {
+    "name": "BattleBarText",
+    "format": "{0} / {1}"
   }
 ]

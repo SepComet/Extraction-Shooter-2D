@@ -1,6 +1,11 @@
+using Cysharp.Threading.Tasks;
+using SepCore.AsyncTask;
+using SepCore.Battle;
+using SepCore.Definition;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityGameFramework.Runtime;
 
 namespace SepCore.UI
 {
@@ -14,24 +19,74 @@ namespace SepCore.UI
         [SerializeField] private TextMeshProUGUI enemyName;
         [SerializeField] private TextMeshProUGUI hpText;
 
-        public Button TargetButton => targetButton;
-        public GameObject SelectedMarker => selectedMarker;
-        public Image Icon => icon;
-        public Image HpFill => hpFill;
-        public TextMeshProUGUI EnemyName => enemyName;
-        public TextMeshProUGUI HpText => hpText;
+        private int _iconVersion;
 
-#if UNITY_EDITOR
-        public void ConfigureEditor(Button button, GameObject marker, Image iconImage, Image hpFillImage,
-            TextMeshProUGUI nameLabel, TextMeshProUGUI hpLabel)
+        /// <summary>
+        /// 用战斗单位视图填充敌人槽：名称、HP 数值与血条、配置图标和当前行动者标记。
+        /// 阵亡或已逃跑目标不可选。
+        /// </summary>
+        public void SetEnemy(BattleUnitView unit, bool isCurrentActor)
         {
-            targetButton = button;
-            selectedMarker = marker;
-            icon = iconImage;
-            hpFill = hpFillImage;
-            enemyName = nameLabel;
-            hpText = hpLabel;
+            if (unit == null)
+            {
+                return;
+            }
+
+            if (enemyName != null)
+            {
+                enemyName.text = BattleUnitViewHelper.GetDisplayName(unit);
+            }
+
+            if (hpText != null)
+            {
+                hpText.text = unit.CurrentHp + " / " + unit.MaxHp;
+            }
+
+            SetBar(hpFill, unit.CurrentHp, unit.MaxHp);
+
+            if (selectedMarker != null)
+            {
+                selectedMarker.SetActive(isCurrentActor);
+            }
+
+            if (targetButton != null)
+            {
+                targetButton.interactable = !unit.IsDefeated && !unit.IsEscaped;
+            }
+
+            _iconVersion++;
+            ShowIconAsync(BattleUnitViewHelper.GetEnemyIconConfig(unit.ConfigId), _iconVersion).Forget();
         }
-#endif
+
+        /// <summary>
+        /// 异步加载敌人图标；iconVersion 用于防止复用格子时旧加载结果覆盖新内容。
+        /// </summary>
+        private async UniTaskVoid ShowIconAsync(SpriteConfig iconConfig, int iconVersion)
+        {
+            if (iconConfig == null || icon == null)
+            {
+                return;
+            }
+
+            Sprite sprite = await SpriteLoader.LoadSpriteAsync(iconConfig);
+            if (sprite == null || _iconVersion != iconVersion)
+            {
+                return;
+            }
+
+            icon.sprite = sprite;
+            icon.gameObject.SetActive(true);
+        }
+
+        private static void SetBar(Image fill, int current, int max)
+        {
+            if (fill == null)
+            {
+                return;
+            }
+
+            float ratio = max > 0 ? Mathf.Clamp01((float)current / max) : 0f;
+            fill.rectTransform.anchorMax = new Vector2(ratio, 1f);
+        }
     }
 }

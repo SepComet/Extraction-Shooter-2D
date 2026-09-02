@@ -1,14 +1,20 @@
+using System;
 using System.Collections.Generic;
+using SepCore.Battle;
+using SepCore.Definition;
+using SepCore.UI;
 using UnityEngine;
 using UnityGameFramework.Runtime;
 
 namespace SepCore.CustomComponent
 {
     /// <summary>
-    /// 单局战斗组件。
-    /// 负责本局临时角色状态、计时、探索暂停标志和战斗占用的最小状态。
+    /// 单局战斗组件，也是战斗模块的唯一外部入口。
+    /// 负责本局临时角色状态、计时、探索暂停标志、战斗占用和当前唯一的 BattleRuntime。
+    /// 外部通过 TryStartBattle 启动战斗、CloseBattle 关闭调试战斗；
+    /// 战斗规则（调度、指令校验、效果、敌人决策）在内部共享同一个 BattleRuntime，
+    /// 不为模块内部的函数调用建立请求/响应 DTO。
     /// 本局种子与共享随机源由独立的 RandomComponent 持有，战斗只沿用，不创建私有随机源。
-    /// 战斗协调（构建请求、打开 UI、回写结果）由独立的 RunBattleCoordinator 负责。
     /// </summary>
     public class TurnBattleComponent : GameFrameworkComponent
     {
@@ -17,6 +23,16 @@ namespace SepCore.CustomComponent
         private bool _timerPaused;
         private bool _explorationPaused;
         private bool _battleActive;
+        private BattleRuntime _runtime;
+        private IBattleConfigProvider _config;
+        private Action<BattleResult> _onCompleted;
+        private Action<BattleStep> _stepListener;
+        private Coroutine _autoAdvanceRoutine;
+
+        /// <summary>
+        /// 敌人自动行动前的间歇时间（秒），用于让 UI 展示行动过程。
+        /// </summary>
+        private const float AutoAdvanceDelaySeconds = 0.6f;
 
         /// <summary>
         /// 获取本局临时角色状态列表（只读）。
@@ -46,15 +62,16 @@ namespace SepCore.CustomComponent
         public bool IsBattleActive => _battleActive;
 
         /// <summary>
+        /// 获取当前唯一的战斗运行时；仅战斗期间非 null。
+        /// </summary>
+        internal BattleRuntime Runtime => _runtime;
+
+        /// <summary>
         /// 开始一局新的单局：重置全部临时状态。
         /// </summary>
         public void BeginRun()
         {
-            _players.Clear();
-            _elapsedMs = 0;
-            _timerPaused = false;
-            _explorationPaused = false;
-            _battleActive = false;
+            ResetRunState();
         }
 
         /// <summary>
@@ -62,11 +79,7 @@ namespace SepCore.CustomComponent
         /// </summary>
         public void EndRun()
         {
-            _players.Clear();
-            _elapsedMs = 0;
-            _timerPaused = false;
-            _explorationPaused = false;
-            _battleActive = false;
+            ResetRunState();
         }
 
         /// <summary>
@@ -83,26 +96,142 @@ namespace SepCore.CustomComponent
         }
 
         /// <summary>
-        /// 预留战斗占用，拒绝同一帧或未结束战斗的重复进入。
+        /// 尝试开始一场战斗，是战斗模块的唯一外部入口。
+        /// 校验通过后预留战斗占用、暂停探索更新与单局计时并打开 BattleForm；
+        /// 校验失败不消耗随机数、不修改单局状态。
+        /// 战斗完成时通过 onCompleted 一次性回调返回 BattleResult；调试入口可不提供回调。
         /// </summary>
-        /// <returns>预留成功返回 true；已存在战斗占用时返回 false。</returns>
-        public bool TryReserveBattle()
+        /// <param name="encounter">探索层创建的遭遇输入。</param>
+        /// <param name="onCompleted">战斗结束的一次性完成回调，可为 null。</param>
+        /// <returns>是否成功开始。</returns>
+        public bool TryStartBattle(BattleEncounter encounter, Action<BattleResult> onCompleted)
         {
-            if (_battleActive)
+            if (encounter == null)
             {
+                Log.Error("Can not start battle with null encounter.");
                 return false;
             }
 
+            if (_battleActive)
+            {
+                Log.Warning("Can not start battle because battle occupancy is already active.");
+                return false;
+            }
+
+            if (GameEntry.Random == null || GameEntry.Random.Random == null)
+            {
+                Log.Warning("Can not start battle because run random source is not initialized.");
+                return false;
+            }
+
+            if (_players.Count == 0)
+            {
+                Log.Warning("Can not start battle because no run player state exists.");
+                return false;
+            }
+
+            if (GameEntry.Luban == null || !GameEntry.Luban.IsReady)
+            {
+                Log.Warning("Can not start battle because battle config is not ready.");
+                return false;
+            }
+
+            if (_config == null)
+            {
+                _config = new LubanBattleConfigProvider();
+            }
+
+            BattleRuntime runtime = BattleRuntime.Create(encounter, _players, _config, GameEntry.Random.Random);
+            if (runtime == null)
+            {
+                Log.Warning("Can not start battle because battle runtime can not be created from given encounter/players/config.");
+                return false;
+            }
+
+            _runtime = runtime;
+            _onCompleted = onCompleted;
             _battleActive = true;
+            _explorationPaused = true;
+            _timerPaused = true;
+
+            GameEntry.UI.OpenUIForm(UIFormType.BattleForm);
+            Log.Info("Battle started with encounter '{0}'.", encounter.EncounterId);
             return true;
         }
 
         /// <summary>
-        /// 释放战斗占用。
+        /// 提交当前玩家指令并同步推进单次行动，返回本次推进的行动记录、最新视图和可能的最终结果。
+        /// 非法指令不消耗行动机会；玩家行动后若轮到敌人，由组件按间歇节奏自动推进敌人回合，
+        /// 每一步通过已注册的推进监听推送给 UI。
+        /// 战斗完成后向 onCompleted 一次性回调返回 BattleResult。
         /// </summary>
-        public void ReleaseBattle()
+        /// <param name="command">当前玩家行动者的指令。</param>
+        /// <returns>本次玩家行动的推进结果；当前没有进行中的战斗时返回 null。</returns>
+        public BattleStep SubmitCommand(BattleCommand command)
         {
+            if (_runtime == null || _runtime.IsCompleted)
+            {
+                return null;
+            }
+
+            BattleStep step = _runtime.SubmitCommand(command);
+            if (step.Result != null)
+            {
+                ApplyResultWriteback(step.Result);
+                Action<BattleResult> callback = _onCompleted;
+                _onCompleted = null;
+                callback?.Invoke(step.Result);
+            }
+            else
+            {
+                ScheduleAutoAdvance();
+            }
+
+            return step;
+        }
+
+        /// <summary>
+        /// 注册战斗推进监听；UI 通过它接收组件自动推进（敌人行动）产生的每一步。
+        /// </summary>
+        /// <param name="listener">推进监听，传入 null 取消注册。</param>
+        public void SetStepListener(Action<BattleStep> listener)
+        {
+            _stepListener = listener;
+        }
+
+        /// <summary>
+        /// 获取当前战斗的只读视图；没有进行中的战斗时返回 null。
+        /// </summary>
+        public BattleViewState GetViewState()
+        {
+            return _runtime != null ? _runtime.BuildViewState() : null;
+        }
+
+        /// <summary>
+        /// 关闭当前战斗壳层并恢复探索更新与单局计时。
+        /// M0 调试入口专用；M5 起由战斗结果统一回写单局状态后关闭。
+        /// </summary>
+        public void CloseBattle()
+        {
+            if (!_battleActive)
+            {
+                return;
+            }
+
+            UGuiForm form = GameEntry.UI.GetUIForm(UIFormType.BattleForm);
+            if (form != null)
+            {
+                GameEntry.UI.CloseUIForm(form);
+            }
+
+            _runtime = null;
+            _onCompleted = null;
+            StopAutoAdvance();
+            _stepListener = null;
+            _explorationPaused = false;
+            _timerPaused = false;
             _battleActive = false;
+            Log.Info("Battle closed.");
         }
 
         /// <summary>
@@ -131,6 +260,91 @@ namespace SepCore.CustomComponent
             }
 
             _elapsedMs += Time.deltaTime * 1000f;
+        }
+
+        /// <summary>
+        /// 当前行动者是敌人且战斗未结束时，启动带间歇的自动推进协程。
+        /// </summary>
+        private void ScheduleAutoAdvance()
+        {
+            if (_autoAdvanceRoutine != null)
+            {
+                return;
+            }
+
+            if (_runtime == null || _runtime.IsCompleted || _runtime.CurrentActor == null ||
+                _runtime.CurrentActor.Faction != BattleFaction.Enemy)
+            {
+                return;
+            }
+
+            _autoAdvanceRoutine = StartCoroutine(AutoAdvanceRoutine());
+        }
+
+        private System.Collections.IEnumerator AutoAdvanceRoutine()
+        {
+            while (_runtime != null && !_runtime.IsCompleted &&
+                   _runtime.CurrentActor != null && _runtime.CurrentActor.Faction == BattleFaction.Enemy)
+            {
+                yield return new WaitForSeconds(AutoAdvanceDelaySeconds);
+
+                BattleStep step = _runtime.AdvanceEnemyTurn();
+                if (step.Result != null)
+                {
+                    ApplyResultWriteback(step.Result);
+                    Action<BattleResult> callback = _onCompleted;
+                    _onCompleted = null;
+                    callback?.Invoke(step.Result);
+                }
+
+                _stepListener?.Invoke(step);
+            }
+
+            _autoAdvanceRoutine = null;
+        }
+
+        private void StopAutoAdvance()
+        {
+            if (_autoAdvanceRoutine != null)
+            {
+                StopCoroutine(_autoAdvanceRoutine);
+                _autoAdvanceRoutine = null;
+            }
+        }
+
+        /// <summary>
+        /// 非 TotalDefeat 结果把玩家战后 HP/MP 回写到单局临时状态。
+        /// 首版保留原始战斗值；M5 按结束矩阵统一应用阵亡恢复 1/1 等规则。
+        /// </summary>
+        private void ApplyResultWriteback(BattleResult result)
+        {
+            if (result.Outcome == BattleOutcome.TotalDefeat)
+            {
+                return;
+            }
+
+            foreach (BattlePlayerResult playerResult in result.Players)
+            {
+                RunPlayerState state = _players.Find(player => player.CharacterId == playerResult.CharacterId);
+                if (state != null)
+                {
+                    state.CurrentHp = playerResult.CurrentHp;
+                    state.CurrentMp = playerResult.CurrentMp;
+                }
+            }
+        }
+
+        private void ResetRunState()
+        {
+            _players.Clear();
+            _elapsedMs = 0;
+            _timerPaused = false;
+            _explorationPaused = false;
+            _battleActive = false;
+            _runtime = null;
+            _onCompleted = null;
+            StopAutoAdvance();
+            _stepListener = null;
         }
     }
 }

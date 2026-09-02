@@ -1,0 +1,14 @@
+{
+    "name": "Tests",
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "references": [
+        "GUID:11ec41dbc3557e6499b2845ba531a9b0",
+        "GUID:a04b272484018094ab427253f20c416c",
+        "GUID:363c5eb08ff8e6a439b85e37b8c20d96"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ]
+}

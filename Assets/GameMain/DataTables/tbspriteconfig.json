@@ -20,6 +20,21 @@
     "spriteIndex": 3
   },
   {
+    "key": "敌人1",
+    "atlasPath": "Monsters.png",
+    "spriteIndex": 0
+  },
+  {
+    "key": "敌人2",
+    "atlasPath": "Monsters.png",
+    "spriteIndex": 1
+  },
+  {
+    "key": "敌人3",
+    "atlasPath": "Monsters.png",
+    "spriteIndex": 2
+  },
+  {
     "key": "旧硬币",
     "atlasPath": "Items.png",
     "spriteIndex": 264

@@ -27,6 +27,8 @@ public sealed partial class EnemyConfig : Luban.BeanBase
         AiType = (EnemyAiType)_buf.ReadInt();
         {int n0 = System.Math.Min(_buf.ReadSize(), _buf.Size);ActionIds = new System.Collections.Generic.List<int>(n0);for(var i0 = 0 ; i0 < n0 ; i0++) { int _e0;  _e0 = _buf.ReadInt(); ActionIds.Add(_e0);}}
         DropTableId = _buf.ReadInt();
+        Icon = _buf.ReadString();
+        Icon_Ref = null;
     }
 
     public static EnemyConfig DeserializeEnemyConfig(ByteBuf _buf)
@@ -78,6 +80,11 @@ public sealed partial class EnemyConfig : Luban.BeanBase
     /// 独立掉落表ID
     /// </summary>
     public readonly int DropTableId;
+    /// <summary>
+    /// 图标资源配置
+    /// </summary>
+    public readonly string Icon;
+    public SpriteConfig Icon_Ref;
    
     public const int __ID__ = 1284055242;
     public override int GetTypeId() => __ID__;
@@ -95,6 +102,7 @@ public sealed partial class EnemyConfig : Luban.BeanBase
         
         
         
+        Icon_Ref = tables.TbSpriteConfig.GetOrDefault(Icon);
     }
 
     public override string ToString()
@@ -111,6 +119,7 @@ public sealed partial class EnemyConfig : Luban.BeanBase
         + "aiType:" + AiType + ","
         + "actionIds:" + Luban.StringUtil.CollectionToString(ActionIds) + ","
         + "dropTableId:" + DropTableId + ","
+        + "icon:" + Icon + ","
         + "}";
     }
 }

@@ -4,7 +4,7 @@ namespace SepCore.Battle
 {
     /// <summary>
     /// 每名参战玩家的战后结果。
-    /// 保留原始战斗值：阵亡者 HP 为 0；恢复 1/1 的规则由 RunBattleCoordinator 统一应用。
+    /// 保留原始战斗值：阵亡者 HP 为 0；恢复 1/1 的规则由 TurnBattleComponent 统一应用。
     /// </summary>
     public sealed class BattlePlayerResult
     {

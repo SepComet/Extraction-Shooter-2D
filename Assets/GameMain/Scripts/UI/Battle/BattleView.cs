@@ -12,7 +12,7 @@ namespace SepCore.UI
         [SerializeField] public global::SepCore.UI.BattleActorCardItem playerCard2;
         [SerializeField] public global::SepCore.UI.BattleActorCardItem playerCard3;
         [SerializeField] public global::SepCore.UI.BattleActorCardItem playerCard4;
-        [SerializeField] public global::UnityEngine.UI.HorizontalLayoutGroup enemySlotsRoot;
+        [SerializeField] public global::UnityEngine.RectTransform enemySlotsRoot;
         [SerializeField] public global::SepCore.UI.BattleEnemySlotItem battleEnemySlotTemplate;
         [SerializeField] public global::TMPro.TextMeshProUGUI currentActorText;
         [SerializeField] public global::UnityEngine.UI.Button attackButton;

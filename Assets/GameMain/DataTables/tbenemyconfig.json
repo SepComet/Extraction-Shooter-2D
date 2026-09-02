@@ -12,7 +12,8 @@
     "actionIds": [
       201
     ],
-    "dropTableId": 1
+    "dropTableId": 1,
+    "icon": "敌人1"
   },
   {
     "id": 3002,
@@ -27,7 +28,8 @@
     "actionIds": [
       201
     ],
-    "dropTableId": 2
+    "dropTableId": 2,
+    "icon": "敌人2"
   },
   {
     "id": 3003,
@@ -43,6 +45,7 @@
       201,
       202
     ],
-    "dropTableId": 3
+    "dropTableId": 3,
+    "icon": "敌人3"
   }
 ]

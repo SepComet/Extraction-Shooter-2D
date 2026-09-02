@@ -241,7 +241,6 @@ namespace SepCore.Editor
                     i == 0 ? Ink : MutedWhite, TextAlignmentOptions.Center, FontStyles.Bold);
 
                 BattleTurnSlotItem slot = slotRect.gameObject.AddComponent<BattleTurnSlotItem>();
-                slot.ConfigureEditor(marker.gameObject, icon, label);
                 RegisterReference(slot, "turnSlot" + (i + 1));
             }
         }
@@ -292,7 +291,6 @@ namespace SepCore.Editor
             Image mpFill = CreateBar(cardRect, "MP", contentX, 112f, 242f, Blue, mp, maxMp, out TextMeshProUGUI mpText);
 
             BattleActorCardItem card = cardRect.gameObject.AddComponent<BattleActorCardItem>();
-            card.ConfigureEditor(marker.gameObject, icon, hpFill, mpFill, name, hpText, mpText);
             RegisterReference(card, "playerCard" + (index + 1));
         }
 
@@ -330,7 +328,6 @@ namespace SepCore.Editor
                 Image hpFill = CreateEnemyBar(slotRect, hp[i], maxHp[i], out TextMeshProUGUI hpText);
 
                 BattleEnemySlotItem slot = slotRect.gameObject.AddComponent<BattleEnemySlotItem>();
-                slot.ConfigureEditor(targetButton, selected.gameObject, icon, hpFill, name, hpText);
                 RegisterReference(slot, "enemySlot" + (i + 1));
             }
         }

@@ -1,6 +1,11 @@
+using Cysharp.Threading.Tasks;
+using SepCore.AsyncTask;
+using SepCore.Battle;
+using SepCore.Definition;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityGameFramework.Runtime;
 
 namespace SepCore.UI
 {
@@ -15,26 +20,74 @@ namespace SepCore.UI
         [SerializeField] private TextMeshProUGUI hpText;
         [SerializeField] private TextMeshProUGUI mpText;
 
-        public GameObject ActiveMarker => activeMarker;
-        public Image Icon => icon;
-        public Image HpFill => hpFill;
-        public Image MpFill => mpFill;
-        public TextMeshProUGUI CharacterName => characterName;
-        public TextMeshProUGUI HpText => hpText;
-        public TextMeshProUGUI MpText => mpText;
+        private int _iconVersion;
 
-#if UNITY_EDITOR
-        public void ConfigureEditor(GameObject marker, Image iconImage, Image hpFillImage, Image mpFillImage,
-            TextMeshProUGUI nameLabel, TextMeshProUGUI hpLabel, TextMeshProUGUI mpLabel)
+        /// <summary>
+        /// 用战斗单位视图填充我方卡片：名称、HP/MP 数值与血条、当前行动者标记和配置图标。
+        /// </summary>
+        public void SetUnit(BattleUnitView unit, bool isCurrentActor)
         {
-            activeMarker = marker;
-            icon = iconImage;
-            hpFill = hpFillImage;
-            mpFill = mpFillImage;
-            characterName = nameLabel;
-            hpText = hpLabel;
-            mpText = mpLabel;
+            if (unit == null)
+            {
+                return;
+            }
+
+            if (characterName != null)
+            {
+                characterName.text = BattleUnitViewHelper.GetDisplayName(unit);
+            }
+
+            if (hpText != null)
+            {
+                hpText.text = unit.CurrentHp + " / " + unit.MaxHp;
+            }
+
+            if (mpText != null)
+            {
+                mpText.text = unit.CurrentMp + " / " + unit.MaxMp;
+            }
+
+            SetBar(hpFill, unit.CurrentHp, unit.MaxHp);
+            SetBar(mpFill, unit.CurrentMp, unit.MaxMp);
+
+            if (activeMarker != null)
+            {
+                activeMarker.SetActive(isCurrentActor);
+            }
+
+            _iconVersion++;
+            ShowIconAsync(BattleUnitViewHelper.GetPlayerIconConfig(unit.ConfigId), _iconVersion).Forget();
         }
-#endif
+
+        /// <summary>
+        /// 异步加载角色图标；iconVersion 用于防止复用格子时旧加载结果覆盖新内容。
+        /// </summary>
+        private async UniTaskVoid ShowIconAsync(SpriteConfig iconConfig, int iconVersion)
+        {
+            if (iconConfig == null || icon == null)
+            {
+                return;
+            }
+
+            Sprite sprite = await SpriteLoader.LoadSpriteAsync(iconConfig);
+            if (sprite == null || _iconVersion != iconVersion)
+            {
+                return;
+            }
+
+            icon.sprite = sprite;
+            icon.gameObject.SetActive(true);
+        }
+
+        private static void SetBar(Image fill, int current, int max)
+        {
+            if (fill == null)
+            {
+                return;
+            }
+
+            float ratio = max > 0 ? Mathf.Clamp01((float)current / max) : 0f;
+            fill.rectTransform.anchorMax = new Vector2(ratio, 1f);
+        }
     }
 }

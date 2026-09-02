@@ -267,7 +267,7 @@ MonoBehaviour:
   playerCard2: {fileID: 17428003479946422}
   playerCard3: {fileID: 7735077048895435792}
   playerCard4: {fileID: 20465036694219600}
-  enemySlotsRoot: {fileID: 2896567169176617828}
+  enemySlotsRoot: {fileID: 2225454379744901781}
   battleEnemySlotTemplate: {fileID: 9135779921912607044}
   currentActorText: {fileID: 3734726615128117434}
   attackButton: {fileID: 4646156403976603773}
@@ -1900,10 +1900,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   componentReferences:
   - component: {fileID: 2225454379744901781}
-    generateReference: 0
-    variableName: enemyRootRectTransform
-  - component: {fileID: 2896567169176617828}
     generateReference: 1
+    variableName: enemySlotsRoot
+  - component: {fileID: 2896567169176617828}
+    generateReference: 0
     variableName: enemySlotsRoot
 --- !u!1 &2613939670594043691
 GameObject:

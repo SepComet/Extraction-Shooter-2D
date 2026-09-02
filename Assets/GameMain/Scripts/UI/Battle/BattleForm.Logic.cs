@@ -18,15 +18,11 @@ namespace SepCore.UI
         private int _displayedRound;
         private readonly List<BattleTurnSlotItem> _turnSlots = new List<BattleTurnSlotItem>();
         private readonly List<int> _turnSlotUnitIds = new List<int>();
+        private readonly List<BattleEnemySlotItem> _enemySlots = new List<BattleEnemySlotItem>();
 
         protected override void OnInit(object userData)
         {
             base.OnInit(userData);
-
-            View.attackButton.onClick.AddListener(OnAttackButtonClick);
-            View.skillButton.onClick.AddListener(OnSkillButtonClick);
-            View.itemButton.onClick.AddListener(OnItemButtonClick);
-            View.escapeButton.onClick.AddListener(OnEscapeButtonClick);
 
             // M1 只开放攻击；道具、技能、逃跑在后续里程碑接入
             View.itemButton.interactable = false;
@@ -38,6 +34,12 @@ namespace SepCore.UI
         {
             base.OnOpen(userData);
 
+            // UIForm 实例复用：每次打开都重新注册按钮监听（OnClose 会移除）
+            View.attackButton.onClick.AddListener(OnAttackButtonClick);
+            View.skillButton.onClick.AddListener(OnSkillButtonClick);
+            View.itemButton.onClick.AddListener(OnItemButtonClick);
+            View.escapeButton.onClick.AddListener(OnEscapeButtonClick);
+
             if (GameEntry.TurnBattle != null)
             {
                 GameEntry.TurnBattle.SetStepListener(ApplyStep);
@@ -47,6 +49,7 @@ namespace SepCore.UI
             _displayedRound = 0;
             _turnSlots.Clear();
             _turnSlotUnitIds.Clear();
+            _enemySlots.Clear();
             Refresh(GameEntry.TurnBattle != null ? GameEntry.TurnBattle.GetViewState() : null);
         }
 
@@ -164,19 +167,32 @@ namespace SepCore.UI
                 return;
             }
 
-            template.gameObject.SetActive(false);
-            ClearSlots(View.enemySlotsRoot, template.transform);
-
+            List<BattleUnitView> enemies = new List<BattleUnitView>();
             foreach (BattleUnitView unit in view.Units)
             {
-                if (unit.Faction != BattleFaction.Enemy)
+                if (unit.Faction == BattleFaction.Enemy)
                 {
-                    continue;
+                    enemies.Add(unit);
                 }
+            }
 
-                BattleEnemySlotItem slot = Instantiate(template, View.enemySlotsRoot);
-                slot.gameObject.SetActive(true);
-                slot.SetEnemy(unit, unit.BattleUnitId == view.CurrentActorUnitId);
+            // 敌人数量在一场战斗内固定：数量变化（新开战斗/规模不同）时才重建，之后原地复用
+            if (_enemySlots.Count != enemies.Count)
+            {
+                template.gameObject.SetActive(false);
+                ClearSlots(View.enemySlotsRoot, template.transform);
+                _enemySlots.Clear();
+                foreach (BattleUnitView unit in enemies)
+                {
+                    BattleEnemySlotItem slot = Instantiate(template, View.enemySlotsRoot);
+                    slot.gameObject.SetActive(true);
+                    _enemySlots.Add(slot);
+                }
+            }
+
+            for (int i = 0; i < _enemySlots.Count; i++)
+            {
+                _enemySlots[i].SetEnemy(enemies[i], enemies[i].BattleUnitId == view.CurrentActorUnitId);
             }
         }
 
@@ -189,7 +205,8 @@ namespace SepCore.UI
                 return;
             }
 
-            if (view.RoundNumber != _displayedRound)
+            if (view.RoundNumber != _displayedRound ||
+                (view.CurrentActorUnitId != 0 && !_turnSlotUnitIds.Contains(view.CurrentActorUnitId)))
             {
                 RebuildTurnSlots(view, template);
                 _displayedRound = view.RoundNumber;
@@ -204,28 +221,41 @@ namespace SepCore.UI
         }
 
         /// <summary>
-        /// 新一轮开始时重建本轮完整顺序：全部活跃单位按显示顺序排列，
+        /// 新一轮开始时刷新本轮顺序：从当前行动者开始的剩余单位按调度优先级排列，
         /// 当前行动者高亮；本轮内已行动单位保持可见。
+        /// 数量与上一轮相同时复用槽对象，只重建单位映射与内容；
+        /// 先制第一轮只有玩家候选，敌人进入行动阶段时（当前行动者不在列表）自动重建为剩余敌人。
         /// </summary>
         private void RebuildTurnSlots(BattleViewState view, BattleTurnSlotItem template)
         {
-            template.gameObject.SetActive(false);
-            ClearSlots(View.turnSlotsRoot, template.transform);
-            _turnSlots.Clear();
-            _turnSlotUnitIds.Clear();
-
-            foreach (BattleUnitView unit in view.Units)
+            List<BattleUnitView> units = new List<BattleUnitView>();
+            foreach (int unitId in view.RemainingTurnOrder)
             {
-                if (unit.IsDefeated || unit.IsEscaped)
+                BattleUnitView unit = FindUnit(view, unitId);
+                if (unit != null)
                 {
-                    continue;
+                    units.Add(unit);
                 }
+            }
 
-                BattleTurnSlotItem slot = Instantiate(template, View.turnSlotsRoot);
-                slot.gameObject.SetActive(true);
-                slot.SetTurnSlot(unit, unit.BattleUnitId == view.CurrentActorUnitId);
-                _turnSlots.Add(slot);
-                _turnSlotUnitIds.Add(unit.BattleUnitId);
+            if (_turnSlots.Count != units.Count)
+            {
+                template.gameObject.SetActive(false);
+                ClearSlots(View.turnSlotsRoot, template.transform);
+                _turnSlots.Clear();
+                foreach (BattleUnitView unit in units)
+                {
+                    BattleTurnSlotItem slot = Instantiate(template, View.turnSlotsRoot);
+                    slot.gameObject.SetActive(true);
+                    _turnSlots.Add(slot);
+                }
+            }
+
+            _turnSlotUnitIds.Clear();
+            for (int i = 0; i < _turnSlots.Count; i++)
+            {
+                _turnSlotUnitIds.Add(units[i].BattleUnitId);
+                _turnSlots[i].SetTurnSlot(units[i], units[i].BattleUnitId == view.CurrentActorUnitId);
             }
         }
 
@@ -289,7 +319,7 @@ namespace SepCore.UI
             return 0;
         }
 
-private static BattleUnitView FindUnit(BattleViewState view, int unitId)
+        private static BattleUnitView FindUnit(BattleViewState view, int unitId)
         {
             foreach (BattleUnitView unit in view.Units)
             {

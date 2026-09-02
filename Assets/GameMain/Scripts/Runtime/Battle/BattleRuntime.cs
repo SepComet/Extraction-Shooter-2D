@@ -244,12 +244,9 @@ namespace SepCore.Battle
             List<int> remainingOrder = new List<int>();
             if (!IsCompleted)
             {
-                foreach (BattleUnit unit in Units)
+                foreach (BattleUnit unit in GetRemainingCandidates())
                 {
-                    if (IsActive(unit) && !ActedUnitIds.Contains(unit.UnitId))
-                    {
-                        remainingOrder.Add(unit.UnitId);
-                    }
+                    remainingOrder.Add(unit.UnitId);
                 }
             }
 
@@ -412,9 +409,14 @@ namespace SepCore.Battle
         }
 
         /// <summary>
-        /// 选择本轮下一个未行动的活跃单位；全部行动过则进入下一轮。
-        /// M1 按单位创建顺序（玩家在前）轮流，每轮每个单位最多行动一次；
-        /// M2 起由完整调度规则（速度、阵营、队伍顺序、先制）替换。
+        /// 选择本轮下一个未行动的活跃单位；候选集为空时开启下一轮。
+        /// 调度规则（文档 6.1）：
+        /// 1. 先制第一轮仍有玩家未行动时只在玩家中选择；
+        /// 2. 当前速度高者优先；
+        /// 3. 同速时玩家优先于敌人；
+        /// 4. 同阵营同速时 PartyOrder 小者优先；
+        /// 5. 已行动单位不因速度变化再次行动（M2 无速度变化效果）；
+        /// 6. 候选集为空时开启下一轮，先制限制只适用于第一轮。
         /// </summary>
         private void SelectNextActor()
         {
@@ -435,17 +437,93 @@ namespace SepCore.Battle
             CurrentActorUnitId = next != null ? next.UnitId : 0;
         }
 
+        /// <summary>
+        /// 按调度规则选本轮优先级最高的候选；没有候选时返回 null。
+        /// </summary>
         private BattleUnit FindNextActor()
         {
+            BattleUnit best = null;
             foreach (BattleUnit unit in Units)
             {
-                if (IsActive(unit) && !ActedUnitIds.Contains(unit.UnitId))
+                if (!IsActive(unit) || ActedUnitIds.Contains(unit.UnitId))
                 {
-                    return unit;
+                    continue;
+                }
+
+                if (IsPreemptiveRound && unit.Faction == BattleFaction.Enemy && HasUnactedPlayer())
+                {
+                    continue;
+                }
+
+                if (best == null || CompareActors(unit, best) < 0)
+                {
+                    best = unit;
                 }
             }
 
-            return null;
+            return best;
+        }
+
+        /// <summary>
+        /// 先制限制只适用于第一轮。
+        /// </summary>
+        private bool IsPreemptiveRound => IsPreemptive && RoundNumber == 1;
+
+        private bool HasUnactedPlayer()
+        {
+            foreach (BattleUnit unit in Units)
+            {
+                if (unit.Faction == BattleFaction.Player && IsActive(unit) && !ActedUnitIds.Contains(unit.UnitId))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// 速度高优先；同速玩家优先；同阵营同速 PartyOrder 小优先。返回负值表示 a 优先于 b。
+        /// </summary>
+        private static int CompareActors(BattleUnit a, BattleUnit b)
+        {
+            if (a.Speed != b.Speed)
+            {
+                return b.Speed - a.Speed;
+            }
+
+            if (a.Faction != b.Faction)
+            {
+                return a.Faction == BattleFaction.Player ? -1 : 1;
+            }
+
+            return a.PartyOrder - b.PartyOrder;
+        }
+
+        /// <summary>
+        /// 本轮尚未行动的候选单位，按调度优先级排序；当前行动者是首个。
+        /// 先制第一轮只返回玩家候选（敌人等玩家全部行动后进入候选集）。
+        /// </summary>
+        private List<BattleUnit> GetRemainingCandidates()
+        {
+            List<BattleUnit> candidates = new List<BattleUnit>();
+            foreach (BattleUnit unit in Units)
+            {
+                if (!IsActive(unit) || ActedUnitIds.Contains(unit.UnitId))
+                {
+                    continue;
+                }
+
+                if (IsPreemptiveRound && unit.Faction == BattleFaction.Enemy && HasUnactedPlayer())
+                {
+                    continue;
+                }
+
+                candidates.Add(unit);
+            }
+
+            candidates.Sort(CompareActors);
+            return candidates;
         }
 
         /// <summary>

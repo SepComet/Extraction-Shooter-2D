@@ -21,9 +21,11 @@ namespace SepCore.UI
         [SerializeField] private TextMeshProUGUI mpText;
 
         private int _iconVersion;
+        private int _currentUnitId;
 
         /// <summary>
         /// 用战斗单位视图填充我方卡片：名称、HP/MP 数值与血条、当前行动者标记和配置图标。
+        /// 同一单位复用时不重复加载图标。
         /// </summary>
         public void SetUnit(BattleUnitView unit, bool isCurrentActor)
         {
@@ -55,8 +57,12 @@ namespace SepCore.UI
                 activeMarker.SetActive(isCurrentActor);
             }
 
-            _iconVersion++;
-            ShowIconAsync(BattleUnitViewHelper.GetPlayerIconConfig(unit.ConfigId), _iconVersion).Forget();
+            if (_currentUnitId != unit.BattleUnitId)
+            {
+                _currentUnitId = unit.BattleUnitId;
+                _iconVersion++;
+                ShowIconAsync(BattleUnitViewHelper.GetPlayerIconConfig(unit.ConfigId), _iconVersion).Forget();
+            }
         }
 
         /// <summary>

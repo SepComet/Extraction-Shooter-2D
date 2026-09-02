@@ -156,6 +156,9 @@ namespace SepCore.CustomComponent
 
             GameEntry.UI.OpenUIForm(UIFormType.BattleForm);
             Log.Info("Battle started with encounter '{0}'.", encounter.EncounterId);
+
+            // M2：敌人速度更高时开局行动者为敌人，同样按间歇节奏自动推进
+            ScheduleAutoAdvance();
             return true;
         }
 
@@ -283,6 +286,13 @@ namespace SepCore.CustomComponent
 
         private System.Collections.IEnumerator AutoAdvanceRoutine()
         {
+            // 战斗 UI 打开是异步资源加载，等推进监听注册后再推第一步，避免敌人先手事件丢失
+            int waitFrames = 0;
+            while (_stepListener == null && _runtime != null && !_runtime.IsCompleted && waitFrames++ < 600)
+            {
+                yield return null;
+            }
+
             while (_runtime != null && !_runtime.IsCompleted &&
                    _runtime.CurrentActor != null && _runtime.CurrentActor.Faction == BattleFaction.Enemy)
             {

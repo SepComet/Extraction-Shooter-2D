@@ -50,9 +50,17 @@ namespace SepCore.Tests
 
         public static EnemyConfig Enemy(int id, int maxHp, int atk, params int[] actionIds)
         {
+            return EnemyWithSpeed(id, maxHp, atk, 8, actionIds);
+        }
+
+        /// <summary>
+        /// 指定速度的敌人；独立方法名避免与上面 params 重载产生歧义。
+        /// </summary>
+        public static EnemyConfig EnemyWithSpeed(int id, int maxHp, int atk, int speed, params int[] actionIds)
+        {
             return TestConfigFactory.Create<EnemyConfig>(
                 "Id", id, "Name", "敌人" + id, "MaxHp", maxHp, "MaxMp", 0, "Atk", atk, "Mat", 0,
-                "Speed", 8, "ThreatLevelId", 1, "AiType", EnemyAiType.Random,
+                "Speed", speed, "ThreatLevelId", 1, "AiType", EnemyAiType.Random,
                 "ActionIds", new List<int>(actionIds), "DropTableId", 0);
         }
 
@@ -163,21 +171,22 @@ namespace SepCore.Tests
     internal static class TestBattle
     {
         /// <summary>
-        /// 标准玩家 1001：120 HP / 40 MP，ATK 14，攻击行动 1，技能行动 101。
+        /// 标准玩家：120 HP / 40 MP，ATK 14，攻击行动 1，技能行动 101。
         /// </summary>
-        public static RunPlayerState Player(int currentHp = 120, int maxHp = 120, int atk = 14)
+        public static RunPlayerState Player(int currentHp = 120, int maxHp = 120, int atk = 14,
+            int speed = 12, int partyOrder = 1, int characterId = 1001)
         {
             return new RunPlayerState
             {
-                CharacterId = 1001,
-                PartyOrder = 1,
+                CharacterId = characterId,
+                PartyOrder = partyOrder,
                 CurrentHp = currentHp,
                 CurrentMp = 40,
                 MaxHp = maxHp,
                 MaxMp = 40,
                 Atk = atk,
                 Mat = 6,
-                Speed = 12,
+                Speed = speed,
                 AttackActionId = 1,
                 SkillActionId = 101
             };

@@ -16,9 +16,11 @@ namespace SepCore.UI
         [SerializeField] private TextMeshProUGUI label;
 
         private int _iconVersion;
+        private int _currentUnitId;
 
         /// <summary>
         /// 填充一个回合顺序槽：单位显示名、配置图标与当前行动者标记。
+        /// 槽被复用到同一单位时不重复加载图标。
         /// </summary>
         public void SetTurnSlot(BattleUnitView unit, bool isCurrentActor)
         {
@@ -34,8 +36,12 @@ namespace SepCore.UI
 
             SetCurrentActor(isCurrentActor);
 
-            _iconVersion++;
-            LoadIconAsync(unit, _iconVersion).Forget();
+            if (_currentUnitId != unit.BattleUnitId)
+            {
+                _currentUnitId = unit.BattleUnitId;
+                _iconVersion++;
+                LoadIconAsync(unit, _iconVersion).Forget();
+            }
         }
 
         /// <summary>

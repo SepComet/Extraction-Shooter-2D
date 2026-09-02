@@ -11,11 +11,18 @@ namespace SepCore.Debugger
     /// <summary>
     /// 战斗壳层调试入口（仅供 Editor/Development Build，正式构建不注册）。
     /// 模拟探索层：缺少单局状态时用配表角色与固定种子初始化临时状态，
-    /// 然后通过 TurnBattleComponent 以固定调试遭遇开始/结束战斗，不依赖尚未实现的地图敌人。
+    /// 然后通过 TurnBattleComponent 以调试遭遇开始/结束战斗，不依赖尚未实现的地图敌人。
+    /// 支持 1v1 / 2v2 / 4v4 与先制开关。
     /// </summary>
     public class BattleDebuggerWindow : IDebuggerWindow
     {
         private const int DebugRunSeed = 240829;
+        private const int DebugEncounterId = 1;
+
+        private int _playerCount = 1;
+        private int _enemyPartyConfigId = 4001;
+        private bool _preemptive;
+        private int _builtPlayerCount = -1;
 
         public void Initialize(params object[] args)
         {
@@ -40,19 +47,50 @@ namespace SepCore.Debugger
         public void OnDraw()
         {
             GUILayout.Label("<b>Battle Shell</b>");
-            GUILayout.BeginHorizontal("box");
-            {
-                if (GUILayout.Button("Open", GUILayout.Height(30)))
-                {
-                    OpenShell();
-                }
 
-                if (GUILayout.Button("Close", GUILayout.Height(30)))
+            GUILayout.BeginVertical("box");
+            {
+                GUILayout.Label("队伍规模（玩家数/敌人队伍）：");
+                GUILayout.BeginHorizontal();
                 {
-                    GameEntry.TurnBattle.CloseBattle();
+                    if (GUILayout.Button("1v1", GUILayout.Height(26)))
+                    {
+                        _playerCount = 1;
+                        _enemyPartyConfigId = 4001;
+                    }
+
+                    if (GUILayout.Button("2v2", GUILayout.Height(26)))
+                    {
+                        _playerCount = 2;
+                        _enemyPartyConfigId = 4002;
+                    }
+
+                    if (GUILayout.Button("4v4", GUILayout.Height(26)))
+                    {
+                        _playerCount = 4;
+                        _enemyPartyConfigId = 4005;
+                    }
                 }
+                GUILayout.EndHorizontal();
+                GUILayout.Label("当前选择：" + _playerCount + " 玩家 / 敌人队伍 " + _enemyPartyConfigId);
+
+                _preemptive = GUILayout.Toggle(_preemptive, "先制（第一轮玩家全先行）");
+
+                GUILayout.BeginHorizontal();
+                {
+                    if (GUILayout.Button("Open", GUILayout.Height(30)))
+                    {
+                        OpenShell();
+                    }
+
+                    if (GUILayout.Button("Close", GUILayout.Height(30)))
+                    {
+                        GameEntry.TurnBattle.CloseBattle();
+                    }
+                }
+                GUILayout.EndHorizontal();
             }
-            GUILayout.EndHorizontal();
+            GUILayout.EndVertical();
 
             DrawRunState();
         }
@@ -77,32 +115,29 @@ namespace SepCore.Debugger
             GUILayout.EndVertical();
         }
 
-        private static void OpenShell()
-        {
-            InitDebugRunStateIfNeeded();
-
-            // 固定调试遭遇：EncounterId=1，敌人队伍预设 4001（单敌人），普通战斗
-            bool started = GameEntry.TurnBattle.TryStartBattle(new BattleEncounter(1, 4001, false), null);
-            if (!started)
-            {
-                Log.Warning("Battle debug shell can not start, maybe a battle is already active.");
-            }
-        }
-
-        private static void InitDebugRunStateIfNeeded()
+        private void OpenShell()
         {
             if (GameEntry.Random.Random == null)
             {
                 GameEntry.Random.BeginRun(DebugRunSeed);
             }
 
-            if (GameEntry.TurnBattle.Players.Count == 0)
+            // 规模变化时重建玩家列表（重置为满状态）；同规模重开保留上次战斗回写的 HP/MP
+            if (_builtPlayerCount != _playerCount)
             {
-                GameEntry.TurnBattle.ReplacePlayers(BuildDebugPlayers());
+                GameEntry.TurnBattle.ReplacePlayers(BuildDebugPlayers(_playerCount));
+                _builtPlayerCount = _playerCount;
+            }
+
+            BattleEncounter encounter = new BattleEncounter(DebugEncounterId, _enemyPartyConfigId, _preemptive);
+            bool started = GameEntry.TurnBattle.TryStartBattle(encounter, null);
+            if (!started)
+            {
+                Log.Warning("Battle debug shell can not start, maybe a battle is already active.");
             }
         }
 
-        private static List<RunPlayerState> BuildDebugPlayers()
+        private static List<RunPlayerState> BuildDebugPlayers(int count)
         {
             List<RunPlayerState> players = new List<RunPlayerState>();
             GlobalConfig global = GameEntry.Luban.Global != null ? GameEntry.Luban.Global.Data : null;
@@ -112,7 +147,6 @@ namespace SepCore.Debugger
                 return players;
             }
 
-            // M1 为 1v1：只取第一个新存档角色作为我方单位
             if (global.NewGameCharacterIds == null || global.NewGameCharacterIds.Count == 0)
             {
                 Log.Warning("Can not build debug players without new game character ids.");
@@ -122,7 +156,7 @@ namespace SepCore.Debugger
             int order = 1;
             foreach (int characterId in global.NewGameCharacterIds)
             {
-                if (order > 1)
+                if (order > count)
                 {
                     break;
                 }

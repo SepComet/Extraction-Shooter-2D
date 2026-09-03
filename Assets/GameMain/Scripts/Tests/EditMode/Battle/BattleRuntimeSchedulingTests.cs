@@ -15,7 +15,7 @@ namespace SepCore.Tests
             TestConfigProvider config = TestConfigProvider.Standard1v1();
             config.AddEnemy(TestConfigs.EnemyWithSpeed(3001, 50, 8, 20, 201));
             BattleRuntime runtime = BattleRuntime.Create(TestBattle.Encounter(),
-                new List<RunPlayerState> { TestBattle.Player(speed: 8) }, config, new TestRandomSource());
+                new List<PlayerUnitState> { TestBattle.Player(speed: 8) }, config, new TestRandomSource());
 
             Assert.AreEqual(2, runtime.CurrentActorUnitId);
             BattleStep step = runtime.AdvanceEnemyTurn();
@@ -29,7 +29,7 @@ namespace SepCore.Tests
             TestConfigProvider config = TestConfigProvider.Standard1v1();
             config.AddEnemy(TestConfigs.EnemyWithSpeed(3001, 50, 8, 12, 201));
             BattleRuntime runtime = BattleRuntime.Create(TestBattle.Encounter(),
-                new List<RunPlayerState> { TestBattle.Player(speed: 12) }, config, new TestRandomSource());
+                new List<PlayerUnitState> { TestBattle.Player(speed: 12) }, config, new TestRandomSource());
 
             Assert.AreEqual(1, runtime.CurrentActorUnitId);
             runtime.SubmitCommand(TestBattle.Attack(1, 2));
@@ -41,7 +41,7 @@ namespace SepCore.Tests
         {
             TestConfigProvider config = TestConfigProvider.Standard1v1();
             config.AddEnemy(TestConfigs.EnemyWithSpeed(3001, 500, 8, 5, 201));
-            List<RunPlayerState> players = new List<RunPlayerState>
+            List<PlayerUnitState> players = new List<PlayerUnitState>
             {
                 TestBattle.Player(speed: 10, partyOrder: 2, characterId: 1002),
                 TestBattle.Player(speed: 10, partyOrder: 1, characterId: 1001)
@@ -61,7 +61,7 @@ namespace SepCore.Tests
             config.AddEnemy(TestConfigs.EnemyWithSpeed(3001, 500, 8, 20, 201));
             config.AddEnemy(TestConfigs.EnemyWithSpeed(3002, 500, 8, 5, 201));
             config.AddParty(TestConfigs.Party(4001, 3001, 3002));
-            List<RunPlayerState> players = new List<RunPlayerState>
+            List<PlayerUnitState> players = new List<PlayerUnitState>
             {
                 TestBattle.Player(speed: 15, partyOrder: 1),
                 TestBattle.Player(speed: 10, partyOrder: 2, characterId: 1002)
@@ -78,7 +78,7 @@ namespace SepCore.Tests
         public void PreemptiveFirstRound_AllPlayersActBeforeEnemies()
         {
             TestConfigProvider config = BuildTankyConfig();
-            List<RunPlayerState> players = BuildFourPlayers(speed: 8);
+            List<PlayerUnitState> players = BuildFourPlayers(speed: 8);
 
             BattleRuntime runtime = BattleRuntime.Create(
                 new BattleEncounter(1, 4001, true), players, config, new TestRandomSource());
@@ -94,7 +94,7 @@ namespace SepCore.Tests
         public void NonPreemptive_RoundOne_UsesSpeedOrder()
         {
             TestConfigProvider config = BuildTankyConfig();
-            List<RunPlayerState> players = BuildFourPlayers(speed: 8);
+            List<PlayerUnitState> players = BuildFourPlayers(speed: 8);
 
             BattleRuntime runtime = BattleRuntime.Create(
                 new BattleEncounter(1, 4001, false), players, config, new TestRandomSource());
@@ -112,7 +112,7 @@ namespace SepCore.Tests
             config.AddParty(TestConfigs.Party(4001, 3001, 3001));
 
             BattleRuntime runtime = BattleRuntime.Create(TestBattle.Encounter(),
-                new List<RunPlayerState> { TestBattle.Player() }, config, new TestRandomSource());
+                new List<PlayerUnitState> { TestBattle.Player() }, config, new TestRandomSource());
 
             Assert.AreEqual(3, runtime.Units.Length);
             Assert.AreEqual(3001, runtime.GetUnit(2).ConfigId);
@@ -132,7 +132,7 @@ namespace SepCore.Tests
             // 击杀 3 号敌人：胜利
             runtime.SubmitCommand(TestBattle.Attack(1, 3, 2));
             Assert.True(runtime.GetUnit(3).IsDefeated);
-            Assert.AreEqual(BattleOutcome.Victory, runtime.Result.Outcome);
+            Assert.AreEqual(BattleOutcomeType.Victory, runtime.Result.Outcome);
         }
 
         [Test]
@@ -166,7 +166,7 @@ namespace SepCore.Tests
             config.AddParty(TestConfigs.Party(4001, 3001, 3002));
 
             BattleRuntime runtime = BattleRuntime.Create(TestBattle.Encounter(),
-                new List<RunPlayerState> { TestBattle.Player(speed: 10) }, config, new TestRandomSource());
+                new List<PlayerUnitState> { TestBattle.Player(speed: 10) }, config, new TestRandomSource());
 
             // 第 1 轮：敌人 3001（速度 20）先行动
             Assert.AreEqual(2, runtime.CurrentActorUnitId);
@@ -191,7 +191,7 @@ namespace SepCore.Tests
             config.AddEnemy(TestConfigs.EnemyWithSpeed(3002, 500, 8, 20, 201, 202));
             config.AddParty(TestConfigs.Party(4001, 3001, 3002));
 
-            List<RunPlayerState> players = new List<RunPlayerState>
+            List<PlayerUnitState> players = new List<PlayerUnitState>
             {
                 TestBattle.Player(speed: 15, partyOrder: 1),
                 TestBattle.Player(speed: 10, partyOrder: 2, characterId: 1002)
@@ -219,9 +219,9 @@ namespace SepCore.Tests
             return config;
         }
 
-        private static List<RunPlayerState> BuildFourPlayers(int speed)
+        private static List<PlayerUnitState> BuildFourPlayers(int speed)
         {
-            return new List<RunPlayerState>
+            return new List<PlayerUnitState>
             {
                 TestBattle.Player(speed: speed, partyOrder: 1, characterId: 1001),
                 TestBattle.Player(speed: speed, partyOrder: 2, characterId: 1002),
@@ -241,7 +241,7 @@ namespace SepCore.Tests
             {
                 BattleUnit actor = runtime.CurrentActor;
                 actors.Add(actor.UnitId);
-                if (actor.Faction == BattleFaction.Player)
+                if (actor.Faction == BattleFactionType.Player)
                 {
                     int targetUnitId = FirstActiveEnemy(runtime);
                     runtime.SubmitCommand(TestBattle.Attack(actor.UnitId, targetUnitId));
@@ -263,7 +263,7 @@ namespace SepCore.Tests
             {
                 BattleUnit actor = runtime.CurrentActor;
                 BattleStep step;
-                if (actor != null && actor.Faction == BattleFaction.Player)
+                if (actor != null && actor.Faction == BattleFactionType.Player)
                 {
                     step = runtime.SubmitCommand(TestBattle.Attack(actor.UnitId, FirstActiveEnemy(runtime)));
                 }
@@ -287,7 +287,7 @@ namespace SepCore.Tests
         {
             foreach (BattleUnit unit in runtime.Units)
             {
-                if (unit.Faction == BattleFaction.Enemy && BattleRuntime.IsActive(unit))
+                if (unit.Faction == BattleFactionType.Enemy && BattleRuntime.IsActive(unit))
                 {
                     return unit.UnitId;
                 }

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using SepCore.Battle;
 using SepCore.CustomComponent;
+using SepCore.Definition;
 
 namespace SepCore.Tests
 {
@@ -20,7 +21,7 @@ namespace SepCore.Tests
 
             BattleUnit player = runtime.Units[0];
             Assert.AreEqual(1, player.UnitId);
-            Assert.AreEqual(BattleFaction.Player, player.Faction);
+            Assert.AreEqual(BattleFactionType.Player, player.Faction);
             Assert.AreEqual(1001, player.ConfigId);
             Assert.AreEqual(1, player.PartyOrder);
             Assert.AreEqual(120, player.CurrentHp);
@@ -33,7 +34,7 @@ namespace SepCore.Tests
 
             BattleUnit enemy = runtime.Units[1];
             Assert.AreEqual(2, enemy.UnitId);
-            Assert.AreEqual(BattleFaction.Enemy, enemy.Faction);
+            Assert.AreEqual(BattleFactionType.Enemy, enemy.Faction);
             Assert.AreEqual(3001, enemy.ConfigId);
             Assert.AreEqual(50, enemy.CurrentHp);
             Assert.AreEqual(8, enemy.Atk);
@@ -45,16 +46,16 @@ namespace SepCore.Tests
         [Test]
         public void Create_WithNullInputs_ReturnsNull()
         {
-            RunPlayerState player = TestBattle.Player();
+            PlayerUnitState playerUnit = TestBattle.Player();
             BattleEncounter encounter = TestBattle.Encounter();
             TestConfigProvider config = TestConfigProvider.Standard1v1();
             IRunRandomSource random = new TestRandomSource();
 
-            Assert.Null(BattleRuntime.Create(null, new List<RunPlayerState> { player }, config, random));
+            Assert.Null(BattleRuntime.Create(null, new List<PlayerUnitState> { playerUnit }, config, random));
             Assert.Null(BattleRuntime.Create(encounter, null, config, random));
-            Assert.Null(BattleRuntime.Create(encounter, new List<RunPlayerState>(), config, random));
-            Assert.Null(BattleRuntime.Create(encounter, new List<RunPlayerState> { player }, null, random));
-            Assert.Null(BattleRuntime.Create(encounter, new List<RunPlayerState> { player }, config, null));
+            Assert.Null(BattleRuntime.Create(encounter, new List<PlayerUnitState>(), config, random));
+            Assert.Null(BattleRuntime.Create(encounter, new List<PlayerUnitState> { playerUnit }, null, random));
+            Assert.Null(BattleRuntime.Create(encounter, new List<PlayerUnitState> { playerUnit }, config, null));
         }
 
         [Test]
@@ -63,7 +64,7 @@ namespace SepCore.Tests
             TestConfigProvider config = TestConfigProvider.Standard1v1();
 
             Assert.Null(BattleRuntime.Create(new BattleEncounter(1, 999, false),
-                new List<RunPlayerState> { TestBattle.Player() }, config, new TestRandomSource()));
+                new List<PlayerUnitState> { TestBattle.Player() }, config, new TestRandomSource()));
         }
 
         [Test]
@@ -73,7 +74,7 @@ namespace SepCore.Tests
             config.AddParty(TestConfigs.Party(5001, 9999));
 
             Assert.Null(BattleRuntime.Create(new BattleEncounter(1, 5001, false),
-                new List<RunPlayerState> { TestBattle.Player() }, config, new TestRandomSource()));
+                new List<PlayerUnitState> { TestBattle.Player() }, config, new TestRandomSource()));
         }
     }
 }

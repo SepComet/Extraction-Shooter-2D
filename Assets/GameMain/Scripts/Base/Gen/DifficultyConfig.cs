@@ -34,9 +34,6 @@ public sealed partial class DifficultyConfig : Luban.BeanBase
     /// 显示名
     /// </summary>
     public readonly string Name;
-    /// <summary>
-    /// 按权重选择地图敌人队伍
-    /// </summary>
     public readonly System.Collections.Generic.List<WeightedEnemyParty> EnemyParties;
    
     public const int __ID__ = 1183625981;

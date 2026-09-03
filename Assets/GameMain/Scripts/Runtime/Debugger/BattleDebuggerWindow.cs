@@ -137,9 +137,9 @@ namespace SepCore.Debugger
             }
         }
 
-        private static List<RunPlayerState> BuildDebugPlayers(int count)
+        private static List<PlayerUnitState> BuildDebugPlayers(int count)
         {
-            List<RunPlayerState> players = new List<RunPlayerState>();
+            List<PlayerUnitState> players = new List<PlayerUnitState>();
             GlobalConfig global = GameEntry.Luban.Global != null ? GameEntry.Luban.Global.Data : null;
             if (global == null)
             {
@@ -168,7 +168,7 @@ namespace SepCore.Debugger
                     continue;
                 }
 
-                players.Add(new RunPlayerState
+                players.Add(new PlayerUnitState
                 {
                     CharacterId = characterId,
                     PartyOrder = order++,

@@ -23,7 +23,7 @@ public sealed partial class BattleEffect : Luban.BeanBase
         FlatValue = _buf.ReadInt();
         SourceStat = (BattleStatType)_buf.ReadInt();
         SourceScalePermille = _buf.ReadInt();
-        Status = (BattleStatusType)_buf.ReadInt();
+        Status = (BattleStateType)_buf.ReadInt();
         DurationRounds = _buf.ReadInt();
     }
 
@@ -51,7 +51,7 @@ public sealed partial class BattleEffect : Luban.BeanBase
     /// <summary>
     /// 附加状态
     /// </summary>
-    public readonly BattleStatusType Status;
+    public readonly BattleStateType Status;
     /// <summary>
     /// 状态持续轮数
     /// </summary>

@@ -50,7 +50,7 @@ namespace SepCore.UI
             _turnSlots.Clear();
             _turnSlotUnitIds.Clear();
             _enemySlots.Clear();
-            Refresh(GameEntry.TurnBattle != null ? GameEntry.TurnBattle.GetViewState() : null);
+            Refresh(GameEntry.TurnBattle.GetViewState());
         }
 
         protected override void OnClose(bool isShutdown, object userData)
@@ -70,11 +70,6 @@ namespace SepCore.UI
 
         private void OnAttackButtonClick()
         {
-            if (GameEntry.TurnBattle == null || !GameEntry.TurnBattle.IsBattleActive)
-            {
-                return;
-            }
-
             BattleViewState view = GameEntry.TurnBattle.GetViewState();
             if (view == null || view.CurrentActorUnitId == 0)
             {
@@ -82,7 +77,7 @@ namespace SepCore.UI
             }
 
             BattleUnitView actor = FindUnit(view, view.CurrentActorUnitId);
-            if (actor == null || actor.Faction != BattleFaction.Player)
+            if (actor == null || actor.Faction != BattleFactionType.Player)
             {
                 return;
             }
@@ -95,8 +90,11 @@ namespace SepCore.UI
             }
 
             BattleStep step = GameEntry.TurnBattle.SubmitCommand(new BattleCommand(
-                actor.BattleUnitId, BattleActionType.Attack, attackActionId,
-                new List<int> { targetUnitId }));
+                actor.BattleUnitId, 
+                BattleActionType.Attack, 
+                attackActionId,
+                new List<int> { targetUnitId })
+            );
             ApplyStep(step);
         }
 
@@ -133,7 +131,7 @@ namespace SepCore.UI
             int index = 0;
             foreach (BattleUnitView unit in view.Units)
             {
-                if (unit.Faction != BattleFaction.Player)
+                if (unit.Faction != BattleFactionType.Player)
                 {
                     continue;
                 }
@@ -170,7 +168,7 @@ namespace SepCore.UI
             List<BattleUnitView> enemies = new List<BattleUnitView>();
             foreach (BattleUnitView unit in view.Units)
             {
-                if (unit.Faction == BattleFaction.Enemy)
+                if (unit.Faction == BattleFactionType.Enemy)
                 {
                     enemies.Add(unit);
                 }
@@ -269,23 +267,23 @@ namespace SepCore.UI
             }
 
             BattleUnitView actor = FindUnit(view, view.CurrentActorUnitId);
-            bool playerTurn = actor != null && actor.Faction == BattleFaction.Player;
+            bool playerTurn = actor != null && actor.Faction == BattleFactionType.Player;
             View.currentActorText.text = string.Format("第 {0} 轮  {1} 行动",
                 view.RoundNumber, actor != null ? BattleUnitViewHelper.GetDisplayName(actor) : string.Empty);
             View.attackButton.interactable = playerTurn;
         }
 
-        private static string GetOutcomeText(BattleOutcome outcome)
+        private static string GetOutcomeText(BattleOutcomeType outcome)
         {
             switch (outcome)
             {
-                case BattleOutcome.Victory:
+                case BattleOutcomeType.Victory:
                     return "胜利！";
-                case BattleOutcome.AllEscaped:
+                case BattleOutcomeType.AllEscaped:
                     return "全员逃跑";
-                case BattleOutcome.PartialEscapeDefeat:
+                case BattleOutcomeType.PartialEscapeDefeat:
                     return "部分逃跑，战斗失败";
-                case BattleOutcome.TotalDefeat:
+                case BattleOutcomeType.TotalDefeat:
                     return "全员阵亡，单局失败";
                 default:
                     return string.Empty;
@@ -310,7 +308,7 @@ namespace SepCore.UI
         {
             foreach (BattleUnitView unit in view.Units)
             {
-                if (unit.Faction == BattleFaction.Enemy && !unit.IsDefeated && !unit.IsEscaped)
+                if (unit.Faction == BattleFactionType.Enemy && !unit.IsDefeated && !unit.IsEscaped)
                 {
                     return unit.BattleUnitId;
                 }

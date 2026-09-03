@@ -59,7 +59,7 @@ namespace SepCore.Tests
             BattleStep final = PlayToCompletion(runtime);
 
             Assert.NotNull(final.Result);
-            Assert.AreEqual(BattleOutcome.Victory, final.Result.Outcome);
+            Assert.AreEqual(BattleOutcomeType.Victory, final.Result.Outcome);
             Assert.AreEqual(1, final.Result.EncounterId);
             Assert.AreEqual(1, final.Result.Players.Count);
             Assert.AreEqual(1001, final.Result.Players[0].CharacterId);
@@ -78,7 +78,7 @@ namespace SepCore.Tests
             BattleStep final = PlayToCompletion(runtime);
 
             Assert.NotNull(final.Result);
-            Assert.AreEqual(BattleOutcome.TotalDefeat, final.Result.Outcome);
+            Assert.AreEqual(BattleOutcomeType.TotalDefeat, final.Result.Outcome);
             Assert.AreEqual(0, final.Result.Players[0].CurrentHp);
             Assert.True(final.Result.Players[0].WasDefeated);
             Assert.True(runtime.IsCompleted);
@@ -186,12 +186,12 @@ namespace SepCore.Tests
             while (runtime.Result == null && guard++ < 200)
             {
                 BattleUnit actor = runtime.CurrentActor;
-                if (actor != null && actor.Faction == BattleFaction.Player)
+                if (actor != null && actor.Faction == BattleFactionType.Player)
                 {
                     int targetUnitId = 0;
                     foreach (BattleUnit unit in runtime.Units)
                     {
-                        if (unit.Faction == BattleFaction.Enemy && BattleRuntime.IsActive(unit))
+                        if (unit.Faction == BattleFactionType.Enemy && BattleRuntime.IsActive(unit))
                         {
                             targetUnitId = unit.UnitId;
                             break;

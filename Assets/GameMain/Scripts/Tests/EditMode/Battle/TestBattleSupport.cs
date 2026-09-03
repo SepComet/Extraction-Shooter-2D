@@ -44,7 +44,7 @@ namespace SepCore.Tests
                     TestConfigFactory.Create<BattleEffect>(
                         "TargetStat", BattleStatType.HP, "FlatValue", flat,
                         "SourceStat", sourceStat, "SourceScalePermille", sourceScalePermille,
-                        "Status", BattleStatusType.None, "DurationRounds", 0)
+                        "Status", BattleStateType.None, "DurationRounds", 0)
                 });
         }
 
@@ -173,10 +173,10 @@ namespace SepCore.Tests
         /// <summary>
         /// 标准玩家：120 HP / 40 MP，ATK 14，攻击行动 1，技能行动 101。
         /// </summary>
-        public static RunPlayerState Player(int currentHp = 120, int maxHp = 120, int atk = 14,
+        public static PlayerUnitState Player(int currentHp = 120, int maxHp = 120, int atk = 14,
             int speed = 12, int partyOrder = 1, int characterId = 1001)
         {
-            return new RunPlayerState
+            return new PlayerUnitState
             {
                 CharacterId = characterId,
                 PartyOrder = partyOrder,
@@ -206,10 +206,10 @@ namespace SepCore.Tests
         /// <summary>
         /// 创建标准 1v1 运行时。
         /// </summary>
-        public static BattleRuntime Create1v1(RunPlayerState player, IBattleConfigProvider config = null,
+        public static BattleRuntime Create1v1(PlayerUnitState playerUnit, IBattleConfigProvider config = null,
             IRunRandomSource random = null)
         {
-            return BattleRuntime.Create(Encounter(), new List<RunPlayerState> { player },
+            return BattleRuntime.Create(Encounter(), new List<PlayerUnitState> { playerUnit },
                 config ?? TestConfigProvider.Standard1v1(), random ?? new TestRandomSource());
         }
     }

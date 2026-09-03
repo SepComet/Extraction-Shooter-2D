@@ -44,9 +44,6 @@ public sealed partial class ThreatLevelConfig : Luban.BeanBase
     /// 脱离视野后每秒降低警惕值
     /// </summary>
     public readonly int AlertDecayPerSecondMilli;
-    /// <summary>
-    /// 由近到远的警惕增长距离段
-    /// </summary>
     public readonly System.Collections.Generic.List<AlertDistanceBand> DistanceBands;
    
     public const int __ID__ = -916505268;

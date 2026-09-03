@@ -61,7 +61,7 @@ namespace SepCore.UI
         /// </summary>
         private async UniTaskVoid LoadIconAsync(BattleUnitView unit, int iconVersion)
         {
-            SpriteConfig iconConfig = unit.Faction == BattleFaction.Player
+            SpriteConfig iconConfig = unit.Faction == BattleFactionType.Player
                 ? BattleUnitViewHelper.GetPlayerIconConfig(unit.ConfigId)
                 : BattleUnitViewHelper.GetEnemyIconConfig(unit.ConfigId);
             if (iconConfig == null || icon == null)

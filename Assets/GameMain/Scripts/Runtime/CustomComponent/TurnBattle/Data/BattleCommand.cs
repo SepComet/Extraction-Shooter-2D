@@ -29,7 +29,10 @@ namespace SepCore.Battle
         /// </summary>
         public readonly IReadOnlyList<int> TargetUnitIds;
 
-        public BattleCommand(int actorUnitId, BattleActionType commandType, int actionConfigId,
+        public BattleCommand(
+            int actorUnitId, 
+            BattleActionType commandType, 
+            int actionConfigId,
             IReadOnlyList<int> targetUnitIds)
         {
             ActorUnitId = actorUnitId;

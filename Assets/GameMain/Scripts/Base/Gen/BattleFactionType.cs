@@ -12,18 +12,18 @@
 namespace SepCore.Definition
 { 
     /// <summary>
-    /// 战斗状态类型
+    /// 回合制阵营类型
     /// </summary>
-    public enum BattleStatusType : byte
+    public enum BattleFactionType : byte
     {
         /// <summary>
-        /// 无
+        /// 玩家
         /// </summary>
-        None = 0,
+        Player = 0,
         /// <summary>
-        /// 眩晕
+        /// 敌人
         /// </summary>
-        Stun = 1,
+        Enemy = 1,
     }
 
 } 

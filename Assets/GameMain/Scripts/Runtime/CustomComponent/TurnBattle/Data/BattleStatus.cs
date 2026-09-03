@@ -11,14 +11,14 @@ namespace SepCore.Battle
         /// <summary>
         /// 状态类型。
         /// </summary>
-        public BattleStatusType Type;
+        public BattleStateType Type;
 
         /// <summary>
         /// 剩余持续次数（行动机会）。
         /// </summary>
         public int RemainingRounds;
 
-        public BattleStatus(BattleStatusType type, int remainingRounds)
+        public BattleStatus(BattleStateType type, int remainingRounds)
         {
             Type = type;
             RemainingRounds = remainingRounds;

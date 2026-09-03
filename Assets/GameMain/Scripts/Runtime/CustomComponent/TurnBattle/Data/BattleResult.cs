@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using SepCore.Definition;
 
 namespace SepCore.Battle
 {
@@ -56,14 +57,14 @@ namespace SepCore.Battle
         /// <summary>
         /// 四种战斗结果之一。
         /// </summary>
-        public readonly BattleOutcome Outcome;
+        public readonly BattleOutcomeType Outcome;
 
         /// <summary>
         /// 每名参战玩家的原始战后结果。
         /// </summary>
         public readonly IReadOnlyList<BattlePlayerResult> Players;
 
-        public BattleResult(int encounterId, BattleOutcome outcome, IReadOnlyList<BattlePlayerResult> players)
+        public BattleResult(int encounterId, BattleOutcomeType outcome, IReadOnlyList<BattlePlayerResult> players)
         {
             EncounterId = encounterId;
             Outcome = outcome;

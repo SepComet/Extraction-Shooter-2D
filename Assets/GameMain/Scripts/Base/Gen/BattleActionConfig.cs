@@ -49,9 +49,6 @@ public sealed partial class BattleActionConfig : Luban.BeanBase
     /// MP消耗
     /// </summary>
     public readonly int MpCost;
-    /// <summary>
-    /// 简单数值效果列表
-    /// </summary>
     public readonly System.Collections.Generic.List<BattleEffect> Effects;
    
     public const int __ID__ = -690357744;

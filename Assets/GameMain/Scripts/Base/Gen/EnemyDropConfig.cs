@@ -34,9 +34,6 @@ public sealed partial class EnemyDropConfig : Luban.BeanBase
     /// 显示名
     /// </summary>
     public readonly string Name;
-    /// <summary>
-    /// 与物资点相同结构的独立掉落规则
-    /// </summary>
     public readonly System.Collections.Generic.List<LootGenerationConfig> LootConfigs;
    
     public const int __ID__ = -1747318631;

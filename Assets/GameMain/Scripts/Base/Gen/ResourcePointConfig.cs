@@ -34,9 +34,6 @@ public sealed partial class ResourcePointConfig : Luban.BeanBase
     /// 显示名
     /// </summary>
     public readonly string Name;
-    /// <summary>
-    /// 每个难度的数量与五档稀有度权重
-    /// </summary>
     public readonly System.Collections.Generic.List<LootGenerationConfig> LootConfigs;
    
     public const int __ID__ = -1147760668;

@@ -52,7 +52,7 @@ namespace SepCore.Battle
         /// <summary>
         /// 施加或刷新的状态类型；无状态变化时为 None。
         /// </summary>
-        public readonly BattleStatusType StatusType;
+        public readonly BattleStateType StatusType;
 
         /// <summary>
         /// 变化后的剩余持续次数（行动机会）；状态被移除时为 0。
@@ -61,7 +61,7 @@ namespace SepCore.Battle
 
         public BattleEvent(int actorUnitId, BattleActionType commandType, int actionConfigId,
             int targetUnitId, int beforeHp, int afterHp, int beforeMp, int afterMp,
-            BattleStatusType statusType, int statusRemainingRounds)
+            BattleStateType statusType, int statusRemainingRounds)
         {
             ActorUnitId = actorUnitId;
             CommandType = commandType;

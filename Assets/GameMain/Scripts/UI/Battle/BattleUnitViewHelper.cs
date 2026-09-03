@@ -19,7 +19,7 @@ namespace SepCore.UI
                 return string.Empty;
             }
 
-            if (unit.Faction == BattleFaction.Player)
+            if (unit.Faction == BattleFactionType.Player)
             {
                 CharacterConfig config = GameEntry.Luban.Get<CharacterConfig>(unit.ConfigId);
                 return config != null ? config.Name : unit.ConfigId.ToString();

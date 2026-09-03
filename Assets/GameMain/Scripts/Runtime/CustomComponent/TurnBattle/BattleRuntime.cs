@@ -79,7 +79,7 @@ namespace SepCore.Battle
         /// 从遭遇、单局玩家状态、配置和本局随机源创建唯一战斗运行时。
         /// 任一必要输入缺失或配置缺失时返回 null，表示启动失败且不产生任何副作用。
         /// </summary>
-        public static BattleRuntime Create(BattleEncounter encounter, IReadOnlyList<RunPlayerState> players,
+        public static BattleRuntime Create(BattleEncounter encounter, IReadOnlyList<PlayerUnitState> players,
             IBattleConfigProvider config, IRunRandomSource random)
         {
             if (encounter == null || players == null || players.Count == 0 || config == null || random == null)
@@ -96,14 +96,14 @@ namespace SepCore.Battle
             List<BattleUnit> units = new List<BattleUnit>(players.Count + party.EnemyIds.Count);
             int nextId = 1;
 
-            foreach (RunPlayerState state in players)
+            foreach (PlayerUnitState state in players)
             {
                 if (state == null)
                 {
                     return null;
                 }
 
-                BattleUnit unit = new BattleUnit(nextId++, BattleFaction.Player, state.CharacterId, state.PartyOrder,
+                BattleUnit unit = new BattleUnit(nextId++, BattleFactionType.Player, state.CharacterId, state.PartyOrder,
                     state.CurrentHp, state.MaxHp, state.CurrentMp, state.MaxMp,
                     state.Atk, state.Mat, state.Speed);
                 if (state.AttackActionId != 0)
@@ -128,7 +128,7 @@ namespace SepCore.Battle
                     return null;
                 }
 
-                BattleUnit unit = new BattleUnit(nextId++, BattleFaction.Enemy, enemy.Id, enemyOrder++,
+                BattleUnit unit = new BattleUnit(nextId++, BattleFactionType.Enemy, enemy.Id, enemyOrder++,
                     enemy.MaxHp, enemy.MaxHp, enemy.MaxMp, enemy.MaxMp, enemy.Atk, enemy.Mat, enemy.Speed);
                 if (enemy.ActionIds != null)
                 {
@@ -203,7 +203,7 @@ namespace SepCore.Battle
         public BattleStep AdvanceEnemyTurn()
         {
             BattleUnit actor = CurrentActor;
-            if (actor == null || actor.Faction != BattleFaction.Enemy || IsCompleted)
+            if (actor == null || actor.Faction != BattleFactionType.Enemy || IsCompleted)
             {
                 return new BattleStep(new BattleEvent[0], BuildViewState(), null);
             }
@@ -230,10 +230,10 @@ namespace SepCore.Battle
             List<BattleUnitView> unitViews = new List<BattleUnitView>(Units.Length);
             foreach (BattleUnit unit in Units)
             {
-                List<BattleStatusView> statusViews = new List<BattleStatusView>(unit.Statuses.Count);
+                List<BattleStateView> statusViews = new List<BattleStateView>(unit.Statuses.Count);
                 foreach (BattleStatus status in unit.Statuses)
                 {
-                    statusViews.Add(new BattleStatusView(status.Type, status.RemainingRounds));
+                    statusViews.Add(new BattleStateView(status.Type, status.RemainingRounds));
                 }
 
                 unitViews.Add(new BattleUnitView(unit.UnitId, unit.Faction, unit.ConfigId, unit.PartyOrder,
@@ -252,7 +252,7 @@ namespace SepCore.Battle
 
             List<int> availableActions = new List<int>();
             BattleUnit actor = CurrentActor;
-            if (actor != null && actor.Faction == BattleFaction.Player)
+            if (actor != null && actor.Faction == BattleFactionType.Player)
             {
                 availableActions.AddRange(actor.ActionIds);
             }
@@ -273,7 +273,7 @@ namespace SepCore.Battle
             }
 
             BattleUnit actor = GetUnit(command.ActorUnitId);
-            if (actor == null || actor.Faction != BattleFaction.Player)
+            if (actor == null || actor.Faction != BattleFactionType.Player)
             {
                 return false;
             }
@@ -372,7 +372,7 @@ namespace SepCore.Battle
 
             PendingEvents.Add(new BattleEvent(actor.UnitId, commandType, actionConfigId, target.UnitId,
                 beforeHp, target.CurrentHp, beforeMp, target.CurrentMp,
-                BattleStatusType.None, 0));
+                BattleStateType.None, 0));
         }
 
         private static int GetStatValue(BattleUnit unit, BattleStatType stat)
@@ -450,7 +450,7 @@ namespace SepCore.Battle
                     continue;
                 }
 
-                if (IsPreemptiveRound && unit.Faction == BattleFaction.Enemy && HasUnactedPlayer())
+                if (IsPreemptiveRound && unit.Faction == BattleFactionType.Enemy && HasUnactedPlayer())
                 {
                     continue;
                 }
@@ -473,7 +473,7 @@ namespace SepCore.Battle
         {
             foreach (BattleUnit unit in Units)
             {
-                if (unit.Faction == BattleFaction.Player && IsActive(unit) && !ActedUnitIds.Contains(unit.UnitId))
+                if (unit.Faction == BattleFactionType.Player && IsActive(unit) && !ActedUnitIds.Contains(unit.UnitId))
                 {
                     return true;
                 }
@@ -494,7 +494,7 @@ namespace SepCore.Battle
 
             if (a.Faction != b.Faction)
             {
-                return a.Faction == BattleFaction.Player ? -1 : 1;
+                return a.Faction == BattleFactionType.Player ? -1 : 1;
             }
 
             return a.PartyOrder - b.PartyOrder;
@@ -514,7 +514,7 @@ namespace SepCore.Battle
                     continue;
                 }
 
-                if (IsPreemptiveRound && unit.Faction == BattleFaction.Enemy && HasUnactedPlayer())
+                if (IsPreemptiveRound && unit.Faction == BattleFactionType.Enemy && HasUnactedPlayer())
                 {
                     continue;
                 }
@@ -594,7 +594,7 @@ namespace SepCore.Battle
             {
                 if (IsActive(unit))
                 {
-                    if (unit.Faction == BattleFaction.Enemy)
+                    if (unit.Faction == BattleFactionType.Enemy)
                     {
                         allEnemiesDefeated = false;
                     }
@@ -605,14 +605,14 @@ namespace SepCore.Battle
                 }
             }
 
-            BattleOutcome outcome;
+            BattleOutcomeType outcome;
             if (allEnemiesDefeated)
             {
-                outcome = BattleOutcome.Victory;
+                outcome = BattleOutcomeType.Victory;
             }
             else if (allPlayersDefeated)
             {
-                outcome = BattleOutcome.TotalDefeat;
+                outcome = BattleOutcomeType.TotalDefeat;
             }
             else
             {
@@ -622,7 +622,7 @@ namespace SepCore.Battle
             List<BattlePlayerResult> players = new List<BattlePlayerResult>();
             foreach (BattleUnit unit in Units)
             {
-                if (unit.Faction == BattleFaction.Player)
+                if (unit.Faction == BattleFactionType.Player)
                 {
                     players.Add(new BattlePlayerResult(unit.ConfigId, unit.CurrentHp, unit.CurrentMp,
                         unit.IsDefeated, unit.IsEscaped));

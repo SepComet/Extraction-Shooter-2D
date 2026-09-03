@@ -105,12 +105,12 @@ namespace SepCore.Tests
             {
                 BattleUnit actor = runtime.CurrentActor;
                 BattleStep step;
-                if (actor != null && actor.Faction == BattleFaction.Player)
+                if (actor != null && actor.Faction == BattleFactionType.Player)
                 {
                     int targetUnitId = 0;
                     foreach (BattleUnit unit in runtime.Units)
                     {
-                        if (unit.Faction == BattleFaction.Enemy && BattleRuntime.IsActive(unit))
+                        if (unit.Faction == BattleFactionType.Enemy && BattleRuntime.IsActive(unit))
                         {
                             targetUnitId = unit.UnitId;
                             break;

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using SepCore.Battle;
 using SepCore.CustomComponent;
+using SepCore.Definition;
 
 namespace SepCore.Tests
 {
@@ -22,7 +23,7 @@ namespace SepCore.Tests
             CollectionAssert.AreEqual(new List<int> { 1, 101 }, view.AvailableActionIds);
 
             BattleUnitView playerView = view.Units[0];
-            Assert.AreEqual(BattleFaction.Player, playerView.Faction);
+            Assert.AreEqual(BattleFactionType.Player, playerView.Faction);
             Assert.AreEqual(1001, playerView.ConfigId);
             Assert.AreEqual(1, playerView.PartyOrder);
             Assert.AreEqual(120, playerView.CurrentHp);
@@ -30,10 +31,10 @@ namespace SepCore.Tests
             Assert.AreEqual(12, playerView.Speed);
             Assert.False(playerView.IsDefeated);
             Assert.False(playerView.IsEscaped);
-            Assert.IsEmpty(playerView.Statuses);
+            Assert.IsEmpty(playerView.States);
 
             BattleUnitView enemyView = view.Units[1];
-            Assert.AreEqual(BattleFaction.Enemy, enemyView.Faction);
+            Assert.AreEqual(BattleFactionType.Enemy, enemyView.Faction);
             Assert.AreEqual(3001, enemyView.ConfigId);
             Assert.AreEqual(50, enemyView.CurrentHp);
             Assert.False(enemyView.IsDefeated);
@@ -62,12 +63,12 @@ namespace SepCore.Tests
             while (runtime.Result == null && guard++ < 200)
             {
                 BattleUnit actor = runtime.CurrentActor;
-                if (actor != null && actor.Faction == BattleFaction.Player)
+                if (actor != null && actor.Faction == BattleFactionType.Player)
                 {
                     int targetUnitId = 0;
                     foreach (BattleUnit unit in runtime.Units)
                     {
-                        if (unit.Faction == BattleFaction.Enemy && BattleRuntime.IsActive(unit))
+                        if (unit.Faction == BattleFactionType.Enemy && BattleRuntime.IsActive(unit))
                         {
                             targetUnitId = unit.UnitId;
                             break;

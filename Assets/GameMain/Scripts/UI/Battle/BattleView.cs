@@ -8,6 +8,7 @@ namespace SepCore.UI
     {
         [SerializeField] public global::UnityEngine.RectTransform turnSlotsRoot;
         [SerializeField] public global::SepCore.UI.BattleTurnSlotItem battleTurnSlotTemplate;
+        [SerializeField] public global::TMPro.TextMeshProUGUI tipText;
         [SerializeField] public global::SepCore.UI.BattleActorCardItem playerCard1;
         [SerializeField] public global::SepCore.UI.BattleActorCardItem playerCard2;
         [SerializeField] public global::SepCore.UI.BattleActorCardItem playerCard3;

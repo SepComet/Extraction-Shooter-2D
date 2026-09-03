@@ -4,7 +4,7 @@ namespace SepCore.CustomComponent
     /// 单局临时角色状态。
     /// 数值由单局快照构建器在开战前从角色与装备结算得到；战斗期间只读，战斗结束回写当前 HP/MP。
     /// </summary>
-    public sealed class RunPlayerState
+    public sealed class PlayerUnitState
     {
         /// <summary>
         /// 角色配置标识。

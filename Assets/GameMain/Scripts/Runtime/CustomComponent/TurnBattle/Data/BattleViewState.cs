@@ -6,19 +6,19 @@ namespace SepCore.Battle
     /// <summary>
     /// 单个战斗状态的只读视图。
     /// </summary>
-    public sealed class BattleStatusView
+    public sealed class BattleStateView
     {
         /// <summary>
         /// 状态类型。
         /// </summary>
-        public readonly BattleStatusType StatusType;
+        public readonly BattleStateType StatusType;
 
         /// <summary>
         /// 剩余持续次数（行动机会）；重复施加取较大值，移除后为 0。
         /// </summary>
         public readonly int RemainingRounds;
 
-        public BattleStatusView(BattleStatusType statusType, int remainingRounds)
+        public BattleStateView(BattleStateType statusType, int remainingRounds)
         {
             StatusType = statusType;
             RemainingRounds = remainingRounds;
@@ -39,7 +39,7 @@ namespace SepCore.Battle
         /// <summary>
         /// 阵营。
         /// </summary>
-        public readonly BattleFaction Faction;
+        public readonly BattleFactionType Faction;
 
         /// <summary>
         /// 配置标识：玩家为 CharacterId，敌人为 EnemyConfigId。
@@ -89,11 +89,11 @@ namespace SepCore.Battle
         /// <summary>
         /// 当前剩余状态列表。
         /// </summary>
-        public readonly IReadOnlyList<BattleStatusView> Statuses;
+        public readonly IReadOnlyList<BattleStateView> States;
 
-        public BattleUnitView(int battleUnitId, BattleFaction faction, int configId, int partyOrder,
+        public BattleUnitView(int battleUnitId, BattleFactionType faction, int configId, int partyOrder,
             int currentHp, int maxHp, int currentMp, int maxMp, int speed,
-            bool isDefeated, bool isEscaped, IReadOnlyList<BattleStatusView> statuses)
+            bool isDefeated, bool isEscaped, IReadOnlyList<BattleStateView> statuses)
         {
             BattleUnitId = battleUnitId;
             Faction = faction;
@@ -106,12 +106,12 @@ namespace SepCore.Battle
             Speed = speed;
             IsDefeated = isDefeated;
             IsEscaped = isEscaped;
-            Statuses = statuses != null ? Copy(statuses) : new BattleStatusView[0];
+            States = statuses != null ? Copy(statuses) : new BattleStateView[0];
         }
 
-        private static BattleStatusView[] Copy(IReadOnlyList<BattleStatusView> source)
+        private static BattleStateView[] Copy(IReadOnlyList<BattleStateView> source)
         {
-            BattleStatusView[] copy = new BattleStatusView[source.Count];
+            BattleStateView[] copy = new BattleStateView[source.Count];
             for (int i = 0; i < source.Count; i++)
             {
                 copy[i] = source[i];

@@ -18,7 +18,7 @@ namespace SepCore.CustomComponent
     /// </summary>
     public class TurnBattleComponent : GameFrameworkComponent
     {
-        private readonly List<RunPlayerState> _players = new List<RunPlayerState>();
+        private readonly List<PlayerUnitState> _players = new List<PlayerUnitState>();
         private float _elapsedMs;
         private bool _timerPaused;
         private bool _explorationPaused;
@@ -37,7 +37,7 @@ namespace SepCore.CustomComponent
         /// <summary>
         /// 获取本局临时角色状态列表（只读）。
         /// </summary>
-        public IReadOnlyList<RunPlayerState> Players => _players;
+        public IReadOnlyList<PlayerUnitState> Players => _players;
 
         /// <summary>
         /// 获取本局已流逝时间（毫秒）。
@@ -86,7 +86,7 @@ namespace SepCore.CustomComponent
         /// 用指定状态替换本局临时角色列表，保持战备顺序。
         /// </summary>
         /// <param name="players">新的临时角色状态，可为空。</param>
-        public void ReplacePlayers(IEnumerable<RunPlayerState> players)
+        public void ReplacePlayers(IEnumerable<PlayerUnitState> players)
         {
             _players.Clear();
             if (players != null)
@@ -117,25 +117,7 @@ namespace SepCore.CustomComponent
                 Log.Warning("Can not start battle because battle occupancy is already active.");
                 return false;
             }
-
-            if (GameEntry.Random == null || GameEntry.Random.Random == null)
-            {
-                Log.Warning("Can not start battle because run random source is not initialized.");
-                return false;
-            }
-
-            if (_players.Count == 0)
-            {
-                Log.Warning("Can not start battle because no run player state exists.");
-                return false;
-            }
-
-            if (GameEntry.Luban == null || !GameEntry.Luban.IsReady)
-            {
-                Log.Warning("Can not start battle because battle config is not ready.");
-                return false;
-            }
-
+            
             if (_config == null)
             {
                 _config = new LubanBattleConfigProvider();
@@ -276,7 +258,7 @@ namespace SepCore.CustomComponent
             }
 
             if (_runtime == null || _runtime.IsCompleted || _runtime.CurrentActor == null ||
-                _runtime.CurrentActor.Faction != BattleFaction.Enemy)
+                _runtime.CurrentActor.Faction != BattleFactionType.Enemy)
             {
                 return;
             }
@@ -294,7 +276,7 @@ namespace SepCore.CustomComponent
             }
 
             while (_runtime != null && !_runtime.IsCompleted &&
-                   _runtime.CurrentActor != null && _runtime.CurrentActor.Faction == BattleFaction.Enemy)
+                   _runtime.CurrentActor != null && _runtime.CurrentActor.Faction == BattleFactionType.Enemy)
             {
                 yield return new WaitForSeconds(AutoAdvanceDelaySeconds);
 
@@ -328,18 +310,18 @@ namespace SepCore.CustomComponent
         /// </summary>
         private void ApplyResultWriteback(BattleResult result)
         {
-            if (result.Outcome == BattleOutcome.TotalDefeat)
+            if (result.Outcome == BattleOutcomeType.TotalDefeat)
             {
                 return;
             }
 
             foreach (BattlePlayerResult playerResult in result.Players)
             {
-                RunPlayerState state = _players.Find(player => player.CharacterId == playerResult.CharacterId);
-                if (state != null)
+                PlayerUnitState unitState = _players.Find(player => player.CharacterId == playerResult.CharacterId);
+                if (unitState != null)
                 {
-                    state.CurrentHp = playerResult.CurrentHp;
-                    state.CurrentMp = playerResult.CurrentMp;
+                    unitState.CurrentHp = playerResult.CurrentHp;
+                    unitState.CurrentMp = playerResult.CurrentMp;
                 }
             }
         }

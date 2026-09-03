@@ -17,7 +17,7 @@ namespace SepCore.Battle
         /// <summary>
         /// 阵营。
         /// </summary>
-        public readonly BattleFaction Faction;
+        public readonly BattleFactionType Faction;
 
         /// <summary>
         /// 配置标识：玩家为 CharacterId，敌人为 EnemyConfigId。
@@ -84,7 +84,7 @@ namespace SepCore.Battle
         /// </summary>
         public readonly List<int> ActionIds = new List<int>();
 
-        public BattleUnit(int unitId, BattleFaction faction, int configId, int partyOrder,
+        public BattleUnit(int unitId, BattleFactionType faction, int configId, int partyOrder,
             int currentHp, int maxHp, int currentMp, int maxMp, int atk, int mat, int speed)
         {
             UnitId = unitId;

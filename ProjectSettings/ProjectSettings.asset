@@ -758,7 +758,7 @@ PlayerSettings:
   webGLMemoryGeometricGrowthCap: 96
   webGLPowerPreference: 2
   scriptingDefineSymbols:
-    Android: DOTWEEN
+    Android: DOTWEEN;ENABLE_LOG
     EmbeddedLinux: DOTWEEN
     GameCoreScarlett: DOTWEEN
     GameCoreXboxOne: DOTWEEN
@@ -768,12 +768,12 @@ PlayerSettings:
     PS5: DOTWEEN
     QNX: DOTWEEN
     Stadia: DOTWEEN
-    Standalone: DOTWEEN
+    Standalone: DOTWEEN;ENABLE_LOG
     VisionOS: DOTWEEN
-    WebGL: DOTWEEN
-    Windows Store Apps: DOTWEEN
+    WebGL: DOTWEEN;ENABLE_LOG
+    Windows Store Apps: DOTWEEN;ENABLE_LOG
     XboxOne: DOTWEEN
-    iPhone: DOTWEEN
+    iPhone: DOTWEEN;ENABLE_LOG
     tvOS: DOTWEEN
   additionalCompilerArguments: {}
   platformArchitecture: {}

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6851401995039582026}
   - component: {fileID: 268559066939802041}
   m_Layer: 5
-  m_Name: BattleCharacterSlotItem
+  m_Name: CharacterSlotItem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

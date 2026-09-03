@@ -43,6 +43,11 @@ namespace SepCore.Battle
         public readonly HashSet<int> ActedUnitIds = new HashSet<int>();
 
         /// <summary>
+        /// 本轮已行动单位 ID（按行动先后，用于行动栏显示顺序）。
+        /// </summary>
+        private readonly List<int> _actedOrder = new List<int>();
+
+        /// <summary>
         /// 本次推进产生的待展示行动记录，推进结束时被 BattleStep 取走。
         /// </summary>
         public readonly List<BattleEvent> PendingEvents = new List<BattleEvent>();
@@ -232,7 +237,7 @@ namespace SepCore.Battle
             foreach (BattleUnit unit in Units)
             {
                 List<BattleStateView> statusViews = new List<BattleStateView>(unit.Statuses.Count);
-                foreach (BattleStatus status in unit.Statuses)
+                foreach (BattleState status in unit.Statuses)
                 {
                     statusViews.Add(new BattleStateView(status.Type, status.RemainingRounds));
                 }
@@ -251,6 +256,12 @@ namespace SepCore.Battle
                 }
             }
 
+            List<int> displayOrder = new List<int>();
+            if (!IsCompleted)
+            {
+                displayOrder = GetDisplayOrder();
+            }
+
             List<int> availableActions = new List<int>();
             BattleUnit actor = CurrentActor;
             if (actor != null && actor.Faction == BattleFactionType.Player)
@@ -258,7 +269,7 @@ namespace SepCore.Battle
                 availableActions.AddRange(actor.ActionIds);
             }
 
-            return new BattleViewState(RoundNumber, CurrentActorUnitId, unitViews, remainingOrder, availableActions);
+            return new BattleViewState(RoundNumber, CurrentActorUnitId, unitViews, remainingOrder, availableActions, displayOrder);
         }
 
         private bool ValidatePlayerCommand(BattleCommand command, out List<int> resolvedTargets)
@@ -441,14 +452,48 @@ namespace SepCore.Battle
                 case BattleStatType.MP:
                     target.CurrentMp = Clamp(target.CurrentMp + change, 0, target.MaxMp);
                     break;
-                default:
-                    // M1 不处理速度/上限等目标属性修改与状态施加
+                case BattleStatType.Speed:
+                    // M4：速度修改即时生效，下限为 1；调度与视图每次按当前速度重算剩余顺序
+                    target.Speed = target.Speed + change < 1 ? 1 : target.Speed + change;
                     break;
+                default:
+                    // 上限等目标属性修改暂不处理
+                    break;
+            }
+
+            BattleStateType appliedStatus = BattleStateType.None;
+            int statusRemaining = 0;
+            if (effect.Status != BattleStateType.None && effect.DurationRounds > 0)
+            {
+                statusRemaining = ApplyStatus(target, effect.Status, effect.DurationRounds);
+                appliedStatus = effect.Status;
             }
 
             PendingEvents.Add(new BattleEvent(actor.UnitId, commandType, actionConfigId, target.UnitId,
                 beforeHp, target.CurrentHp, beforeMp, target.CurrentMp,
-                BattleStateType.None, 0));
+                appliedStatus, statusRemaining));
+        }
+
+        /// <summary>
+        /// 施加战斗状态；同类状态不叠层，保留较长的剩余行动机会次数。返回施加后的剩余次数。
+        /// </summary>
+        private static int ApplyStatus(BattleUnit target, BattleStateType type, int durationRounds)
+        {
+            foreach (BattleState status in target.Statuses)
+            {
+                if (status.Type == type)
+                {
+                    if (durationRounds > status.RemainingRounds)
+                    {
+                        status.RemainingRounds = durationRounds;
+                    }
+
+                    return status.RemainingRounds;
+                }
+            }
+
+            target.Statuses.Add(new BattleState(type, durationRounds));
+            return durationRounds;
         }
 
         private static int GetStatValue(BattleUnit unit, BattleStatType stat)
@@ -482,6 +527,7 @@ namespace SepCore.Battle
         private void MarkActed(int unitId)
         {
             ActedUnitIds.Add(unitId);
+            _actedOrder.Add(unitId);
         }
 
         /// <summary>
@@ -491,7 +537,7 @@ namespace SepCore.Battle
         /// 2. 当前速度高者优先；
         /// 3. 同速时玩家优先于敌人；
         /// 4. 同阵营同速时 PartyOrder 小者优先；
-        /// 5. 已行动单位不因速度变化再次行动（M2 无速度变化效果）；
+        /// 5. 已行动单位不因速度变化再次行动；
         /// 6. 候选集为空时开启下一轮，先制限制只适用于第一轮。
         /// </summary>
         private void SelectNextActor()
@@ -507,10 +553,63 @@ namespace SepCore.Battle
             {
                 RoundNumber++;
                 ActedUnitIds.Clear();
+                _actedOrder.Clear();
                 next = FindNextActor();
             }
 
+            // M4：眩晕单位仍获得行动机会，但轮到时立即跳过——标已行动、消耗一次持续次数并记录事件，
+            // 不把行动菜单交给 UI；持续归零时移除状态
+            while (next != null && TryConsumeStunSkip(next))
+            {
+                next = FindNextActor();
+                if (next == null)
+                {
+                    RoundNumber++;
+                    ActedUnitIds.Clear();
+                    _actedOrder.Clear();
+                    next = FindNextActor();
+                }
+            }
+
             CurrentActorUnitId = next != null ? next.UnitId : 0;
+        }
+
+        /// <summary>
+        /// 消耗一次眩晕跳过：剩余次数减 1，归零移除；标记已行动并记录跳过事件。返回是否发生跳过。
+        /// </summary>
+        private bool TryConsumeStunSkip(BattleUnit unit)
+        {
+            BattleState stun = FindStatus(unit, BattleStateType.Stun);
+            if (stun == null || stun.RemainingRounds <= 0)
+            {
+                return false;
+            }
+
+            stun.RemainingRounds--;
+            int remaining = stun.RemainingRounds;
+            if (remaining <= 0)
+            {
+                unit.Statuses.Remove(stun);
+            }
+
+            MarkActed(unit.UnitId);
+            PendingEvents.Add(new BattleEvent(unit.UnitId, BattleActionType.None, 0, unit.UnitId,
+                unit.CurrentHp, unit.CurrentHp, unit.CurrentMp, unit.CurrentMp,
+                BattleStateType.Stun, remaining));
+            return true;
+        }
+
+        private static BattleState FindStatus(BattleUnit unit, BattleStateType type)
+        {
+            foreach (BattleState status in unit.Statuses)
+            {
+                if (status.Type == type)
+                {
+                    return status;
+                }
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -600,6 +699,49 @@ namespace SepCore.Battle
 
             candidates.Sort(CompareActors);
             return candidates;
+        }
+
+        /// <summary>
+        /// 本轮行动栏显示顺序：已行动单位按行动先后排前，未行动单位按当前调度优先级随后；
+        /// 先制第一轮敌人排在全部未行动玩家之后，但仍显示。速度变化后重算。
+        /// </summary>
+        private List<int> GetDisplayOrder()
+        {
+            List<int> order = new List<int>(_actedOrder);
+
+            List<BattleUnit> pending = new List<BattleUnit>();
+            foreach (BattleUnit unit in Units)
+            {
+                if (!IsActive(unit) || ActedUnitIds.Contains(unit.UnitId))
+                {
+                    continue;
+                }
+
+                pending.Add(unit);
+            }
+
+            pending.Sort(CompareDisplayPriority);
+            foreach (BattleUnit unit in pending)
+            {
+                order.Add(unit.UnitId);
+            }
+
+            return order;
+        }
+
+        private int CompareDisplayPriority(BattleUnit a, BattleUnit b)
+        {
+            if (IsPreemptiveRound && HasUnactedPlayer())
+            {
+                bool aWaiting = a.Faction == BattleFactionType.Enemy;
+                bool bWaiting = b.Faction == BattleFactionType.Enemy;
+                if (aWaiting != bWaiting)
+                {
+                    return aWaiting ? 1 : -1;
+                }
+            }
+
+            return CompareActors(a, b);
         }
 
         /// <summary>

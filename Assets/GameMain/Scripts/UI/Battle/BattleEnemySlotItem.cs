@@ -6,7 +6,6 @@ using SepCore.Definition;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityGameFramework.Runtime;
 
 namespace SepCore.UI
 {
@@ -19,6 +18,7 @@ namespace SepCore.UI
         [SerializeField] private Image hpFill;
         [SerializeField] private TextMeshProUGUI enemyName;
         [SerializeField] private TextMeshProUGUI hpText;
+        [SerializeField] private TextMeshProUGUI stateText;
 
         private int _iconVersion;
         private int _currentUnitId;

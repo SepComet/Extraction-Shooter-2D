@@ -383,7 +383,8 @@ namespace SepCore.UI
             }
 
             if (view.RoundNumber != _displayedRound ||
-                (view.CurrentActorUnitId != 0 && !_turnSlotUnitIds.Contains(view.CurrentActorUnitId)))
+                (view.CurrentActorUnitId != 0 && !_turnSlotUnitIds.Contains(view.CurrentActorUnitId)) ||
+                IsDisplayOrderChanged(view))
             {
                 RebuildTurnSlots(view, template);
                 _displayedRound = view.RoundNumber;
@@ -398,15 +399,42 @@ namespace SepCore.UI
         }
 
         /// <summary>
-        /// 新一轮开始时刷新本轮顺序：从当前行动者开始的剩余单位按调度优先级排列，
-        /// 当前行动者高亮；本轮内已行动单位保持可见。
-        /// 数量与上一轮相同时复用槽对象，只重建单位映射与内容；
-        /// 先制第一轮只有玩家候选，敌人进入行动阶段时（当前行动者不在列表）自动重建为剩余敌人。
+        /// 显示列表与视图行动栏顺序不一致时返回 true。
+        /// 视图顺序为本轮完整顺序（已行动按行动先后排前，未行动按当前调度优先级随后，
+        /// 先制第一轮敌人排在玩家之后）；变速重排或单位阵亡时触发重建。
+        /// </summary>
+        private bool IsDisplayOrderChanged(BattleViewState view)
+        {
+            if (view.CurrentActorUnitId == 0 || view.DisplayOrder == null)
+            {
+                return false;
+            }
+
+            if (_turnSlotUnitIds.Count != view.DisplayOrder.Count)
+            {
+                return true;
+            }
+
+            for (int i = 0; i < view.DisplayOrder.Count; i++)
+            {
+                if (_turnSlotUnitIds[i] != view.DisplayOrder[i])
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// 刷新本轮行动栏顺序：已行动单位按行动先后排前，
+        /// 未行动单位按当前调度优先级随后，当前行动者高亮；本轮内已行动单位保持可见。
+        /// 数量相同时复用槽对象，只重建单位映射与内容。
         /// </summary>
         private void RebuildTurnSlots(BattleViewState view, BattleTurnSlotItem template)
         {
             List<BattleUnitView> units = new List<BattleUnitView>();
-            foreach (int unitId in view.RemainingTurnOrder)
+            foreach (int unitId in view.DisplayOrder)
             {
                 BattleUnitView unit = FindUnit(view, unitId);
                 if (unit != null)

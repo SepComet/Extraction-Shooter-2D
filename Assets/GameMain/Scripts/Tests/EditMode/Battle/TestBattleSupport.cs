@@ -49,11 +49,12 @@ namespace SepCore.Tests
         }
 
         /// <summary>
-        /// 技能行动（支持指定目标类型、效果与 MP 消耗）。
+        /// 技能行动（支持指定目标类型、效果、MP 消耗与状态施加）。
         /// </summary>
         public static BattleActionConfig SkillAction(int id, BattleTargetType targetType, int flat,
             BattleStatType sourceStat, int sourceScalePermille, int mpCost = 10,
-            BattleStatType targetStat = BattleStatType.HP)
+            BattleStatType targetStat = BattleStatType.HP,
+            BattleStateType status = BattleStateType.None, int durationRounds = 0)
         {
             return TestConfigFactory.Create<BattleActionConfig>(
                 "Id", id, "Name", "技能" + id, "ActionType", BattleActionType.Skill,
@@ -63,7 +64,7 @@ namespace SepCore.Tests
                     TestConfigFactory.Create<BattleEffect>(
                         "TargetStat", targetStat, "FlatValue", flat,
                         "SourceStat", sourceStat, "SourceScalePermille", sourceScalePermille,
-                        "Status", BattleStateType.None, "DurationRounds", 0)
+                        "Status", status, "DurationRounds", durationRounds)
                 });
         }
 
@@ -158,15 +159,17 @@ namespace SepCore.Tests
         }
 
         /// <summary>
-        /// 包含角色 1~3 技能与敌人技能的测试配置：
-        /// 101（单体高伤）、102（单体治疗）、103（全体法伤）、202（敌人单体魔法）。
+        /// 包含角色 1~4 技能与敌人技能的测试配置：
+        /// 101（单体减速）、102（单体治疗）、103（全体法伤）、104（单体眩晕）、202（敌人单体魔法）。
         /// </summary>
         public static TestConfigProvider StandardWithSkills()
         {
             TestConfigProvider provider = Standard1v1();
-            provider.AddAction(TestConfigs.SkillAction(101, BattleTargetType.SingleEnemy, -5, BattleStatType.ATK, -1500, 10));
+            provider.AddAction(TestConfigs.SkillAction(101, BattleTargetType.SingleEnemy, -5, BattleStatType.None, 0, 10, BattleStatType.Speed));
             provider.AddAction(TestConfigs.SkillAction(102, BattleTargetType.SingleAlly, 20, BattleStatType.MAT, 1000, 10));
             provider.AddAction(TestConfigs.SkillAction(103, BattleTargetType.AllEnemies, -2, BattleStatType.MAT, -800, 10));
+            provider.AddAction(TestConfigs.SkillAction(104, BattleTargetType.SingleEnemy, 0, BattleStatType.None, 0, 10,
+                BattleStatType.None, BattleStateType.Stun, 1));
             provider.AddAction(TestConfigs.SkillAction(202, BattleTargetType.SingleEnemy, -4, BattleStatType.MAT, -1200, 8));
             return provider;
         }

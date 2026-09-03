@@ -77,7 +77,7 @@ namespace SepCore.Battle
         /// <summary>
         /// 当前剩余状态。
         /// </summary>
-        public readonly List<BattleStatus> Statuses = new List<BattleStatus>();
+        public readonly List<BattleState> Statuses = new List<BattleState>();
 
         /// <summary>
         /// 该单位可用的行动配置 ID。

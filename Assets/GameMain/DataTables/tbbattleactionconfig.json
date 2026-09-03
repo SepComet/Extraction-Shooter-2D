@@ -24,10 +24,10 @@
     "mpCost": 10,
     "effects": [
       {
-        "targetStat": 1,
+        "targetStat": 7,
         "flatValue": -5,
-        "sourceStat": 5,
-        "sourceScalePermille": -1500,
+        "sourceStat": 0,
+        "sourceScalePermille": 0,
         "status": 0,
         "durationRounds": 0
       }

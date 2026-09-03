@@ -6,7 +6,7 @@ namespace SepCore.Battle
     /// 单场战斗中的状态，只存在于 BattleRuntime。
     /// 同类状态不叠层，重复施加保留较长的剩余行动机会次数。
     /// </summary>
-    internal sealed class BattleStatus
+    public sealed class BattleState
     {
         /// <summary>
         /// 状态类型。
@@ -18,7 +18,7 @@ namespace SepCore.Battle
         /// </summary>
         public int RemainingRounds;
 
-        public BattleStatus(BattleStateType type, int remainingRounds)
+        public BattleState(BattleStateType type, int remainingRounds)
         {
             Type = type;
             RemainingRounds = remainingRounds;

@@ -13,6 +13,8 @@ namespace SepCore.Tests
         public void PlayerSkill_SingleEnemyDamage_CalculatesDamageAndDeductsMp()
         {
             TestConfigProvider config = TestConfigProvider.StandardWithSkills();
+            // 本用例验证单体伤害公式：本地覆盖 101 为旧版高伤技能（真实配表 101 现为减速）
+            config.AddAction(TestConfigs.SkillAction(101, BattleTargetType.SingleEnemy, -5, BattleStatType.ATK, -1500, 10));
             PlayerUnitState player = TestBattle.Player(atk: 14, currentMp: 40);
             BattleRuntime runtime = TestBattle.Create1v1(player, config);
 

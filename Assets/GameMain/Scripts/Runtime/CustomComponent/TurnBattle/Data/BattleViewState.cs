@@ -148,19 +148,26 @@ namespace SepCore.Battle
         public readonly IReadOnlyList<int> RemainingTurnOrder;
 
         /// <summary>
+        /// 本轮行动栏显示顺序：已行动单位按行动先后排前，未行动单位按当前调度优先级随后；
+        /// 先制第一轮敌人排在全部未行动玩家之后。速度变化或单位阵亡后重建。
+        /// </summary>
+        public readonly IReadOnlyList<int> DisplayOrder;
+
+        /// <summary>
         /// 当前玩家可用的行动配置 ID；当前行动者不是玩家或战斗完成时为空。
         /// </summary>
         public readonly IReadOnlyList<int> AvailableActionIds;
 
         public BattleViewState(int roundNumber, int currentActorUnitId,
             IReadOnlyList<BattleUnitView> units, IReadOnlyList<int> remainingTurnOrder,
-            IReadOnlyList<int> availableActionIds)
+            IReadOnlyList<int> availableActionIds, IReadOnlyList<int> displayOrder)
         {
             RoundNumber = roundNumber;
             CurrentActorUnitId = currentActorUnitId;
             Units = units != null ? Copy(units) : new BattleUnitView[0];
             RemainingTurnOrder = remainingTurnOrder != null ? Copy(remainingTurnOrder) : new int[0];
             AvailableActionIds = availableActionIds != null ? Copy(availableActionIds) : new int[0];
+            DisplayOrder = displayOrder != null ? Copy(displayOrder) : new int[0];
         }
 
         private static BattleUnitView[] Copy(IReadOnlyList<BattleUnitView> source)

@@ -20,6 +20,7 @@ namespace SepCore.UI
         [SerializeField] private TextMeshProUGUI _characterName;
         [SerializeField] private FormatTextUI _hpText;
         [SerializeField] private FormatTextUI _mpText;
+        [SerializeField] private TextMeshProUGUI _stateText;
 
         private int _iconVersion;
         private int _currentUnitId;

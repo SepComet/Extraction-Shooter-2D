@@ -113,12 +113,26 @@ namespace SepCore.Tests
         }
 
         [Test]
-        public void InvalidCommand_SkillCommand_IsRejected()
+        public void InvalidCommand_ItemCommand_IsRejected()
         {
             BattleRuntime runtime = TestBattle.Create1v1(TestBattle.Player());
 
             BattleStep step = runtime.SubmitCommand(
-                new BattleCommand(1, BattleActionType.Skill, 101, new List<int> { 2 }));
+                new BattleCommand(1, BattleActionType.Item, 0, new List<int> { 2 }));
+
+            Assert.Null(step.Result);
+            Assert.IsEmpty(step.Events);
+            Assert.AreEqual(1, runtime.CurrentActorUnitId);
+        }
+
+        [Test]
+        public void InvalidCommand_UnknownAction_IsRejected()
+        {
+            BattleRuntime runtime = TestBattle.Create1v1(TestBattle.Player());
+
+            // 行动 999 不在配置中
+            BattleStep step = runtime.SubmitCommand(
+                new BattleCommand(1, BattleActionType.Attack, 999, new List<int> { 2 }));
 
             Assert.Null(step.Result);
             Assert.IsEmpty(step.Events);

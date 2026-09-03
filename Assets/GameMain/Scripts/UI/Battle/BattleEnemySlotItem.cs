@@ -1,3 +1,4 @@
+using System;
 using Cysharp.Threading.Tasks;
 using SepCore.AsyncTask;
 using SepCore.Battle;
@@ -21,12 +22,28 @@ namespace SepCore.UI
 
         private int _iconVersion;
         private int _currentUnitId;
+        private Action<int> _onClick;
+
+        public int CurrentUnitId => _currentUnitId;
+
+        public void SetOnClick(Action<int> onClick)
+        {
+            _onClick = onClick;
+            if (targetButton != null)
+            {
+                targetButton.onClick.RemoveAllListeners();
+                if (_onClick != null)
+                {
+                    targetButton.onClick.AddListener(() => _onClick(_currentUnitId));
+                }
+            }
+        }
 
         /// <summary>
         /// 用战斗单位视图填充敌人槽：名称、HP 数值与血条、配置图标和当前行动者标记。
         /// 阵亡或已逃跑目标不可选；同一单位复用时不重复加载图标。
         /// </summary>
-        public void SetEnemy(BattleUnitView unit, bool isCurrentActor)
+        public void SetEnemy(BattleUnitView unit, bool isCurrentActor, bool isSelectedTarget = false)
         {
             if (unit == null)
             {
@@ -47,7 +64,7 @@ namespace SepCore.UI
 
             if (selectedMarker != null)
             {
-                selectedMarker.SetActive(isCurrentActor);
+                selectedMarker.SetActive(isCurrentActor || isSelectedTarget);
             }
 
             if (targetButton != null)

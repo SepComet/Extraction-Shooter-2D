@@ -35,6 +35,8 @@ public sealed partial class GlobalConfig : Luban.BeanBase
         BattlePausesRunTimer = _buf.ReadBool();
         InventoryPausesRunTimer = _buf.ReadBool();
         PauseMenuPausesRunTimer = _buf.ReadBool();
+        AutoAdvanceDelayMs = _buf.ReadInt();
+        RegisterFrameout = _buf.ReadInt();
         {int n0 = System.Math.Min(_buf.ReadSize(), _buf.Size);NewGameCharacterIds = new System.Collections.Generic.List<int>(n0);for(var i0 = 0 ; i0 < n0 ; i0++) { int _e0;  _e0 = _buf.ReadInt(); NewGameCharacterIds.Add(_e0);}}
     }
 
@@ -120,6 +122,14 @@ public sealed partial class GlobalConfig : Luban.BeanBase
     /// </summary>
     public readonly bool PauseMenuPausesRunTimer;
     /// <summary>
+    /// 敌人自动行动间隔
+    /// </summary>
+    public readonly int AutoAdvanceDelayMs;
+    /// <summary>
+    /// UI时间注册超时帧数
+    /// </summary>
+    public readonly int RegisterFrameout;
+    /// <summary>
     /// 新存档直接拥有的角色
     /// </summary>
     public readonly System.Collections.Generic.List<int> NewGameCharacterIds;
@@ -129,6 +139,8 @@ public sealed partial class GlobalConfig : Luban.BeanBase
 
     public  void ResolveRef(Tables tables)
     {
+        
+        
         
         
         
@@ -173,6 +185,8 @@ public sealed partial class GlobalConfig : Luban.BeanBase
         + "battlePausesRunTimer:" + BattlePausesRunTimer + ","
         + "inventoryPausesRunTimer:" + InventoryPausesRunTimer + ","
         + "pauseMenuPausesRunTimer:" + PauseMenuPausesRunTimer + ","
+        + "autoAdvanceDelayMs:" + AutoAdvanceDelayMs + ","
+        + "registerFrameout:" + RegisterFrameout + ","
         + "newGameCharacterIds:" + Luban.StringUtil.CollectionToString(NewGameCharacterIds) + ","
         + "}";
     }

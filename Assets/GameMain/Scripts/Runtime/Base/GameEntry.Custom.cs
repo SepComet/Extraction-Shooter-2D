@@ -1,4 +1,5 @@
-﻿using SepCore.CustomComponent;
+﻿using SepCore.Battle;
+using SepCore.CustomComponent;
 using UnityEngine;
 
 /// <summary>

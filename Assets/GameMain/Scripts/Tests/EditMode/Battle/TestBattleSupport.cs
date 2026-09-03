@@ -48,6 +48,25 @@ namespace SepCore.Tests
                 });
         }
 
+        /// <summary>
+        /// 技能行动（支持指定目标类型、效果与 MP 消耗）。
+        /// </summary>
+        public static BattleActionConfig SkillAction(int id, BattleTargetType targetType, int flat,
+            BattleStatType sourceStat, int sourceScalePermille, int mpCost = 10,
+            BattleStatType targetStat = BattleStatType.HP)
+        {
+            return TestConfigFactory.Create<BattleActionConfig>(
+                "Id", id, "Name", "技能" + id, "ActionType", BattleActionType.Skill,
+                "TargetType", targetType, "MpCost", mpCost,
+                "Effects", new List<BattleEffect>
+                {
+                    TestConfigFactory.Create<BattleEffect>(
+                        "TargetStat", targetStat, "FlatValue", flat,
+                        "SourceStat", sourceStat, "SourceScalePermille", sourceScalePermille,
+                        "Status", BattleStateType.None, "DurationRounds", 0)
+                });
+        }
+
         public static EnemyConfig Enemy(int id, int maxHp, int atk, params int[] actionIds)
         {
             return EnemyWithSpeed(id, maxHp, atk, 8, actionIds);
@@ -137,6 +156,20 @@ namespace SepCore.Tests
             provider.AddParty(TestConfigs.Party(4001, 3001));
             return provider;
         }
+
+        /// <summary>
+        /// 包含角色 1~3 技能与敌人技能的测试配置：
+        /// 101（单体高伤）、102（单体治疗）、103（全体法伤）、202（敌人单体魔法）。
+        /// </summary>
+        public static TestConfigProvider StandardWithSkills()
+        {
+            TestConfigProvider provider = Standard1v1();
+            provider.AddAction(TestConfigs.SkillAction(101, BattleTargetType.SingleEnemy, -5, BattleStatType.ATK, -1500, 10));
+            provider.AddAction(TestConfigs.SkillAction(102, BattleTargetType.SingleAlly, 20, BattleStatType.MAT, 1000, 10));
+            provider.AddAction(TestConfigs.SkillAction(103, BattleTargetType.AllEnemies, -2, BattleStatType.MAT, -800, 10));
+            provider.AddAction(TestConfigs.SkillAction(202, BattleTargetType.SingleEnemy, -4, BattleStatType.MAT, -1200, 8));
+            return provider;
+        }
     }
 
     /// <summary>
@@ -174,21 +207,22 @@ namespace SepCore.Tests
         /// 标准玩家：120 HP / 40 MP，ATK 14，攻击行动 1，技能行动 101。
         /// </summary>
         public static PlayerUnitState Player(int currentHp = 120, int maxHp = 120, int atk = 14,
-            int speed = 12, int partyOrder = 1, int characterId = 1001)
+            int speed = 12, int partyOrder = 1, int characterId = 1001, int currentMp = 40, int maxMp = 40,
+            int mat = 6, int skillActionId = 101)
         {
             return new PlayerUnitState
             {
                 CharacterId = characterId,
                 PartyOrder = partyOrder,
                 CurrentHp = currentHp,
-                CurrentMp = 40,
+                CurrentMp = currentMp,
                 MaxHp = maxHp,
-                MaxMp = 40,
+                MaxMp = maxMp,
                 Atk = atk,
-                Mat = 6,
+                Mat = mat,
                 Speed = speed,
                 AttackActionId = 1,
-                SkillActionId = 101
+                SkillActionId = skillActionId
             };
         }
 
@@ -201,6 +235,12 @@ namespace SepCore.Tests
         {
             return new BattleCommand(actorUnitId, BattleActionType.Attack, actionId,
                 new List<int> { targetUnitId });
+        }
+
+        public static BattleCommand Skill(int actorUnitId, int actionId, params int[] targetUnitIds)
+        {
+            return new BattleCommand(actorUnitId, BattleActionType.Skill, actionId,
+                targetUnitIds != null ? new List<int>(targetUnitIds) : new List<int>());
         }
 
         /// <summary>

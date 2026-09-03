@@ -8,7 +8,7 @@ namespace SepCore.Battle
     /// 当前战斗的事实唯一来源，仅战斗期间存在。
     /// 调度、指令校验、效果、状态和敌人决策共享同一实例，不复制单位、轮次和状态集合；
     /// 内部不为函数调用建立请求/响应 DTO，玩家与敌人的行动都走同一条执行管线并产生同一组 BattleEvent。
-    /// M1 只支持 1 名玩家与 1 名敌人的普通攻击闭环。
+    /// 支持 1 至 4 人普通攻击与技能行动闭环。
     /// </summary>
     internal sealed class BattleRuntime
     {
@@ -175,7 +175,8 @@ namespace SepCore.Battle
         /// </summary>
         public BattleStep SubmitCommand(BattleCommand command)
         {
-            if (!ValidatePlayerCommand(command))
+            List<int> resolvedTargets;
+            if (!ValidatePlayerCommand(command, out resolvedTargets))
             {
                 return new BattleStep(new BattleEvent[0], BuildViewState(), null);
             }
@@ -183,7 +184,7 @@ namespace SepCore.Battle
             PendingEvents.Clear();
 
             BattleUnit actor = GetUnit(command.ActorUnitId);
-            ExecuteAction(actor, command.CommandType, command.ActionConfigId, command.TargetUnitIds);
+            ExecuteAction(actor, command.CommandType, command.ActionConfigId, resolvedTargets);
             MarkActed(command.ActorUnitId);
             CheckBattleEnd();
 
@@ -260,8 +261,9 @@ namespace SepCore.Battle
             return new BattleViewState(RoundNumber, CurrentActorUnitId, unitViews, remainingOrder, availableActions);
         }
 
-        private bool ValidatePlayerCommand(BattleCommand command)
+        private bool ValidatePlayerCommand(BattleCommand command, out List<int> resolvedTargets)
         {
+            resolvedTargets = null;
             if (command == null || IsCompleted)
             {
                 return false;
@@ -273,18 +275,18 @@ namespace SepCore.Battle
             }
 
             BattleUnit actor = GetUnit(command.ActorUnitId);
-            if (actor == null || actor.Faction != BattleFactionType.Player)
+            if (actor == null || actor.Faction != BattleFactionType.Player || !IsActive(actor))
             {
                 return false;
             }
 
-            if (command.CommandType != BattleActionType.Attack)
+            if (command.CommandType != BattleActionType.Attack && command.CommandType != BattleActionType.Skill)
             {
                 return false;
             }
 
             BattleActionConfig action = _config.GetAction(command.ActionConfigId);
-            if (action == null || action.ActionType != BattleActionType.Attack)
+            if (action == null || action.ActionType != command.CommandType)
             {
                 return false;
             }
@@ -294,23 +296,92 @@ namespace SepCore.Battle
                 return false;
             }
 
-            return TryResolvePlayerTargets(command, actor, action);
+            return TryResolvePlayerTargets(command, actor, action, out resolvedTargets);
         }
 
-        private bool TryResolvePlayerTargets(BattleCommand command, BattleUnit actor, BattleActionConfig action)
+        private bool TryResolvePlayerTargets(BattleCommand command, BattleUnit actor, BattleActionConfig action,
+            out List<int> resolvedTargets)
         {
-            if (action.TargetType != BattleTargetType.SingleEnemy)
+            resolvedTargets = null;
+            switch (action.TargetType)
             {
-                return false;
-            }
+                case BattleTargetType.SingleEnemy:
+                {
+                    if (command.TargetUnitIds == null || command.TargetUnitIds.Count != 1)
+                    {
+                        return false;
+                    }
 
-            if (command.TargetUnitIds == null || command.TargetUnitIds.Count != 1)
-            {
-                return false;
-            }
+                    BattleUnit target = GetUnit(command.TargetUnitIds[0]);
+                    if (target == null || target.Faction == actor.Faction || !IsActive(target))
+                    {
+                        return false;
+                    }
 
-            BattleUnit target = GetUnit(command.TargetUnitIds[0]);
-            return target != null && target.Faction != actor.Faction && IsActive(target);
+                    resolvedTargets = new List<int> { target.UnitId };
+                    return true;
+                }
+                case BattleTargetType.SingleAlly:
+                {
+                    if (command.TargetUnitIds == null || command.TargetUnitIds.Count != 1)
+                    {
+                        return false;
+                    }
+
+                    BattleUnit target = GetUnit(command.TargetUnitIds[0]);
+                    // SingleAlly 包含施法者自己
+                    if (target == null || target.Faction != actor.Faction || !IsActive(target))
+                    {
+                        return false;
+                    }
+
+                    resolvedTargets = new List<int> { target.UnitId };
+                    return true;
+                }
+                case BattleTargetType.Self:
+                {
+                    if (command.TargetUnitIds != null && command.TargetUnitIds.Count > 0)
+                    {
+                        if (command.TargetUnitIds.Count != 1 || command.TargetUnitIds[0] != actor.UnitId)
+                        {
+                            return false;
+                        }
+                    }
+
+                    resolvedTargets = new List<int> { actor.UnitId };
+                    return true;
+                }
+                case BattleTargetType.AllEnemies:
+                {
+                    // 全体目标由战斗内核展开，UI 不自行拼装
+                    resolvedTargets = new List<int>();
+                    foreach (BattleUnit unit in Units)
+                    {
+                        if (unit.Faction != actor.Faction && IsActive(unit))
+                        {
+                            resolvedTargets.Add(unit.UnitId);
+                        }
+                    }
+
+                    return resolvedTargets.Count > 0;
+                }
+                case BattleTargetType.AllAllies:
+                {
+                    // 全体友方由战斗内核展开
+                    resolvedTargets = new List<int>();
+                    foreach (BattleUnit unit in Units)
+                    {
+                        if (unit.Faction == actor.Faction && IsActive(unit))
+                        {
+                            resolvedTargets.Add(unit.UnitId);
+                        }
+                    }
+
+                    return resolvedTargets.Count > 0;
+                }
+                default:
+                    return false;
+            }
         }
 
         private void ExecuteAction(BattleUnit actor, BattleActionType commandType, int actionConfigId,
@@ -325,6 +396,11 @@ namespace SepCore.Battle
             if (action.MpCost > 0 && actor.CurrentMp >= action.MpCost)
             {
                 actor.CurrentMp -= action.MpCost;
+            }
+
+            if (action.Effects == null)
+            {
+                return;
             }
 
             foreach (int targetUnitId in targetUnitIds)
@@ -549,23 +625,91 @@ namespace SepCore.Battle
 
             int chosenActionId = PickOne(usableActions);
             BattleActionConfig chosen = _config.GetAction(chosenActionId);
-
-            List<int> targets = new List<int>();
-            foreach (BattleUnit unit in Units)
-            {
-                if (unit.Faction != enemy.Faction && IsActive(unit))
-                {
-                    targets.Add(unit.UnitId);
-                }
-            }
-
-            if (targets.Count == 0)
+            if (chosen == null)
             {
                 return;
             }
 
-            int targetUnitId = PickOne(targets);
-            ExecuteAction(enemy, chosen.ActionType, chosenActionId, new[] { targetUnitId });
+            List<int> targets = ResolveEnemyTargets(enemy, chosen);
+            if (targets == null || targets.Count == 0)
+            {
+                return;
+            }
+
+            ExecuteAction(enemy, chosen.ActionType, chosenActionId, targets);
+        }
+
+        private List<int> ResolveEnemyTargets(BattleUnit enemy, BattleActionConfig action)
+        {
+            switch (action.TargetType)
+            {
+                case BattleTargetType.SingleEnemy:
+                {
+                    List<int> candidates = new List<int>();
+                    foreach (BattleUnit unit in Units)
+                    {
+                        if (unit.Faction != enemy.Faction && IsActive(unit))
+                        {
+                            candidates.Add(unit.UnitId);
+                        }
+                    }
+
+                    if (candidates.Count == 0)
+                    {
+                        return null;
+                    }
+
+                    return new List<int> { PickOne(candidates) };
+                }
+                case BattleTargetType.AllEnemies:
+                {
+                    List<int> candidates = new List<int>();
+                    foreach (BattleUnit unit in Units)
+                    {
+                        if (unit.Faction != enemy.Faction && IsActive(unit))
+                        {
+                            candidates.Add(unit.UnitId);
+                        }
+                    }
+
+                    return candidates.Count > 0 ? candidates : null;
+                }
+                case BattleTargetType.SingleAlly:
+                {
+                    List<int> candidates = new List<int>();
+                    foreach (BattleUnit unit in Units)
+                    {
+                        if (unit.Faction == enemy.Faction && IsActive(unit))
+                        {
+                            candidates.Add(unit.UnitId);
+                        }
+                    }
+
+                    if (candidates.Count == 0)
+                    {
+                        return null;
+                    }
+
+                    return new List<int> { PickOne(candidates) };
+                }
+                case BattleTargetType.AllAllies:
+                {
+                    List<int> candidates = new List<int>();
+                    foreach (BattleUnit unit in Units)
+                    {
+                        if (unit.Faction == enemy.Faction && IsActive(unit))
+                        {
+                            candidates.Add(unit.UnitId);
+                        }
+                    }
+
+                    return candidates.Count > 0 ? candidates : null;
+                }
+                case BattleTargetType.Self:
+                    return new List<int> { enemy.UnitId };
+                default:
+                    return null;
+            }
         }
 
         /// <summary>

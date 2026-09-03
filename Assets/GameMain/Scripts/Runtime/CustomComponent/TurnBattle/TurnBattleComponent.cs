@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
-using SepCore.Battle;
 using SepCore.Definition;
 using SepCore.UI;
 using UnityEngine;
 using UnityGameFramework.Runtime;
 
-namespace SepCore.CustomComponent
+namespace SepCore.Battle
 {
     /// <summary>
     /// 单局战斗组件，也是战斗模块的唯一外部入口。
@@ -28,11 +27,6 @@ namespace SepCore.CustomComponent
         private Action<BattleResult> _onCompleted;
         private Action<BattleStep> _stepListener;
         private Coroutine _autoAdvanceRoutine;
-
-        /// <summary>
-        /// 敌人自动行动前的间歇时间（秒），用于让 UI 展示行动过程。
-        /// </summary>
-        private const float AutoAdvanceDelaySeconds = 0.6f;
 
         /// <summary>
         /// 获取本局临时角色状态列表（只读）。
@@ -117,7 +111,7 @@ namespace SepCore.CustomComponent
                 Log.Warning("Can not start battle because battle occupancy is already active.");
                 return false;
             }
-            
+
             if (_config == null)
             {
                 _config = new LubanBattleConfigProvider();
@@ -126,7 +120,8 @@ namespace SepCore.CustomComponent
             BattleRuntime runtime = BattleRuntime.Create(encounter, _players, _config, GameEntry.Random.Random);
             if (runtime == null)
             {
-                Log.Warning("Can not start battle because battle runtime can not be created from given encounter/players/config.");
+                Log.Warning(
+                    "Can not start battle because battle runtime can not be created from given encounter/players/config.");
                 return false;
             }
 
@@ -268,9 +263,14 @@ namespace SepCore.CustomComponent
 
         private System.Collections.IEnumerator AutoAdvanceRoutine()
         {
+            GlobalConfig global = _config.GetGlobal();
+            float advanceDelaySeconds = global.AutoAdvanceDelayMs / 1000f;
+            int registerFrameout = global.RegisterFrameout;
+
             // 战斗 UI 打开是异步资源加载，等推进监听注册后再推第一步，避免敌人先手事件丢失
             int waitFrames = 0;
-            while (_stepListener == null && _runtime != null && !_runtime.IsCompleted && waitFrames++ < 600)
+            while (_stepListener == null && _runtime != null && !_runtime.IsCompleted &&
+                   waitFrames++ < registerFrameout)
             {
                 yield return null;
             }
@@ -278,7 +278,7 @@ namespace SepCore.CustomComponent
             while (_runtime != null && !_runtime.IsCompleted &&
                    _runtime.CurrentActor != null && _runtime.CurrentActor.Faction == BattleFactionType.Enemy)
             {
-                yield return new WaitForSeconds(AutoAdvanceDelaySeconds);
+                yield return new WaitForSeconds(advanceDelaySeconds);
 
                 BattleStep step = _runtime.AdvanceEnemyTurn();
                 if (step.Result != null)

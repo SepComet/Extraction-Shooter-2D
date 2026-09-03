@@ -19,6 +19,8 @@
     "battlePausesRunTimer": true,
     "inventoryPausesRunTimer": false,
     "pauseMenuPausesRunTimer": true,
+    "autoAdvanceDelayMs": 600,
+    "registerFrameout": 600,
     "newGameCharacterIds": [
       1001,
       1002,

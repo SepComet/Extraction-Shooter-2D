@@ -107,6 +107,14 @@ public partial class TbGlobalConfig
     /// </summary>
      public bool PauseMenuPausesRunTimer => _data.PauseMenuPausesRunTimer;
     /// <summary>
+    /// 敌人自动行动间隔
+    /// </summary>
+     public int AutoAdvanceDelayMs => _data.AutoAdvanceDelayMs;
+    /// <summary>
+    /// UI时间注册超时帧数
+    /// </summary>
+     public int RegisterFrameout => _data.RegisterFrameout;
+    /// <summary>
     /// 新存档直接拥有的角色
     /// </summary>
      public System.Collections.Generic.List<int> NewGameCharacterIds => _data.NewGameCharacterIds;

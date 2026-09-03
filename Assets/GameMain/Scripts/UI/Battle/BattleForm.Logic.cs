@@ -19,14 +19,15 @@ namespace SepCore.UI
         private readonly List<BattleTurnSlotItem> _turnSlots = new List<BattleTurnSlotItem>();
         private readonly List<int> _turnSlotUnitIds = new List<int>();
         private readonly List<BattleEnemySlotItem> _enemySlots = new List<BattleEnemySlotItem>();
+        private BattleActionType _pendingCommandType = BattleActionType.None;
+        private int _pendingActionConfigId;
 
         protected override void OnInit(object userData)
         {
             base.OnInit(userData);
 
-            // M1 只开放攻击；道具、技能、逃跑在后续里程碑接入
+            // 道具首版禁用；逃跑在 M5 接入
             View.itemButton.interactable = false;
-            View.skillButton.interactable = false;
             View.escapeButton.interactable = false;
         }
 
@@ -47,6 +48,8 @@ namespace SepCore.UI
 
             _result = null;
             _displayedRound = 0;
+            _pendingCommandType = BattleActionType.None;
+            _pendingActionConfigId = 0;
             _turnSlots.Clear();
             _turnSlotUnitIds.Clear();
             _enemySlots.Clear();
@@ -65,6 +68,9 @@ namespace SepCore.UI
             View.itemButton.onClick.RemoveListener(OnItemButtonClick);
             View.escapeButton.onClick.RemoveListener(OnEscapeButtonClick);
 
+            _pendingCommandType = BattleActionType.None;
+            _pendingActionConfigId = 0;
+
             base.OnClose(isShutdown, userData);
         }
 
@@ -82,18 +88,187 @@ namespace SepCore.UI
                 return;
             }
 
+            // 二次确认与取消机制：若已经处于普通攻击待命状态，再次点击普通攻击按钮取消（不攻击）
+            if (_pendingCommandType == BattleActionType.Attack)
+            {
+                ClearPendingAction();
+                RefreshActionPanel(view);
+                return;
+            }
+
             int attackActionId = FindAttackActionId(view);
-            int targetUnitId = FindFirstActiveEnemy(view);
-            if (attackActionId == 0 || targetUnitId == 0)
+            if (attackActionId == 0)
             {
                 return;
             }
 
+            _pendingCommandType = BattleActionType.Attack;
+            _pendingActionConfigId = attackActionId;
+            RefreshActionPanel(view);
+        }
+
+        private void OnSkillButtonClick()
+        {
+            BattleViewState view = GameEntry.TurnBattle.GetViewState();
+            if (view == null || view.CurrentActorUnitId == 0)
+            {
+                return;
+            }
+
+            BattleUnitView actor = FindUnit(view, view.CurrentActorUnitId);
+            if (actor == null || actor.Faction != BattleFactionType.Player)
+            {
+                return;
+            }
+
+            // 二次确认与取消机制：若已经处于技能待命状态，再次点击技能按钮取消（不放技能）
+            if (_pendingCommandType == BattleActionType.Skill)
+            {
+                ClearPendingAction();
+                RefreshActionPanel(view);
+                return;
+            }
+
+            int skillActionId = FindSkillActionId(view);
+            if (skillActionId == 0)
+            {
+                return;
+            }
+
+            BattleActionConfig config = GameEntry.Luban.Get<BattleActionConfig>(skillActionId);
+            if (config == null || actor.CurrentMp < config.MpCost)
+            {
+                return;
+            }
+
+            _pendingCommandType = BattleActionType.Skill;
+            _pendingActionConfigId = skillActionId;
+            RefreshActionPanel(view);
+        }
+
+        private void ClearPendingAction()
+        {
+            _pendingCommandType = BattleActionType.None;
+            _pendingActionConfigId = 0;
+        }
+
+        private void OnEnemySlotClick(int targetEnemyUnitId)
+        {
+            if (_pendingCommandType == BattleActionType.None || _pendingActionConfigId == 0)
+            {
+                return;
+            }
+
+            BattleViewState view = GameEntry.TurnBattle.GetViewState();
+            if (view == null || view.CurrentActorUnitId == 0)
+            {
+                return;
+            }
+
+            BattleUnitView actor = FindUnit(view, view.CurrentActorUnitId);
+            if (actor == null || actor.Faction != BattleFactionType.Player)
+            {
+                return;
+            }
+
+            BattleActionConfig action = GameEntry.Luban.Get<BattleActionConfig>(_pendingActionConfigId);
+            if (action == null)
+            {
+                return;
+            }
+
+            if (action.TargetType == BattleTargetType.SingleEnemy)
+            {
+                BattleUnitView target = FindUnit(view, targetEnemyUnitId);
+                if (target == null || target.Faction != BattleFactionType.Enemy || target.IsDefeated || target.IsEscaped)
+                {
+                    return;
+                }
+
+                SubmitPendingCommand(actor.BattleUnitId, _pendingCommandType, _pendingActionConfigId,
+                    new List<int> { targetEnemyUnitId });
+            }
+            else if (action.TargetType == BattleTargetType.AllEnemies)
+            {
+                // 全体目标：点击任意存活敌人确认释放，目标由内核自动展开
+                BattleUnitView target = FindUnit(view, targetEnemyUnitId);
+                if (target == null || target.Faction != BattleFactionType.Enemy || target.IsDefeated || target.IsEscaped)
+                {
+                    return;
+                }
+
+                SubmitPendingCommand(actor.BattleUnitId, _pendingCommandType, _pendingActionConfigId,
+                    new List<int>());
+            }
+        }
+
+        private void OnPlayerCardClick(int targetPlayerUnitId)
+        {
+            if (_pendingCommandType == BattleActionType.None || _pendingActionConfigId == 0)
+            {
+                return;
+            }
+
+            BattleViewState view = GameEntry.TurnBattle.GetViewState();
+            if (view == null || view.CurrentActorUnitId == 0)
+            {
+                return;
+            }
+
+            BattleUnitView actor = FindUnit(view, view.CurrentActorUnitId);
+            if (actor == null || actor.Faction != BattleFactionType.Player)
+            {
+                return;
+            }
+
+            BattleActionConfig action = GameEntry.Luban.Get<BattleActionConfig>(_pendingActionConfigId);
+            if (action == null)
+            {
+                return;
+            }
+
+            if (action.TargetType == BattleTargetType.SingleAlly)
+            {
+                BattleUnitView target = FindUnit(view, targetPlayerUnitId);
+                // SingleAlly 可以选择队友或施法者自身
+                if (target == null || target.Faction != BattleFactionType.Player || target.IsDefeated || target.IsEscaped)
+                {
+                    return;
+                }
+
+                SubmitPendingCommand(actor.BattleUnitId, _pendingCommandType, _pendingActionConfigId,
+                    new List<int> { targetPlayerUnitId });
+            }
+            else if (action.TargetType == BattleTargetType.AllAllies)
+            {
+                BattleUnitView target = FindUnit(view, targetPlayerUnitId);
+                if (target == null || target.Faction != BattleFactionType.Player || target.IsDefeated || target.IsEscaped)
+                {
+                    return;
+                }
+
+                SubmitPendingCommand(actor.BattleUnitId, _pendingCommandType, _pendingActionConfigId,
+                    new List<int>());
+            }
+            else if (action.TargetType == BattleTargetType.Self)
+            {
+                if (targetPlayerUnitId == actor.BattleUnitId)
+                {
+                    SubmitPendingCommand(actor.BattleUnitId, _pendingCommandType, _pendingActionConfigId,
+                        new List<int> { actor.BattleUnitId });
+                }
+            }
+        }
+
+        private void SubmitPendingCommand(int actorUnitId, BattleActionType commandType, int actionConfigId,
+            List<int> targets)
+        {
+            ClearPendingAction();
             BattleStep step = GameEntry.TurnBattle.SubmitCommand(new BattleCommand(
-                actor.BattleUnitId, 
-                BattleActionType.Attack, 
-                attackActionId,
-                new List<int> { targetUnitId })
+                actorUnitId,
+                commandType,
+                actionConfigId,
+                targets)
             );
             ApplyStep(step);
         }
@@ -104,6 +279,8 @@ namespace SepCore.UI
             {
                 return;
             }
+
+            ClearPendingAction();
 
             if (step.Result != null)
             {
@@ -140,6 +317,7 @@ namespace SepCore.UI
                 if (card != null)
                 {
                     card.gameObject.SetActive(true);
+                    card.SetOnClick(OnPlayerCardClick);
                     card.SetUnit(unit, unit.BattleUnitId == view.CurrentActorUnitId);
                 }
 
@@ -190,6 +368,7 @@ namespace SepCore.UI
 
             for (int i = 0; i < _enemySlots.Count; i++)
             {
+                _enemySlots[i].SetOnClick(OnEnemySlotClick);
                 _enemySlots[i].SetEnemy(enemies[i], enemies[i].BattleUnitId == view.CurrentActorUnitId);
             }
         }
@@ -263,14 +442,67 @@ namespace SepCore.UI
             {
                 View.currentActorText.text = GetOutcomeText(_result.Outcome);
                 View.attackButton.interactable = false;
+                View.skillButton.interactable = false;
+                if (View.tipText != null)
+                {
+                    View.tipText.text = string.Empty;
+                }
+
                 return;
             }
 
             BattleUnitView actor = FindUnit(view, view.CurrentActorUnitId);
             bool playerTurn = actor != null && actor.Faction == BattleFactionType.Player;
-            View.currentActorText.text = string.Format("第 {0} 轮  {1} 行动",
-                view.RoundNumber, actor != null ? BattleUnitViewHelper.GetDisplayName(actor) : string.Empty);
+            int skillActionId = playerTurn ? FindSkillActionId(view) : 0;
+            BattleActionConfig skillConfig = skillActionId != 0 ? GameEntry.Luban.Get<BattleActionConfig>(skillActionId) : null;
+            bool canUseSkill = playerTurn && skillConfig != null && actor.CurrentMp >= skillConfig.MpCost;
+
             View.attackButton.interactable = playerTurn;
+            View.skillButton.interactable = canUseSkill;
+
+            if (_pendingCommandType != BattleActionType.None)
+            {
+                BattleActionConfig pendingAction = GameEntry.Luban.Get<BattleActionConfig>(_pendingActionConfigId);
+                string actionName = pendingAction != null ? pendingAction.Name : (_pendingCommandType == BattleActionType.Attack ? "普通攻击" : "技能");
+                View.currentActorText.text = string.Format("【{0}】待命中（再次点击取消）", actionName);
+                if (View.tipText != null)
+                {
+                    View.tipText.text = GetPendingTip(pendingAction);
+                }
+            }
+            else
+            {
+                View.currentActorText.text = string.Format("第 {0} 轮  {1} 行动",
+                    view.RoundNumber, actor != null ? BattleUnitViewHelper.GetDisplayName(actor) : string.Empty);
+                if (View.tipText != null)
+                {
+                    View.tipText.text = playerTurn ? "请选择行动：攻击或技能" : string.Empty;
+                }
+            }
+        }
+
+        private static string GetPendingTip(BattleActionConfig action)
+        {
+            if (action == null)
+            {
+                return "请选择目标";
+            }
+
+            switch (action.TargetType)
+            {
+                case BattleTargetType.SingleEnemy:
+                    return "请点击目标敌人释放";
+                case BattleTargetType.AllEnemies:
+                    return "点击任意敌人确认释放全体攻击";
+                case BattleTargetType.SingleAlly:
+                    return "请点击目标友方（包含自身）释放";
+                case BattleTargetType.AllAllies:
+                    return "点击任意友方确认释放全体效果";
+                case BattleTargetType.Self:
+                    return "点击自身角色卡片确认释放";
+                default:
+                    return "请选择目标";
+            }
         }
 
         private static string GetOutcomeText(BattleOutcomeType outcome)
@@ -296,6 +528,20 @@ namespace SepCore.UI
             {
                 BattleActionConfig action = GameEntry.Luban.Get<BattleActionConfig>(actionId);
                 if (action != null && action.ActionType == BattleActionType.Attack)
+                {
+                    return actionId;
+                }
+            }
+
+            return 0;
+        }
+
+        private static int FindSkillActionId(BattleViewState view)
+        {
+            foreach (int actionId in view.AvailableActionIds)
+            {
+                BattleActionConfig action = GameEntry.Luban.Get<BattleActionConfig>(actionId);
+                if (action != null && action.ActionType == BattleActionType.Skill)
                 {
                     return actionId;
                 }
@@ -359,11 +605,6 @@ namespace SepCore.UI
 
                 Destroy(child.gameObject);
             }
-        }
-
-        private void OnSkillButtonClick()
-        {
-            // M3 接入
         }
 
         private void OnItemButtonClick()

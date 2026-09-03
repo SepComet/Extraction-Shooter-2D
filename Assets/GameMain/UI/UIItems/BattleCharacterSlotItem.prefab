@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6851401995039582026}
   - component: {fileID: 268559066939802041}
   m_Layer: 5
-  m_Name: CharacterSlotItem
+  m_Name: BattleCharacterSlotItem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -95,14 +95,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d3418d26a66340028b5d353f0077c1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bg: {fileID: 6851401995039582026}
-  icon: {fileID: 6570181376979616729}
-  characterName: {fileID: 4425265634882279033}
-  hpText: {fileID: 6080660344388298497}
-  mpText: {fileID: 1136399153603602661}
-  speedText: {fileID: 3183818451327307436}
-  atkText: {fileID: 7618462627920033143}
-  matText: {fileID: 1921253247565485041}
+  _bg: {fileID: 3693108158544181568}
+  _icon: {fileID: 6570181376979616729}
+  _characterName: {fileID: 4425265634882279033}
+  _hpText: {fileID: 6080660344388298497}
+  _mpText: {fileID: 1136399153603602661}
+  _speedText: {fileID: 3183818451327307436}
+  _atkText: {fileID: 7618462627920033143}
+  _matText: {fileID: 1921253247565485041}
 --- !u!1 &1499301190055571948
 GameObject:
   m_ObjectHideFlags: 0

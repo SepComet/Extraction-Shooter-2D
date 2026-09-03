@@ -10,14 +10,14 @@ namespace SepCore.UI
 {
     public class CharacterSlotItem : MonoBehaviour
     {
-        [SerializeField] private Image bg;
-        [SerializeField] private Image icon;
-        [SerializeField] private TextMeshProUGUI characterName;
-        [SerializeField] private FormatTextUI hpText;
-        [SerializeField] private FormatTextUI mpText;
-        [SerializeField] private FormatTextUI speedText;
-        [SerializeField] private FormatTextUI atkText;
-        [SerializeField] private FormatTextUI matText;
+        [SerializeField] private Image _bg;
+        [SerializeField] private Image _icon;
+        [SerializeField] private TextMeshProUGUI _characterName;
+        [SerializeField] private FormatTextUI _hpText;
+        [SerializeField] private FormatTextUI _mpText;
+        [SerializeField] private FormatTextUI _speedText;
+        [SerializeField] private FormatTextUI _atkText;
+        [SerializeField] private FormatTextUI _matText;
 
         private int _iconVersion = 0;
 
@@ -34,12 +34,12 @@ namespace SepCore.UI
                 return;
             }
 
-            characterName.text = config.Name;
-            hpText.Set(config.MaxHp);
-            mpText.Set(config.MaxMp);
-            speedText.Set(config.Speed);
-            atkText.Set(config.Atk);
-            matText.Set(config.Mat);
+            _characterName.text = config.Name;
+            _hpText.Set(config.MaxHp);
+            _mpText.Set(config.MaxMp);
+            _speedText.Set(config.Speed);
+            _atkText.Set(config.Atk);
+            _matText.Set(config.Mat);
             _iconVersion++;
             ShowIconAsync(config.Icon_Ref, _iconVersion).Forget();
         }
@@ -50,24 +50,24 @@ namespace SepCore.UI
         public void SetEmpty()
         {
             _iconVersion++;
-            characterName.text = string.Empty;
-            hpText.Clear();
-            mpText.Clear();
-            speedText.Clear();
-            atkText.Clear();
-            matText.Clear();
+            _characterName.text = string.Empty;
+            _hpText.Clear();
+            _mpText.Clear();
+            _speedText.Clear();
+            _atkText.Clear();
+            _matText.Clear();
             HideIcon();
         }
 
         private void HideIcon()
         {
-            if (icon == null)
+            if (_icon == null)
             {
                 return;
             }
 
-            icon.sprite = null;
-            icon.gameObject.SetActive(false);
+            _icon.sprite = null;
+            _icon.gameObject.SetActive(false);
         }
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace SepCore.UI
         /// </summary>
         private async UniTaskVoid ShowIconAsync(SpriteConfig iconConfig, int iconVersion)
         {
-            if (iconConfig == null || icon == null)
+            if (iconConfig == null || _icon == null)
             {
                 return;
             }
@@ -86,8 +86,8 @@ namespace SepCore.UI
                 return;
             }
 
-            icon.sprite = sprite;
-            icon.gameObject.SetActive(true);
+            _icon.sprite = sprite;
+            _icon.gameObject.SetActive(true);
         }
     }
 }

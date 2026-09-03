@@ -1,3 +1,4 @@
+using System;
 using Cysharp.Threading.Tasks;
 using SepCore.AsyncTask;
 using SepCore.Battle;
@@ -5,56 +6,99 @@ using SepCore.Definition;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityGameFramework.Runtime;
 
 namespace SepCore.UI
 {
     [DisallowMultipleComponent]
     public sealed class BattleActorCardItem : MonoBehaviour
     {
-        [SerializeField] private GameObject activeMarker;
-        [SerializeField] private Image icon;
-        [SerializeField] private Image hpFill;
-        [SerializeField] private Image mpFill;
-        [SerializeField] private TextMeshProUGUI characterName;
-        [SerializeField] private TextMeshProUGUI hpText;
-        [SerializeField] private TextMeshProUGUI mpText;
+        [SerializeField] private Button _button;
+        [SerializeField] private GameObject _activeMarker;
+        [SerializeField] private Image _icon;
+        [SerializeField] private Image _hpFill;
+        [SerializeField] private Image _mpFill;
+        [SerializeField] private TextMeshProUGUI _characterName;
+        [SerializeField] private FormatTextUI _hpText;
+        [SerializeField] private FormatTextUI _mpText;
 
         private int _iconVersion;
         private int _currentUnitId;
+        private Action<int> _onClick;
+
+        public int CurrentUnitId => _currentUnitId;
+
+        private void Awake()
+        {
+            EnsureButtonListener();
+        }
+
+        private void EnsureButtonListener()
+        {
+            if (_button == null)
+            {
+                _button = GetComponent<Button>();
+            }
+
+            if (_button != null)
+            {
+                _button.onClick.RemoveListener(OnCardButtonClick);
+                _button.onClick.AddListener(OnCardButtonClick);
+            }
+        }
+
+        private void OnCardButtonClick()
+        {
+            _onClick?.Invoke(_currentUnitId);
+        }
+
+        public void SetOnClick(Action<int> onClick)
+        {
+            _onClick = onClick;
+            EnsureButtonListener();
+        }
 
         /// <summary>
         /// 用战斗单位视图填充我方卡片：名称、HP/MP 数值与血条、当前行动者标记和配置图标。
         /// 同一单位复用时不重复加载图标。
         /// </summary>
-        public void SetUnit(BattleUnitView unit, bool isCurrentActor)
+        public void SetUnit(BattleUnitView unit, bool isCurrentActor, bool isSelectedTarget = false)
         {
             if (unit == null)
             {
                 return;
             }
 
-            if (characterName != null)
+            if (_button == null)
             {
-                characterName.text = BattleUnitViewHelper.GetDisplayName(unit);
+                _button = GetComponent<Button>();
             }
 
-            if (hpText != null)
+            if (_button != null)
             {
-                hpText.text = unit.CurrentHp + " / " + unit.MaxHp;
+                _button.interactable = !unit.IsDefeated && !unit.IsEscaped;
             }
 
-            if (mpText != null)
+            if (_characterName != null)
             {
-                mpText.text = unit.CurrentMp + " / " + unit.MaxMp;
+                _characterName.text = BattleUnitViewHelper.GetDisplayName(unit);
             }
 
-            SetBar(hpFill, unit.CurrentHp, unit.MaxHp);
-            SetBar(mpFill, unit.CurrentMp, unit.MaxMp);
-
-            if (activeMarker != null)
+            if (_hpText != null)
             {
-                activeMarker.SetActive(isCurrentActor);
+                _hpText.Set(unit.CurrentHp, unit.MaxHp);
+            }
+
+            if (_mpText != null)
+            {
+                _mpText.Set(unit.CurrentMp, unit.MaxMp);
+            }
+
+            SetBar(_hpFill, unit.CurrentHp, unit.MaxHp);
+            SetBar(_mpFill, unit.CurrentMp, unit.MaxMp);
+
+            if (_activeMarker != null)
+            {
+                _activeMarker.SetActive(isCurrentActor || isSelectedTarget);
             }
 
             if (_currentUnitId != unit.BattleUnitId)
@@ -70,7 +114,7 @@ namespace SepCore.UI
         /// </summary>
         private async UniTaskVoid ShowIconAsync(SpriteConfig iconConfig, int iconVersion)
         {
-            if (iconConfig == null || icon == null)
+            if (iconConfig == null || _icon == null)
             {
                 return;
             }
@@ -81,8 +125,8 @@ namespace SepCore.UI
                 return;
             }
 
-            icon.sprite = sprite;
-            icon.gameObject.SetActive(true);
+            _icon.sprite = sprite;
+            _icon.gameObject.SetActive(true);
         }
 
         private static void SetBar(Image fill, int current, int max)

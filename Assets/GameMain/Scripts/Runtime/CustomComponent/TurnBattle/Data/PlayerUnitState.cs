@@ -1,4 +1,4 @@
-namespace SepCore.CustomComponent
+namespace SepCore.Battle
 {
     /// <summary>
     /// 单局临时角色状态。

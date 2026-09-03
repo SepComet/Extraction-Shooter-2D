@@ -625,8 +625,9 @@ Play Mode：通过（Debugger -> Battle/Shell 实测，EscapeSuccessPermille 临
   7. 已验证：全过程不碰存档（战斗代码零引用 Save；
      且 persistentDataPath 下根本不存在 save.json，只有 GameFrameworkSetting.dat）；
   Victory/TotalDefeat 见 M1 证据，本里程碑只补逃跑相关两支）
-提交或差异：未提交（working tree 差异：Escape 指令与成功率判定、四种 Outcome、
-  回写 helper 与 TotalDefeat 流程、逃跑按钮与结果停留关闭、EditMode 逃跑回写用例）
+提交或差异：commit 1f722c5（Escape 指令与成功率判定、四种 Outcome、
+  回写 helper 与 TotalDefeat 流程、逃跑按钮与结果停留关闭、战斗结束日志、
+  EditMode 逃跑回写用例）
 剩余问题：无阻塞。M6 接入真实探索遭遇。
 ```
 

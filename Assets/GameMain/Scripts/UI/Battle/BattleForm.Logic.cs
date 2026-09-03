@@ -21,6 +21,7 @@ namespace SepCore.UI
         private readonly List<BattleEnemySlotItem> _enemySlots = new List<BattleEnemySlotItem>();
         private BattleActionType _pendingCommandType = BattleActionType.None;
         private int _pendingActionConfigId;
+        private int _displayedActorId;
 
         protected override void OnInit(object userData)
         {
@@ -50,6 +51,7 @@ namespace SepCore.UI
             _displayedRound = 0;
             _pendingCommandType = BattleActionType.None;
             _pendingActionConfigId = 0;
+            _displayedActorId = 0;
             _turnSlots.Clear();
             _turnSlotUnitIds.Clear();
             _enemySlots.Clear();
@@ -70,6 +72,7 @@ namespace SepCore.UI
 
             _pendingCommandType = BattleActionType.None;
             _pendingActionConfigId = 0;
+            _displayedActorId = 0;
 
             base.OnClose(isShutdown, userData);
         }
@@ -292,7 +295,28 @@ namespace SepCore.UI
         }
 
         /// <summary>
-        /// 按本次推进事件生成飘字：HP 变化飘数字（-12/+25），纯状态变化飘状态名。
+        /// 轮到眩晕单位时飘一次状态名（新行动者且处于眩晕才触发，同一步重复刷新不重复飘）。
+        /// </summary>
+        private void MaybeSpawnStunFloat(BattleViewState view)
+        {
+            int actorId = view.CurrentActorUnitId;
+            bool isNewActor = actorId != 0 && actorId != _displayedActorId;
+            _displayedActorId = actorId;
+            if (!isNewActor)
+            {
+                return;
+            }
+
+            BattleUnitView actor = FindUnit(view, actorId);
+            if (actor != null && BattleUnitViewHelper.IsStunned(actor))
+            {
+                SpawnCardFloatText(actorId, BattleUnitViewHelper.GetStateText(BattleStateType.Stun));
+            }
+        }
+
+        /// <summary>
+        /// 按本次推进事件生成飘字：目前只飘 HP 变化数字（-12/+25）。
+        /// 状态名不在施加时飘，只在轮到该单位时由 MaybeSpawnStunFloat 飘一次。
         /// 每个事件独立生成一个，不互斥、不被后续刷新打断，淡出后自毁。
         /// </summary>
         private void OverlayEventStates(IReadOnlyList<BattleEvent> events)
@@ -310,26 +334,16 @@ namespace SepCore.UI
                 }
 
                 int hpDelta = battleEvent.AfterHp - battleEvent.BeforeHp;
-                string text = null;
-                if (hpDelta != 0)
-                {
-                    text = hpDelta > 0 ? "+" + hpDelta : hpDelta.ToString();
-                }
-                else if (battleEvent.StatusType != BattleStateType.None)
-                {
-                    text = BattleUnitViewHelper.GetStateText(battleEvent.StatusType);
-                }
-
-                if (string.IsNullOrEmpty(text))
+                if (hpDelta == 0)
                 {
                     continue;
                 }
 
-                SetCardStateText(battleEvent.TargetUnitId, text);
+                SpawnCardFloatText(battleEvent.TargetUnitId, hpDelta > 0 ? "+" + hpDelta : hpDelta.ToString());
             }
         }
 
-        private void SetCardStateText(int unitId, string text)
+        private void SpawnCardFloatText(int unitId, string text)
         {
             for (int i = 0; i < 4; i++)
             {
@@ -362,6 +376,7 @@ namespace SepCore.UI
             RefreshEnemySlots(view);
             RefreshTurnSlots(view);
             RefreshActionPanel(view);
+            MaybeSpawnStunFloat(view);
         }
 
         private void RefreshPlayerCards(BattleViewState view)

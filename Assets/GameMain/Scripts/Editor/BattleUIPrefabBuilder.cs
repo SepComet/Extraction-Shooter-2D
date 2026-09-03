@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System;
 using System.Linq;
 using SepCore.UI;
@@ -587,3 +588,4 @@ namespace SepCore.Editor
         }
     }
 }
+#endif

@@ -72,12 +72,10 @@ namespace SepCore.UI
                 targetButton.interactable = !unit.IsDefeated && !unit.IsEscaped;
             }
 
-            // 常驻状态文本：眩晕即时显示，其余清空；模板自身不做动画
+            // 状态模板只做飘字底板，不常驻显示（眩晕只在轮到该单位时飘一次）
             if (stateText != null)
             {
-                stateText.text = BattleUnitViewHelper.IsStunned(unit)
-                    ? BattleUnitViewHelper.GetStateText(BattleStateType.Stun)
-                    : string.Empty;
+                stateText.text = string.Empty;
             }
 
             if (_currentUnitId != unit.BattleUnitId)

@@ -23,13 +23,17 @@ namespace SepCore.UI
         private int _pendingActionConfigId;
         private int _displayedActorId;
 
+        /// <summary>
+        /// 战斗结果展示停留时间（秒），之后非全灭结果自动关闭战斗界面。
+        /// </summary>
+        private const float ResultDisplayDelaySeconds = 1.5f;
+
         protected override void OnInit(object userData)
         {
             base.OnInit(userData);
 
-            // 道具首版禁用；逃跑在 M5 接入
+            // 道具首版禁用；逃跑 M5 接入
             View.itemButton.interactable = false;
-            View.escapeButton.interactable = false;
         }
 
         protected override void OnOpen(object userData)
@@ -207,7 +211,7 @@ namespace SepCore.UI
 
         private void OnPlayerCardClick(int targetPlayerUnitId)
         {
-            if (_pendingCommandType == BattleActionType.None || _pendingActionConfigId == 0)
+            if (_pendingCommandType == BattleActionType.None)
             {
                 return;
             }
@@ -220,6 +224,22 @@ namespace SepCore.UI
 
             BattleUnitView actor = FindUnit(view, view.CurrentActorUnitId);
             if (actor == null || actor.Faction != BattleFactionType.Player)
+            {
+                return;
+            }
+
+            // 逃跑确认：点击自身角色卡片释放，无目标无配置
+            if (_pendingCommandType == BattleActionType.Escape)
+            {
+                if (targetPlayerUnitId == actor.BattleUnitId)
+                {
+                    SubmitPendingCommand(actor.BattleUnitId, BattleActionType.Escape, 0, new List<int>());
+                }
+
+                return;
+            }
+
+            if (_pendingActionConfigId == 0)
             {
                 return;
             }
@@ -292,6 +312,24 @@ namespace SepCore.UI
 
             Refresh(step.View);
             OverlayEventStates(step.Events);
+
+            if (step.Result != null && step.Result.Outcome != BattleOutcomeType.TotalDefeat)
+            {
+                StartCoroutine(CloseAfterResultDelay(step.Result));
+            }
+        }
+
+        /// <summary>
+        /// 非全灭结果展示停留后自行关闭战斗（恢复探索）；全灭停留显示失败等待外部处理。
+        /// </summary>
+        private System.Collections.IEnumerator CloseAfterResultDelay(BattleResult result)
+        {
+            yield return new WaitForSecondsRealtime(ResultDisplayDelaySeconds);
+
+            if (_result == result && GameEntry.TurnBattle != null && GameEntry.TurnBattle.IsBattleActive)
+            {
+                GameEntry.TurnBattle.CloseBattle();
+            }
         }
 
         /// <summary>
@@ -547,6 +585,7 @@ namespace SepCore.UI
                 View.currentActorText.text = GetOutcomeText(_result.Outcome);
                 View.attackButton.interactable = false;
                 View.skillButton.interactable = false;
+                View.escapeButton.interactable = false;
                 if (View.tipText != null)
                 {
                     View.tipText.text = string.Empty;
@@ -564,6 +603,7 @@ namespace SepCore.UI
             {
                 View.attackButton.interactable = false;
                 View.skillButton.interactable = false;
+                View.escapeButton.interactable = false;
                 View.currentActorText.text = string.Format("第 {0} 轮  {1} 被眩晕，跳过行动",
                     view.RoundNumber, BattleUnitViewHelper.GetDisplayName(actor));
                 if (View.tipText != null)
@@ -580,8 +620,17 @@ namespace SepCore.UI
 
             View.attackButton.interactable = playerTurn;
             View.skillButton.interactable = canUseSkill;
+            View.escapeButton.interactable = playerTurn;
 
-            if (_pendingCommandType != BattleActionType.None)
+            if (_pendingCommandType == BattleActionType.Escape)
+            {
+                View.currentActorText.text = "【逃跑】待命中（再次点击取消）";
+                if (View.tipText != null)
+                {
+                    View.tipText.text = "点击自身角色卡片确认逃跑";
+                }
+            }
+            else if (_pendingCommandType != BattleActionType.None)
             {
                 BattleActionConfig pendingAction = GameEntry.Luban.Get<BattleActionConfig>(_pendingActionConfigId);
                 string actionName = pendingAction != null ? pendingAction.Name : (_pendingCommandType == BattleActionType.Attack ? "普通攻击" : "技能");
@@ -735,7 +784,29 @@ namespace SepCore.UI
 
         private void OnEscapeButtonClick()
         {
-            // M5 接入
+            BattleViewState view = GameEntry.TurnBattle.GetViewState();
+            if (view == null || view.CurrentActorUnitId == 0)
+            {
+                return;
+            }
+
+            BattleUnitView actor = FindUnit(view, view.CurrentActorUnitId);
+            if (actor == null || actor.Faction != BattleFactionType.Player || BattleUnitViewHelper.IsStunned(actor))
+            {
+                return;
+            }
+
+            // 二次确认与取消机制：已处于逃跑待命时再次点击取消
+            if (_pendingCommandType == BattleActionType.Escape)
+            {
+                ClearPendingAction();
+                RefreshActionPanel(view);
+                return;
+            }
+
+            _pendingCommandType = BattleActionType.Escape;
+            _pendingActionConfigId = 0;
+            RefreshActionPanel(view);
         }
     }
 }

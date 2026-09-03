@@ -189,7 +189,15 @@ namespace SepCore.Battle
             PendingEvents.Clear();
 
             BattleUnit actor = GetUnit(command.ActorUnitId);
-            ExecuteAction(actor, command.CommandType, command.ActionConfigId, resolvedTargets);
+            if (command.CommandType == BattleActionType.Escape)
+            {
+                ExecuteEscape(actor);
+            }
+            else
+            {
+                ExecuteAction(actor, command.CommandType, command.ActionConfigId, resolvedTargets);
+            }
+
             MarkActed(command.ActorUnitId);
             CheckBattleEnd();
 
@@ -346,6 +354,23 @@ namespace SepCore.Battle
                 return false;
             }
 
+            if (command.CommandType == BattleActionType.Escape)
+            {
+                // 逃跑无配置无目标：行动 ID 为 0 且目标为空；成功率判定在执行时消费随机数
+                if (command.ActionConfigId != 0)
+                {
+                    return false;
+                }
+
+                if (command.TargetUnitIds != null && command.TargetUnitIds.Count > 0)
+                {
+                    return false;
+                }
+
+                resolvedTargets = new List<int>();
+                return true;
+            }
+
             if (command.CommandType != BattleActionType.Attack && command.CommandType != BattleActionType.Skill)
             {
                 return false;
@@ -448,6 +473,23 @@ namespace SepCore.Battle
                 default:
                     return false;
             }
+        }
+
+        /// <summary>
+        /// 执行逃跑：用全局逃跑成功率与本局随机源独立判定；成功与失败都消耗本轮行动机会，
+        /// 成功者离开候选集与合法目标集合（IsActive 已隔离），不视为阵亡。
+        /// </summary>
+        private void ExecuteEscape(BattleUnit actor)
+        {
+            GlobalConfig global = _config.GetGlobal();
+            if (_random.RollPermille(global.EscapeSuccessPermille))
+            {
+                actor.IsEscaped = true;
+            }
+
+            PendingEvents.Add(new BattleEvent(actor.UnitId, BattleActionType.Escape, 0, actor.UnitId,
+                actor.CurrentHp, actor.CurrentHp, actor.CurrentMp, actor.CurrentMp,
+                BattleStateType.None, 0));
         }
 
         private void ExecuteAction(BattleUnit actor, BattleActionType commandType, int actionConfigId,
@@ -909,7 +951,12 @@ namespace SepCore.Battle
 
             return candidates[_random.NextInt(0, candidates.Count)];
         }
-
+        /// <summary>
+        /// 互斥结束判定（文档 5.6）：
+        /// Victory=所有敌人阵亡；AllEscaped=全体玩家逃跑且无人阵亡；
+        /// PartialEscapeDefeat=有人逃跑、其余在场玩家全部阵亡；TotalDefeat=全体阵亡且无人逃跑。
+        /// 仍有玩家在场时不结束。
+        /// </summary>
         private void CheckBattleEnd()
         {
             if (Result != null)
@@ -917,33 +964,56 @@ namespace SepCore.Battle
                 return;
             }
 
-            bool allEnemiesDefeated = true;
-            bool allPlayersDefeated = true;
+            bool anyActiveEnemy = false;
+            int activePlayers = 0;
+            int defeatedPlayers = 0;
+            int escapedPlayers = 0;
+
             foreach (BattleUnit unit in Units)
             {
-                if (IsActive(unit))
+                if (unit.Faction == BattleFactionType.Enemy)
                 {
-                    if (unit.Faction == BattleFactionType.Enemy)
+                    if (IsActive(unit))
                     {
-                        allEnemiesDefeated = false;
+                        anyActiveEnemy = true;
                     }
-                    else
-                    {
-                        allPlayersDefeated = false;
-                    }
+                }
+                else if (IsActive(unit))
+                {
+                    activePlayers++;
+                }
+                else if (unit.IsDefeated)
+                {
+                    defeatedPlayers++;
+                }
+                else if (unit.IsEscaped)
+                {
+                    escapedPlayers++;
                 }
             }
 
-            BattleOutcomeType outcome;
-            if (allEnemiesDefeated)
+            BattleOutcomeType? outcome = null;
+            if (!anyActiveEnemy)
             {
                 outcome = BattleOutcomeType.Victory;
             }
-            else if (allPlayersDefeated)
+            else if (activePlayers == 0)
             {
-                outcome = BattleOutcomeType.TotalDefeat;
+                if (escapedPlayers > 0 && defeatedPlayers == 0)
+                {
+                    outcome = BattleOutcomeType.AllEscaped;
+                }
+                else if (escapedPlayers == 0 && defeatedPlayers > 0)
+                {
+                    outcome = BattleOutcomeType.TotalDefeat;
+                }
+                else if (escapedPlayers > 0 && defeatedPlayers > 0)
+                {
+                    outcome = BattleOutcomeType.PartialEscapeDefeat;
+                }
             }
-            else
+
+            if (outcome == null)
             {
                 return;
             }
@@ -958,7 +1028,7 @@ namespace SepCore.Battle
                 }
             }
 
-            Result = new BattleResult(EncounterId, outcome, players);
+            Result = new BattleResult(EncounterId, outcome.Value, players);
             CurrentActorUnitId = 0;
         }
 

@@ -89,6 +89,15 @@ namespace SepCore.Tests
             return TestConfigFactory.Create<EnemyPartyConfig>(
                 "Id", id, "Name", "队伍" + id, "EnemyIds", new List<int>(enemyIds));
         }
+
+        /// <summary>
+        /// 只含逃跑成功率的全局配置（逃跑边界测试用）。
+        /// </summary>
+        public static GlobalConfig BattleGlobal(int escapeSuccessPermille)
+        {
+            return TestConfigFactory.Create<GlobalConfig>(
+                "EscapeSuccessPermille", escapeSuccessPermille);
+        }
     }
 
     /// <summary>
@@ -244,6 +253,11 @@ namespace SepCore.Tests
         {
             return new BattleCommand(actorUnitId, BattleActionType.Skill, actionId,
                 targetUnitIds != null ? new List<int>(targetUnitIds) : new List<int>());
+        }
+
+        public static BattleCommand Escape(int actorUnitId)
+        {
+            return new BattleCommand(actorUnitId, BattleActionType.Escape, 0, new List<int>());
         }
 
         /// <summary>

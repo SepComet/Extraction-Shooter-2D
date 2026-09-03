@@ -27,6 +27,7 @@ namespace SepCore.Battle
         private Action<BattleResult> _onCompleted;
         private Action<BattleStep> _stepListener;
         private Coroutine _autoAdvanceRoutine;
+        private BattleOutcomeType? _lastOutcome;
 
         /// <summary>
         /// 获取本局临时角色状态列表（只读）。
@@ -127,6 +128,7 @@ namespace SepCore.Battle
 
             _runtime = runtime;
             _onCompleted = onCompleted;
+            _lastOutcome = null;
             _battleActive = true;
             _explorationPaused = true;
             _timerPaused = true;
@@ -157,10 +159,7 @@ namespace SepCore.Battle
             BattleStep step = _runtime.SubmitCommand(command);
             if (step.Result != null)
             {
-                ApplyResultWriteback(step.Result);
-                Action<BattleResult> callback = _onCompleted;
-                _onCompleted = null;
-                callback?.Invoke(step.Result);
+                FinishBattle(step.Result);
             }
             else
             {
@@ -188,8 +187,9 @@ namespace SepCore.Battle
         }
 
         /// <summary>
-        /// 关闭当前战斗壳层并恢复探索更新与单局计时。
-        /// M0 调试入口专用；M5 起由战斗结果统一回写单局状态后关闭。
+        /// 关闭当前战斗壳层。非 TotalDefeat 恢复探索更新与单局计时；
+        /// TotalDefeat 后关闭只收起界面，不恢复（单局已失败）。
+        /// M5 起战斗界面在展示结果后自行调用；调试入口可手动调用。
         /// </summary>
         public void CloseBattle()
         {
@@ -208,8 +208,12 @@ namespace SepCore.Battle
             _onCompleted = null;
             StopAutoAdvance();
             _stepListener = null;
-            _explorationPaused = false;
-            _timerPaused = false;
+            if (_lastOutcome != BattleOutcomeType.TotalDefeat)
+            {
+                _explorationPaused = false;
+                _timerPaused = false;
+            }
+
             _battleActive = false;
             Log.Info("Battle closed.");
         }
@@ -301,10 +305,7 @@ namespace SepCore.Battle
                     : _runtime.AdvanceEnemyTurn();
                 if (step.Result != null)
                 {
-                    ApplyResultWriteback(step.Result);
-                    Action<BattleResult> callback = _onCompleted;
-                    _onCompleted = null;
-                    callback?.Invoke(step.Result);
+                    FinishBattle(step.Result);
                 }
 
                 _stepListener?.Invoke(step);
@@ -323,24 +324,42 @@ namespace SepCore.Battle
         }
 
         /// <summary>
-        /// 非 TotalDefeat 结果把玩家战后 HP/MP 回写到单局临时状态。
-        /// 首版保留原始战斗值；M5 按结束矩阵统一应用阵亡恢复 1/1 等规则。
+        /// 统一结束流程：回写单局状态、一次性完成回调。
+        /// 非 TotalDefeat 由战斗界面展示结果后自行关闭并恢复探索；
+        /// TotalDefeat 不回写，界面停留显示失败，由外部处理单局失败。
+        /// </summary>
+        private void FinishBattle(BattleResult result)
+        {
+            ApplyResultWriteback(result);
+            _lastOutcome = result.Outcome;
+            LogBattleResult(result);
+            Action<BattleResult> callback = _onCompleted;
+            _onCompleted = null;
+            callback?.Invoke(result);
+        }
+
+        /// <summary>
+        /// 非 TotalDefeat 结果把玩家战后 HP/MP 回写到单局临时状态，阵亡者按复活值恢复。
         /// </summary>
         private void ApplyResultWriteback(BattleResult result)
         {
-            if (result.Outcome == BattleOutcomeType.TotalDefeat)
+            GlobalConfig global = _config.GetGlobal();
+            RunPlayerStateWriteback.Apply(_players, result, global.ReviveHp, global.ReviveMp);
+        }
+
+        private static void LogBattleResult(BattleResult result)
+        {
+            Log.Info("Battle ended with outcome '{0}' (encounter '{1}').", result.Outcome, result.EncounterId);
+            if (result.Players == null)
             {
                 return;
             }
 
             foreach (BattlePlayerResult playerResult in result.Players)
             {
-                PlayerUnitState unitState = _players.Find(player => player.CharacterId == playerResult.CharacterId);
-                if (unitState != null)
-                {
-                    unitState.CurrentHp = playerResult.CurrentHp;
-                    unitState.CurrentMp = playerResult.CurrentMp;
-                }
+                Log.Info("Battle player '{0}': HP {1}, MP {2}, defeated {3}, escaped {4}.",
+                    playerResult.CharacterId, playerResult.CurrentHp, playerResult.CurrentMp,
+                    playerResult.WasDefeated, playerResult.Escaped);
             }
         }
 
@@ -353,6 +372,7 @@ namespace SepCore.Battle
             _battleActive = false;
             _runtime = null;
             _onCompleted = null;
+            _lastOutcome = null;
             StopAutoAdvance();
             _stepListener = null;
         }

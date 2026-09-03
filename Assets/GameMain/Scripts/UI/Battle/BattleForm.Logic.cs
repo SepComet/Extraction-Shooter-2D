@@ -83,7 +83,7 @@ namespace SepCore.UI
             }
 
             BattleUnitView actor = FindUnit(view, view.CurrentActorUnitId);
-            if (actor == null || actor.Faction != BattleFactionType.Player)
+            if (actor == null || actor.Faction != BattleFactionType.Player || BattleUnitViewHelper.IsStunned(actor))
             {
                 return;
             }
@@ -116,7 +116,7 @@ namespace SepCore.UI
             }
 
             BattleUnitView actor = FindUnit(view, view.CurrentActorUnitId);
-            if (actor == null || actor.Faction != BattleFactionType.Player)
+            if (actor == null || actor.Faction != BattleFactionType.Player || BattleUnitViewHelper.IsStunned(actor))
             {
                 return;
             }
@@ -288,6 +288,67 @@ namespace SepCore.UI
             }
 
             Refresh(step.View);
+            OverlayEventStates(step.Events);
+        }
+
+        /// <summary>
+        /// 按本次推进事件生成飘字：HP 变化飘数字（-12/+25），纯状态变化飘状态名。
+        /// 每个事件独立生成一个，不互斥、不被后续刷新打断，淡出后自毁。
+        /// </summary>
+        private void OverlayEventStates(IReadOnlyList<BattleEvent> events)
+        {
+            if (events == null)
+            {
+                return;
+            }
+
+            foreach (BattleEvent battleEvent in events)
+            {
+                if (battleEvent == null)
+                {
+                    continue;
+                }
+
+                int hpDelta = battleEvent.AfterHp - battleEvent.BeforeHp;
+                string text = null;
+                if (hpDelta != 0)
+                {
+                    text = hpDelta > 0 ? "+" + hpDelta : hpDelta.ToString();
+                }
+                else if (battleEvent.StatusType != BattleStateType.None)
+                {
+                    text = BattleUnitViewHelper.GetStateText(battleEvent.StatusType);
+                }
+
+                if (string.IsNullOrEmpty(text))
+                {
+                    continue;
+                }
+
+                SetCardStateText(battleEvent.TargetUnitId, text);
+            }
+        }
+
+        private void SetCardStateText(int unitId, string text)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                BattleActorCardItem card = GetPlayerCard(i);
+                if (card != null && card.gameObject.activeSelf && card.CurrentUnitId == unitId)
+                {
+                    card.SpawnFloatText(text);
+                    return;
+                }
+            }
+
+            foreach (BattleEnemySlotItem slot in _enemySlots)
+            {
+                if (slot != null && slot.CurrentUnitId == unitId)
+                {
+                    slot.SpawnFloatText(text);
+                    return;
+                }
+            }
         }
 
         private void Refresh(BattleViewState view)
@@ -481,6 +542,23 @@ namespace SepCore.UI
 
             BattleUnitView actor = FindUnit(view, view.CurrentActorUnitId);
             bool playerTurn = actor != null && actor.Faction == BattleFactionType.Player;
+            bool actorStunned = BattleUnitViewHelper.IsStunned(actor);
+
+            // 眩晕行动者不显示行动菜单：按钮禁用，提示跳过（其跳过由组件按延迟自动推进）
+            if (actorStunned)
+            {
+                View.attackButton.interactable = false;
+                View.skillButton.interactable = false;
+                View.currentActorText.text = string.Format("第 {0} 轮  {1} 被眩晕，跳过行动",
+                    view.RoundNumber, BattleUnitViewHelper.GetDisplayName(actor));
+                if (View.tipText != null)
+                {
+                    View.tipText.text = BattleUnitViewHelper.GetStateText(BattleStateType.Stun);
+                }
+
+                return;
+            }
+
             int skillActionId = playerTurn ? FindSkillActionId(view) : 0;
             BattleActionConfig skillConfig = skillActionId != 0 ? GameEntry.Luban.Get<BattleActionConfig>(skillActionId) : null;
             bool canUseSkill = playerTurn && skillConfig != null && actor.CurrentMp >= skillConfig.MpCost;

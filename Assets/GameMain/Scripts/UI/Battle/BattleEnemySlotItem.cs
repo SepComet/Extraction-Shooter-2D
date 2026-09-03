@@ -72,12 +72,28 @@ namespace SepCore.UI
                 targetButton.interactable = !unit.IsDefeated && !unit.IsEscaped;
             }
 
+            // 常驻状态文本：眩晕即时显示，其余清空；模板自身不做动画
+            if (stateText != null)
+            {
+                stateText.text = BattleUnitViewHelper.IsStunned(unit)
+                    ? BattleUnitViewHelper.GetStateText(BattleStateType.Stun)
+                    : string.Empty;
+            }
+
             if (_currentUnitId != unit.BattleUnitId)
             {
                 _currentUnitId = unit.BattleUnitId;
                 _iconVersion++;
                 ShowIconAsync(BattleUnitViewHelper.GetEnemyIconConfig(unit.ConfigId), _iconVersion).Forget();
             }
+        }
+
+        /// <summary>
+        /// 生成一个独立飘字（伤害数字、状态名）：出现后上浮淡出，不受后续刷新影响。
+        /// </summary>
+        public void SpawnFloatText(string text)
+        {
+            FloatText.Spawn(stateText, text);
         }
 
         /// <summary>

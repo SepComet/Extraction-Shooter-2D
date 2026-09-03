@@ -244,6 +244,7 @@ namespace SepCore.Battle
 
         /// <summary>
         /// 当前行动者是敌人且战斗未结束时，启动带间歇的自动推进协程。
+        /// 眩晕玩家同样自动推进：其跳过是独立一拍，UI 按延迟展示该单位行为。
         /// </summary>
         private void ScheduleAutoAdvance()
         {
@@ -252,13 +253,27 @@ namespace SepCore.Battle
                 return;
             }
 
-            if (_runtime == null || _runtime.IsCompleted || _runtime.CurrentActor == null ||
-                _runtime.CurrentActor.Faction != BattleFactionType.Enemy)
+            if (!NeedsAutoAdvance())
             {
                 return;
             }
 
             _autoAdvanceRoutine = StartCoroutine(AutoAdvanceRoutine());
+        }
+
+        private bool NeedsAutoAdvance()
+        {
+            if (_runtime == null || _runtime.IsCompleted || _runtime.CurrentActor == null)
+            {
+                return false;
+            }
+
+            if (_runtime.CurrentActor.Faction == BattleFactionType.Enemy)
+            {
+                return true;
+            }
+
+            return BattleRuntime.IsStunned(_runtime.CurrentActor);
         }
 
         private System.Collections.IEnumerator AutoAdvanceRoutine()
@@ -275,12 +290,15 @@ namespace SepCore.Battle
                 yield return null;
             }
 
-            while (_runtime != null && !_runtime.IsCompleted &&
-                   _runtime.CurrentActor != null && _runtime.CurrentActor.Faction == BattleFactionType.Enemy)
+            while (NeedsAutoAdvance())
             {
                 yield return new WaitForSeconds(advanceDelaySeconds);
 
-                BattleStep step = _runtime.AdvanceEnemyTurn();
+                // 眩晕玩家走跳过推进，其余自动行动者（敌人，含眩晕敌人）走敌人回合推进
+                BattleUnit actor = _runtime.CurrentActor;
+                BattleStep step = actor.Faction == BattleFactionType.Player
+                    ? _runtime.AdvanceStunSkip()
+                    : _runtime.AdvanceEnemyTurn();
                 if (step.Result != null)
                 {
                     ApplyResultWriteback(step.Result);

@@ -48,5 +48,34 @@ namespace SepCore.UI
             EnemyConfig config = GameEntry.Luban.Get<EnemyConfig>(enemyId);
             return config != null ? config.Icon_Ref : null;
         }
+
+        /// <summary>
+        /// 指定单位是否处于眩晕。
+        /// </summary>
+        public static bool IsStunned(BattleUnitView unit)
+        {
+            if (unit == null || unit.States == null)
+            {
+                return false;
+            }
+
+            foreach (BattleStateView state in unit.States)
+            {
+                if (state != null && state.StatusType == BattleStateType.Stun)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// 状态显示文本；首版直接使用固定文本，本地化在 M7 接入。
+        /// </summary>
+        public static string GetStateText(BattleStateType statusType)
+        {
+            return statusType == BattleStateType.Stun ? "Stun" : string.Empty;
+        }
     }
 }

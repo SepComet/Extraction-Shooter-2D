@@ -37,6 +37,8 @@ public sealed partial class GlobalConfig : Luban.BeanBase
         PauseMenuPausesRunTimer = _buf.ReadBool();
         AutoAdvanceDelayMs = _buf.ReadInt();
         RegisterFrameout = _buf.ReadInt();
+        CardStateTextDurationMs = _buf.ReadInt();
+        CardStateTextFloatPx = _buf.ReadInt();
         {int n0 = System.Math.Min(_buf.ReadSize(), _buf.Size);NewGameCharacterIds = new System.Collections.Generic.List<int>(n0);for(var i0 = 0 ; i0 < n0 ; i0++) { int _e0;  _e0 = _buf.ReadInt(); NewGameCharacterIds.Add(_e0);}}
     }
 
@@ -130,6 +132,14 @@ public sealed partial class GlobalConfig : Luban.BeanBase
     /// </summary>
     public readonly int RegisterFrameout;
     /// <summary>
+    /// 卡片状态文本动画时间
+    /// </summary>
+    public readonly int CardStateTextDurationMs;
+    /// <summary>
+    /// 卡片状态文本浮动高度
+    /// </summary>
+    public readonly int CardStateTextFloatPx;
+    /// <summary>
     /// 新存档直接拥有的角色
     /// </summary>
     public readonly System.Collections.Generic.List<int> NewGameCharacterIds;
@@ -139,6 +149,8 @@ public sealed partial class GlobalConfig : Luban.BeanBase
 
     public  void ResolveRef(Tables tables)
     {
+        
+        
         
         
         
@@ -187,6 +199,8 @@ public sealed partial class GlobalConfig : Luban.BeanBase
         + "pauseMenuPausesRunTimer:" + PauseMenuPausesRunTimer + ","
         + "autoAdvanceDelayMs:" + AutoAdvanceDelayMs + ","
         + "registerFrameout:" + RegisterFrameout + ","
+        + "cardStateTextDurationMs:" + CardStateTextDurationMs + ","
+        + "cardStateTextFloatPx:" + CardStateTextFloatPx + ","
         + "newGameCharacterIds:" + Luban.StringUtil.CollectionToString(NewGameCharacterIds) + ","
         + "}";
     }

@@ -204,6 +204,7 @@ namespace SepCore.Battle
         /// <summary>
         /// 推进当前敌人行动者的自动回合（单次行动）。
         /// 当前行动者不是敌人、没有行动者或战斗已完成时返回无变化步骤；
+        /// 眩晕敌人不执行决策，直接消费一次跳过并记为独立一拍；
         /// 与玩家指令共用同一执行管线并产生同一组 BattleEvent。
         /// </summary>
         public BattleStep AdvanceEnemyTurn()
@@ -216,8 +217,16 @@ namespace SepCore.Battle
 
             PendingEvents.Clear();
 
-            ExecuteEnemyTurn(actor);
-            MarkActed(actor.UnitId);
+            if (IsStunned(actor))
+            {
+                TryConsumeStunSkip(actor);
+            }
+            else
+            {
+                ExecuteEnemyTurn(actor);
+                MarkActed(actor.UnitId);
+            }
+
             CheckBattleEnd();
 
             if (!IsCompleted)
@@ -226,6 +235,46 @@ namespace SepCore.Battle
             }
 
             return new BattleStep(DrainEvents(), BuildViewState(), Result);
+        }
+
+        /// <summary>
+        /// 推进当前眩晕行动者的跳过（单次行动，独立一拍）。
+        /// 当前行动者未被眩晕、没有行动者或战斗已完成时返回无变化步骤；
+        /// 组件用它按延迟自动推过眩晕玩家，UI 据此展示跳过行为。
+        /// </summary>
+        public BattleStep AdvanceStunSkip()
+        {
+            BattleUnit actor = CurrentActor;
+            if (actor == null || IsCompleted || !IsStunned(actor))
+            {
+                return new BattleStep(new BattleEvent[0], BuildViewState(), null);
+            }
+
+            PendingEvents.Clear();
+
+            TryConsumeStunSkip(actor);
+            CheckBattleEnd();
+
+            if (!IsCompleted)
+            {
+                SelectNextActor();
+            }
+
+            return new BattleStep(DrainEvents(), BuildViewState(), Result);
+        }
+
+        /// <summary>
+        /// 指定单位是否处于眩晕（剩余行动机会次数大于 0）。
+        /// </summary>
+        public static bool IsStunned(BattleUnit unit)
+        {
+            if (unit == null)
+            {
+                return false;
+            }
+
+            BattleState stun = FindStatus(unit, BattleStateType.Stun);
+            return stun != null && stun.RemainingRounds > 0;
         }
 
         /// <summary>
@@ -287,6 +336,12 @@ namespace SepCore.Battle
 
             BattleUnit actor = GetUnit(command.ActorUnitId);
             if (actor == null || actor.Faction != BattleFactionType.Player || !IsActive(actor))
+            {
+                return false;
+            }
+
+            // 眩晕行动者不能提交指令，其跳过由 AdvanceStunSkip 按延迟自动推进
+            if (IsStunned(actor))
             {
                 return false;
             }
@@ -557,20 +612,8 @@ namespace SepCore.Battle
                 next = FindNextActor();
             }
 
-            // M4：眩晕单位仍获得行动机会，但轮到时立即跳过——标已行动、消耗一次持续次数并记录事件，
-            // 不把行动菜单交给 UI；持续归零时移除状态
-            while (next != null && TryConsumeStunSkip(next))
-            {
-                next = FindNextActor();
-                if (next == null)
-                {
-                    RoundNumber++;
-                    ActedUnitIds.Clear();
-                    _actedOrder.Clear();
-                    next = FindNextActor();
-                }
-            }
-
+            // 眩晕单位仍获得行动机会并停住成为当前行动者，其跳过由 AdvanceEnemyTurn/AdvanceStunSkip
+            // 消费为独立一拍（走组件延迟），UI 据此展示该单位行为；此处不直接跳过
             CurrentActorUnitId = next != null ? next.UnitId : 0;
         }
 

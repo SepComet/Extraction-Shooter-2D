@@ -115,6 +115,14 @@ public partial class TbGlobalConfig
     /// </summary>
      public int RegisterFrameout => _data.RegisterFrameout;
     /// <summary>
+    /// 卡片状态文本动画时间
+    /// </summary>
+     public int CardStateTextDurationMs => _data.CardStateTextDurationMs;
+    /// <summary>
+    /// 卡片状态文本浮动高度
+    /// </summary>
+     public int CardStateTextFloatPx => _data.CardStateTextFloatPx;
+    /// <summary>
     /// 新存档直接拥有的角色
     /// </summary>
      public System.Collections.Generic.List<int> NewGameCharacterIds => _data.NewGameCharacterIds;

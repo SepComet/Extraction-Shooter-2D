@@ -19,15 +19,22 @@ namespace SepCore.Tests
             Assert.AreEqual(1, runtime.CurrentActorUnitId);
 
             // 技能 104：SingleEnemy，Stun(1)，MpCost = 10
-            BattleStep step = runtime.SubmitCommand(TestBattle.Skill(1, 104, 2));
+            BattleStep stunStep = runtime.SubmitCommand(TestBattle.Skill(1, 104, 2));
 
-            // 施加事件 + 跳过事件；敌人本轮机会被消耗，状态移除，进入第 2 轮玩家行动
-            Assert.AreEqual(2, step.Events.Count);
-            Assert.AreEqual(BattleStateType.Stun, step.Events[0].StatusType);
-            Assert.AreEqual(1, step.Events[0].StatusRemainingRounds);
-            Assert.AreEqual(BattleStateType.Stun, step.Events[1].StatusType);
-            Assert.AreEqual(0, step.Events[1].StatusRemainingRounds);
-            Assert.AreEqual(2, step.Events[1].ActorUnitId);
+            // 眩晕敌人停住成为当前行动者，跳过尚未消费（独立一拍由敌人回合推进消费）
+            Assert.AreEqual(1, stunStep.Events.Count);
+            Assert.AreEqual(BattleStateType.Stun, stunStep.Events[0].StatusType);
+            Assert.AreEqual(1, stunStep.Events[0].StatusRemainingRounds);
+            Assert.AreEqual(2, runtime.CurrentActorUnitId);
+            Assert.AreEqual(1, runtime.RoundNumber);
+            Assert.AreEqual(1, runtime.GetUnit(2).Statuses.Count);
+
+            // 独立一拍：敌人回合推进消费跳过
+            BattleStep skipStep = runtime.AdvanceEnemyTurn();
+            Assert.AreEqual(1, skipStep.Events.Count);
+            Assert.AreEqual(BattleStateType.Stun, skipStep.Events[0].StatusType);
+            Assert.AreEqual(0, skipStep.Events[0].StatusRemainingRounds);
+            Assert.AreEqual(2, skipStep.Events[0].ActorUnitId);
 
             Assert.AreEqual(2, runtime.RoundNumber);
             Assert.AreEqual(1, runtime.CurrentActorUnitId);
@@ -57,12 +64,17 @@ namespace SepCore.Tests
             BattleRuntime runtime = TestBattle.Create1v1(player, config);
             Assert.AreEqual(2, runtime.CurrentActorUnitId);
 
-            // 第 1 轮敌人行动后，玩家眩晕已行动的敌人
+            // 第 1 轮敌人行动后，玩家眩晕已行动的敌人：敌人停住，跳过尚未消费
             runtime.AdvanceEnemyTurn();
             Assert.AreEqual(1, runtime.CurrentActorUnitId);
-            BattleStep step = runtime.SubmitCommand(TestBattle.Skill(1, 104, 2));
+            BattleStep stunStep = runtime.SubmitCommand(TestBattle.Skill(1, 104, 2));
 
-            // 敌人第 2 轮机会被跳过，回到玩家行动
+            Assert.AreEqual(1, stunStep.Events.Count);
+            Assert.AreEqual(2, runtime.CurrentActorUnitId);
+            Assert.AreEqual(2, runtime.RoundNumber); // 双方已行动，进入第 2 轮，眩晕敌人停住
+
+            // 独立一拍消费跳过：敌人第 2 轮机会被跳过，回到玩家行动
+            runtime.AdvanceEnemyTurn();
             Assert.AreEqual(2, runtime.RoundNumber);
             Assert.AreEqual(1, runtime.CurrentActorUnitId);
             Assert.IsEmpty(runtime.GetUnit(2).Statuses);
@@ -82,11 +94,13 @@ namespace SepCore.Tests
             BattleEncounter encounter = new BattleEncounter(1, 4002, false);
             BattleRuntime runtime = BattleRuntime.Create(encounter, new List<PlayerUnitState> { pA, pB }, config, new TestRandomSource());
 
-            // 第 1 轮：A 施加 Stun(3)，B 攻击后敌人跳过（剩余 2）
+            // 第 1 轮：A 施加 Stun(3)，B 攻击后敌人停住；独立一拍消费跳过（剩余 2）
             BattleStep stunStep = runtime.SubmitCommand(TestBattle.Skill(1, 106, 3));
             Assert.AreEqual(3, stunStep.Events[0].StatusRemainingRounds);
             Assert.AreEqual(2, runtime.CurrentActorUnitId);
             runtime.SubmitCommand(TestBattle.Attack(2, 3));
+            Assert.AreEqual(3, runtime.CurrentActorUnitId);
+            runtime.AdvanceEnemyTurn();
             Assert.AreEqual(2, runtime.RoundNumber);
             Assert.AreEqual(1, runtime.CurrentActorUnitId);
 
@@ -96,6 +110,8 @@ namespace SepCore.Tests
             Assert.AreEqual(2, reapplyStep.Events[0].StatusRemainingRounds);
 
             runtime.SubmitCommand(TestBattle.Attack(2, 3));
+            Assert.AreEqual(3, runtime.CurrentActorUnitId);
+            runtime.AdvanceEnemyTurn();
             Assert.AreEqual(3, runtime.RoundNumber);
             List<BattleState> statuses = runtime.GetUnit(3).Statuses;
             Assert.AreEqual(1, statuses.Count);
@@ -115,22 +131,68 @@ namespace SepCore.Tests
                 "Speed", 20, "ThreatLevelId", 1, "AiType", EnemyAiType.Random,
                 "ActionIds", new List<int> { 205 }, "DropTableId", 0));
 
-            // 敌人速度 20 > 玩家 10，敌人先手眩晕玩家
+            // 敌人速度 20 > 玩家 10，敌人先手眩晕玩家：玩家停住，跳过尚未消费
             PlayerUnitState player = TestBattle.Player(speed: 10);
             BattleRuntime runtime = TestBattle.Create1v1(player, config);
-            BattleStep step = runtime.AdvanceEnemyTurn();
+            BattleStep stunStep = runtime.AdvanceEnemyTurn();
 
-            // 施加事件 + 玩家跳过事件；进入第 2 轮敌人行动
-            Assert.AreEqual(2, step.Events.Count);
-            Assert.AreEqual(205, step.Events[0].ActionConfigId);
-            Assert.AreEqual(1, step.Events[0].TargetUnitId);
-            Assert.AreEqual(BattleStateType.Stun, step.Events[1].StatusType);
-            Assert.AreEqual(0, step.Events[1].StatusRemainingRounds);
+            Assert.AreEqual(1, stunStep.Events.Count);
+            Assert.AreEqual(205, stunStep.Events[0].ActionConfigId);
+            Assert.AreEqual(1, stunStep.Events[0].TargetUnitId);
+            Assert.AreEqual(1, runtime.CurrentActorUnitId);
+            Assert.AreEqual(1, runtime.RoundNumber);
+            Assert.AreEqual(1, runtime.GetUnit(1).Statuses.Count);
+
+            // 独立一拍：跳过推进消费玩家跳过，进入第 2 轮敌人行动
+            BattleStep skipStep = runtime.AdvanceStunSkip();
+
+            Assert.AreEqual(1, skipStep.Events.Count);
+            Assert.AreEqual(BattleStateType.Stun, skipStep.Events[0].StatusType);
+            Assert.AreEqual(0, skipStep.Events[0].StatusRemainingRounds);
 
             Assert.AreEqual(2, runtime.RoundNumber);
             Assert.AreEqual(2, runtime.CurrentActorUnitId);
             Assert.IsEmpty(runtime.GetUnit(1).Statuses);
             Assert.AreEqual(10, runtime.GetUnit(2).CurrentMp);
+        }
+
+        [Test]
+        public void AdvanceStunSkip_NotStunned_ReturnsEmptyWithoutSideEffects()
+        {
+            TestConfigProvider config = TestConfigProvider.StandardWithSkills();
+            BattleRuntime runtime = TestBattle.Create1v1(TestBattle.Player(), config);
+
+            BattleStep step = runtime.AdvanceStunSkip();
+
+            Assert.Null(step.Result);
+            Assert.IsEmpty(step.Events);
+            Assert.AreEqual(1, runtime.CurrentActorUnitId);
+            Assert.AreEqual(1, runtime.RoundNumber);
+        }
+
+        [Test]
+        public void SubmitCommand_StunnedActor_IsRejected()
+        {
+            TestConfigProvider config = TestConfigProvider.StandardWithSkills();
+            config.AddAction(TestConfigs.SkillAction(205, BattleTargetType.SingleEnemy, 0,
+                BattleStatType.None, 0, 10, BattleStatType.None, BattleStateType.Stun, 1));
+            config.AddEnemy(TestConfigFactory.Create<EnemyConfig>(
+                "Id", 3001, "Name", "眩晕敌", "MaxHp", 50, "MaxMp", 20, "Atk", 8, "Mat", 0,
+                "Speed", 20, "ThreatLevelId", 1, "AiType", EnemyAiType.Random,
+                "ActionIds", new List<int> { 205 }, "DropTableId", 0));
+
+            PlayerUnitState player = TestBattle.Player(speed: 10);
+            BattleRuntime runtime = TestBattle.Create1v1(player, config);
+            runtime.AdvanceEnemyTurn();
+            Assert.AreEqual(1, runtime.CurrentActorUnitId);
+
+            // 眩晕玩家提交指令被拒绝，不消耗 MP 与行动机会
+            BattleStep step = runtime.SubmitCommand(TestBattle.Attack(1, 2));
+
+            Assert.Null(step.Result);
+            Assert.IsEmpty(step.Events);
+            Assert.AreEqual(1, runtime.CurrentActorUnitId);
+            Assert.AreEqual(40, runtime.GetUnit(1).CurrentMp);
         }
 
         [Test]

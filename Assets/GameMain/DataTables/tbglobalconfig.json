@@ -21,6 +21,8 @@
     "pauseMenuPausesRunTimer": true,
     "autoAdvanceDelayMs": 600,
     "registerFrameout": 600,
+    "cardStateTextDurationMs": 600,
+    "cardStateTextFloatPx": 32,
     "newGameCharacterIds": [
       1001,
       1002,

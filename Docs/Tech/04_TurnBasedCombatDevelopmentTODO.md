@@ -573,7 +573,7 @@ Play Mode：通过（Debugger -> Battle/Shell 实测：
   3. 已行动目标被眩晕后跳过下一轮行动；
   4. 重复眩晕保留较长持续 Play Mode 不可观察，EditMode 已覆盖；
   5. 已行动加速不再行动配表暂无加速技能无法实测，EditMode 已覆盖）
-提交或差异：未提交（working tree 差异：ApplyEffect 速度分支与状态施加、调度眩晕跳过、
+提交或差异：commit eca2295（ApplyEffect 速度分支与状态施加、调度眩晕跳过、
   行动栏 DisplayOrder、先制首轮 8 人栏、EditMode 眩晕变速与栏顺序用例）
 剩余问题：待补三项 Play Mode 确认后关闭 M4。M5 接入逃跑与结束矩阵。
 ```

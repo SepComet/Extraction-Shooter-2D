@@ -18,7 +18,16 @@ public sealed partial class GlobalConfig : Luban.BeanBase
     {
         RunTimeLimitMs = _buf.ReadInt();
         ExtractionRevealTimeMs = _buf.ReadInt();
+        MapDefinitionPath = _buf.ReadString();
         EscapeProtectionMs = _buf.ReadInt();
+        LowThreatEnemyPartyEntity = _buf.ReadString();
+        LowThreatEnemyPartyEntity_Ref = null;
+        MiddleThreatEnemyPartyEntity = _buf.ReadString();
+        MiddleThreatEnemyPartyEntity_Ref = null;
+        HighThreatEnemyPartyEntity = _buf.ReadString();
+        HighThreatEnemyPartyEntity_Ref = null;
+        EvacuatePointEntity = _buf.ReadString();
+        EvacuatePointEntity_Ref = null;
         EnemyLoseTargetMs = _buf.ReadInt();
         EnemyFrontViewAngle = _buf.ReadInt();
         AlertMax = _buf.ReadInt();
@@ -56,9 +65,33 @@ public sealed partial class GlobalConfig : Luban.BeanBase
     /// </summary>
     public readonly int ExtractionRevealTimeMs;
     /// <summary>
+    /// 地图定义SO路径（相对于Assets/GameMain）
+    /// </summary>
+    public readonly string MapDefinitionPath;
+    /// <summary>
     /// 逃跑返回地图后的保护时间，毫秒
     /// </summary>
     public readonly int EscapeProtectionMs;
+    /// <summary>
+    /// 低威胁敌人小队实体
+    /// </summary>
+    public readonly string LowThreatEnemyPartyEntity;
+    public EntityConfig LowThreatEnemyPartyEntity_Ref;
+    /// <summary>
+    /// 中威胁敌人小队实体
+    /// </summary>
+    public readonly string MiddleThreatEnemyPartyEntity;
+    public EntityConfig MiddleThreatEnemyPartyEntity_Ref;
+    /// <summary>
+    /// 高威胁敌人小队实体
+    /// </summary>
+    public readonly string HighThreatEnemyPartyEntity;
+    public EntityConfig HighThreatEnemyPartyEntity_Ref;
+    /// <summary>
+    /// 撤离点实体
+    /// </summary>
+    public readonly string EvacuatePointEntity;
+    public EntityConfig EvacuatePointEntity_Ref;
     /// <summary>
     /// 敌人丢失目标后返回巡逻的时间，毫秒
     /// </summary>
@@ -153,6 +186,11 @@ public sealed partial class GlobalConfig : Luban.BeanBase
         
         
         
+        LowThreatEnemyPartyEntity_Ref = tables.TbEntityConfig.GetOrDefault(LowThreatEnemyPartyEntity);
+        MiddleThreatEnemyPartyEntity_Ref = tables.TbEntityConfig.GetOrDefault(MiddleThreatEnemyPartyEntity);
+        HighThreatEnemyPartyEntity_Ref = tables.TbEntityConfig.GetOrDefault(HighThreatEnemyPartyEntity);
+        EvacuatePointEntity_Ref = tables.TbEntityConfig.GetOrDefault(EvacuatePointEntity);
+        
         
         
         
@@ -180,7 +218,12 @@ public sealed partial class GlobalConfig : Luban.BeanBase
         return "{ "
         + "runTimeLimitMs:" + RunTimeLimitMs + ","
         + "extractionRevealTimeMs:" + ExtractionRevealTimeMs + ","
+        + "mapDefinitionPath:" + MapDefinitionPath + ","
         + "escapeProtectionMs:" + EscapeProtectionMs + ","
+        + "lowThreatEnemyPartyEntity:" + LowThreatEnemyPartyEntity + ","
+        + "middleThreatEnemyPartyEntity:" + MiddleThreatEnemyPartyEntity + ","
+        + "highThreatEnemyPartyEntity:" + HighThreatEnemyPartyEntity + ","
+        + "evacuatePointEntity:" + EvacuatePointEntity + ","
         + "enemyLoseTargetMs:" + EnemyLoseTargetMs + ","
         + "enemyFrontViewAngle:" + EnemyFrontViewAngle + ","
         + "alertMax:" + AlertMax + ","

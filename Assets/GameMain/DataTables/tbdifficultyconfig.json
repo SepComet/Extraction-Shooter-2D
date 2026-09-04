@@ -4,12 +4,20 @@
     "name": "难度1",
     "enemyParties": [
       {
-        "partyId": 4001,
-        "weight": 70
+        "threat": 0,
+        "weight": 30
       },
       {
-        "partyId": 4002,
-        "weight": 30
+        "threat": 1,
+        "weight": 50
+      },
+      {
+        "threat": 2,
+        "weight": 15
+      },
+      {
+        "threat": 3,
+        "weight": 5
       }
     ]
   },
@@ -18,12 +26,20 @@
     "name": "难度2",
     "enemyParties": [
       {
-        "partyId": 4002,
+        "threat": 0,
+        "weight": 10
+      },
+      {
+        "threat": 1,
         "weight": 50
       },
       {
-        "partyId": 4003,
-        "weight": 50
+        "threat": 2,
+        "weight": 25
+      },
+      {
+        "threat": 3,
+        "weight": 15
       }
     ]
   },
@@ -32,12 +48,20 @@
     "name": "难度3",
     "enemyParties": [
       {
-        "partyId": 4003,
-        "weight": 50
+        "threat": 0,
+        "weight": 0
       },
       {
-        "partyId": 4004,
-        "weight": 50
+        "threat": 1,
+        "weight": 40
+      },
+      {
+        "threat": 2,
+        "weight": 30
+      },
+      {
+        "threat": 3,
+        "weight": 30
       }
     ]
   }

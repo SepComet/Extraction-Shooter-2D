@@ -40,14 +40,14 @@ namespace SepCore.Entity
                 return;
             }
 
-            EntityConfig entityConfig = GameEntry.Luban.Get<EntityConfig>(data.TypeId);
+            EntityConfig entityConfig = GameEntry.Luban.Get<EntityConfig>(data.AssetName);
             if (entityConfig == null)
             {
-                Log.Warning("Can not load entity id '{0}' from data table.", data.TypeId.ToString());
+                Log.Warning("Can not load entity assetName '{0}' from data table.", data.AssetName);
                 return;
             }
 
-            entityComponent.ShowEntity(data.Id, typeof(T), AssetUtility.GetEntityAsset(entityConfig.AssetName), group,
+            entityComponent.ShowEntity(data.Id, typeof(T), AssetUtility.GetEntityAsset(entityConfig.PrefabPath), group,
                 priority, data);
         }
 
@@ -60,14 +60,14 @@ namespace SepCore.Entity
                 return;
             }
 
-            EntityConfig entityConfig = GameEntry.Luban.Get<EntityConfig>(data.TypeId);
+            EntityConfig entityConfig = GameEntry.Luban.Get<EntityConfig>(data.AssetName);
             if (entityConfig == null)
             {
-                Log.Warning("Can not load entity id '{0}' from data table.", data.TypeId.ToString());
+                Log.Warning("Can not load entity assetName '{0}' from data table.", data.AssetName);
                 return;
             }
 
-            entityComponent.ShowEntity(data.Id, logicType, AssetUtility.GetEntityAsset(entityConfig.AssetName), entityGroup,
+            entityComponent.ShowEntity(data.Id, logicType, AssetUtility.GetEntityAsset(entityConfig.PrefabPath), entityGroup,
                 priority, data);
         }
 

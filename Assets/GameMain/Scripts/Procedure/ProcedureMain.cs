@@ -1,10 +1,69 @@
 using GameFramework.Fsm;
 using GameFramework.Procedure;
+using SepCore.Definition;
+using SepCore.Exploration;
+using UnityEngine;
+using UnityGameFramework.Runtime;
 
 namespace SepCore.Procedure
 {
+    /// <summary>
+    /// 主玩法流程（SceneType.Main 场景）。
+    /// 内部维护分层状态机，统一编排：
+    /// 1. MainMapBuildingState（地图构建）
+    /// 2. MainExplorationBattleState（探索与战斗循环）
+    /// 3. MainSettlementState（撤离结算）
+    /// </summary>
     public class ProcedureMain : ProcedureBase
     {
+        private IFsm<IProcedureManager> _procedureOwner;
+        private IFsm<ProcedureMain> _fsm;
+
+        /// <summary>
+        /// 本局地图构建结果。
+        /// </summary>
+        public MapBuildResult BuildResult { get; set; }
+
+        /// <summary>
+        /// 本局开放的撤离点世界坐标。
+        /// </summary>
+        public Vector2 ExtractionPoint { get; set; }
+
+        /// <summary>
+        /// 本局玩家出生点世界坐标。
+        /// </summary>
+        public Vector2 PlayerSpawnPoint { get; set; }
+
+        /// <summary>
+        /// 撤离点是否已被揭示并标记到小地图上（20分钟达到时揭示）。
+        /// </summary>
+        public bool IsExtractionPointRevealed { get; set; }
+
+        /// <summary>
+        /// 本局单局难度。
+        /// </summary>
+        public DifficultyTier Difficulty { get; set; }
+
+        /// <summary>
+        /// 本局进入场景时间（Unix 毫秒现实时间戳）。
+        /// </summary>
+        public long RunStartTimeUtcMs { get; set; }
+
+        /// <summary>
+        /// 待处理的单局结算结果。
+        /// </summary>
+        public RunResultType? PendingOutcome { get; private set; }
+
+        /// <summary>
+        /// 结算后是否自动返回大厅菜单（无结算 UI 时默认 true）。
+        /// </summary>
+        public bool AutoReturnToMenu { get; set; } = true;
+
+        /// <summary>
+        /// 当前子状态机实例。
+        /// </summary>
+        public IFsm<ProcedureMain> Fsm => _fsm;
+
         protected override void OnInit(IFsm<IProcedureManager> procedureOwner)
         {
             base.OnInit(procedureOwner);
@@ -13,6 +72,29 @@ namespace SepCore.Procedure
         protected override void OnEnter(IFsm<IProcedureManager> procedureOwner)
         {
             base.OnEnter(procedureOwner);
+            Log.Info("[ProcedureMain] Procedure entered.");
+
+            _procedureOwner = procedureOwner;
+            BuildResult = null;
+            ExtractionPoint = Vector2.zero;
+            PlayerSpawnPoint = Vector2.zero;
+            IsExtractionPointRevealed = false;
+            PendingOutcome = null;
+            RunStartTimeUtcMs = 0;
+
+            Difficulty = DifficultyTier.Tier1;
+            if (GameEntry.Save.Data?.loadout != null)
+            {
+                Difficulty = GameEntry.Save.Data.loadout.difficultyId;
+            }
+
+            // 创建并启动子状态机
+            _fsm = GameEntry.Fsm.CreateFsm("MainProcedureFsm", this,
+                new MainMapBuildingState(),
+                new MainExplorationBattleState(),
+                new MainSettlementState());
+
+            _fsm.Start<MainMapBuildingState>();
         }
 
         protected override void OnUpdate(IFsm<IProcedureManager> procedureOwner, float elapseSeconds,
@@ -23,12 +105,71 @@ namespace SepCore.Procedure
 
         protected override void OnLeave(IFsm<IProcedureManager> procedureOwner, bool isShutdown)
         {
+            if (_fsm != null)
+            {
+                GameEntry.Fsm.DestroyFsm(_fsm);
+                _fsm = null;
+            }
+
+            _procedureOwner = null;
+            BuildResult = null;
+            PendingOutcome = null;
+
+            Log.Info("[ProcedureMain] Procedure left.");
             base.OnLeave(procedureOwner, isShutdown);
         }
 
         protected override void OnDestroy(IFsm<IProcedureManager> procedureOwner)
         {
             base.OnDestroy(procedureOwner);
+        }
+
+        /// <summary>
+        /// 触发单局结算，设置结果并在下一个生命周期切换至结算状态。
+        /// </summary>
+        public void TriggerSettlement(RunResultType outcome)
+        {
+            PendingOutcome = outcome;
+        }
+
+        /// <summary>
+        /// 揭示本局开放的撤离点（达到 20 分钟时触发）。
+        /// </summary>
+        public void RevealExtractionPoint()
+        {
+            if (IsExtractionPointRevealed)
+            {
+                return;
+            }
+
+            IsExtractionPointRevealed = true;
+            Log.Info("[ProcedureMain] Extraction point revealed at ({0}, {1}).",
+                ExtractionPoint.x, ExtractionPoint.y);
+        }
+
+        /// <summary>
+        /// 设置暂停菜单状态（暂停或恢复单局探索计时）。
+        /// </summary>
+        public void SetPauseMenuPaused(bool paused)
+        {
+            GameEntry.TurnBattle.SetTimerPaused(paused);
+            Log.Info("[ProcedureMain] Pause menu timer pause set to: {0}.", paused);
+        }
+
+        /// <summary>
+        /// 退出单局场景，切换至大厅流程。
+        /// </summary>
+        public void ReturnToMenu()
+        {
+            if (_procedureOwner == null)
+            {
+                Log.Error("[ProcedureMain] Procedure owner is invalid. Cannot return to menu.");
+                return;
+            }
+
+            Log.Info("[ProcedureMain] Returning to Menu procedure...");
+            _procedureOwner.SetData<VarInt32>("NextSceneId", (int)SceneType.Menu);
+            ChangeState<ProcedureChangeScene>(_procedureOwner);
         }
     }
 }

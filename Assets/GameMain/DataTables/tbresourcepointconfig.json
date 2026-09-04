@@ -33,7 +33,8 @@
         "goldWeight": 15,
         "redWeight": 10
       }
-    ]
+    ],
+    "prefab": "ResourcePoint1"
   },
   {
     "id": 2,
@@ -69,7 +70,8 @@
         "goldWeight": 13,
         "redWeight": 5
       }
-    ]
+    ],
+    "prefab": "ResourcePoint2"
   },
   {
     "id": 3,
@@ -105,7 +107,8 @@
         "goldWeight": 20,
         "redWeight": 10
       }
-    ]
+    ],
+    "prefab": "ResourcePoint3"
   },
   {
     "id": 4,
@@ -141,7 +144,8 @@
         "goldWeight": 20,
         "redWeight": 10
       }
-    ]
+    ],
+    "prefab": "ResourcePoint4"
   },
   {
     "id": 5,
@@ -177,6 +181,7 @@
         "goldWeight": 25,
         "redWeight": 20
       }
-    ]
+    ],
+    "prefab": "ResourcePoint5"
   }
 ]

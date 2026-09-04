@@ -19,6 +19,8 @@ public sealed partial class ResourcePointConfig : Luban.BeanBase
         Id = _buf.ReadInt();
         Name = _buf.ReadString();
         {int n0 = System.Math.Min(_buf.ReadSize(), _buf.Size);LootConfigs = new System.Collections.Generic.List<LootGenerationConfig>(n0);for(var i0 = 0 ; i0 < n0 ; i0++) { LootGenerationConfig _e0;  _e0 = LootGenerationConfig.DeserializeLootGenerationConfig(_buf); LootConfigs.Add(_e0);}}
+        Prefab = _buf.ReadString();
+        Prefab_Ref = null;
     }
 
     public static ResourcePointConfig DeserializeResourcePointConfig(ByteBuf _buf)
@@ -35,6 +37,11 @@ public sealed partial class ResourcePointConfig : Luban.BeanBase
     /// </summary>
     public readonly string Name;
     public readonly System.Collections.Generic.List<LootGenerationConfig> LootConfigs;
+    /// <summary>
+    /// 实体
+    /// </summary>
+    public readonly string Prefab;
+    public EntityConfig Prefab_Ref;
    
     public const int __ID__ = -1147760668;
     public override int GetTypeId() => __ID__;
@@ -44,6 +51,7 @@ public sealed partial class ResourcePointConfig : Luban.BeanBase
         
         
         foreach (var _e in LootConfigs) { _e?.ResolveRef(tables); }
+        Prefab_Ref = tables.TbEntityConfig.GetOrDefault(Prefab);
     }
 
     public override string ToString()
@@ -52,6 +60,7 @@ public sealed partial class ResourcePointConfig : Luban.BeanBase
         + "id:" + Id + ","
         + "name:" + Name + ","
         + "lootConfigs:" + Luban.StringUtil.CollectionToString(LootConfigs) + ","
+        + "prefab:" + Prefab + ","
         + "}";
     }
 }

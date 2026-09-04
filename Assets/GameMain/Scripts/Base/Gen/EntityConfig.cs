@@ -16,8 +16,8 @@ public sealed partial class EntityConfig : Luban.BeanBase
 {
     public EntityConfig(ByteBuf _buf) 
     {
-        Id = _buf.ReadInt();
         AssetName = _buf.ReadString();
+        PrefabPath = _buf.ReadString();
     }
 
     public static EntityConfig DeserializeEntityConfig(ByteBuf _buf)
@@ -26,13 +26,13 @@ public sealed partial class EntityConfig : Luban.BeanBase
     }
 
     /// <summary>
-    /// 实体编号
-    /// </summary>
-    public readonly int Id;
-    /// <summary>
     /// 资源名称
     /// </summary>
     public readonly string AssetName;
+    /// <summary>
+    /// 资源路径（相较于Assets/GameMain/Entities）
+    /// </summary>
+    public readonly string PrefabPath;
    
     public const int __ID__ = 436072741;
     public override int GetTypeId() => __ID__;
@@ -46,8 +46,8 @@ public sealed partial class EntityConfig : Luban.BeanBase
     public override string ToString()
     {
         return "{ "
-        + "id:" + Id + ","
         + "assetName:" + AssetName + ","
+        + "prefabPath:" + PrefabPath + ","
         + "}";
     }
 }

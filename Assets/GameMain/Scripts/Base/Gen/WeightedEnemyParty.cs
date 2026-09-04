@@ -19,7 +19,7 @@ public sealed partial class WeightedEnemyParty : Luban.BeanBase
 {
     public WeightedEnemyParty(ByteBuf _buf) 
     {
-        PartyId = _buf.ReadInt();
+        Threat = (EnemyPartyThreatLevel)_buf.ReadInt();
         Weight = _buf.ReadInt();
     }
 
@@ -29,9 +29,9 @@ public sealed partial class WeightedEnemyParty : Luban.BeanBase
     }
 
     /// <summary>
-    /// 敌人队伍配置ID
+    /// 刷新的敌人威胁度
     /// </summary>
-    public readonly int PartyId;
+    public readonly EnemyPartyThreatLevel Threat;
     /// <summary>
     /// 刷新权重
     /// </summary>
@@ -49,7 +49,7 @@ public sealed partial class WeightedEnemyParty : Luban.BeanBase
     public override string ToString()
     {
         return "{ "
-        + "partyId:" + PartyId + ","
+        + "threat:" + Threat + ","
         + "weight:" + Weight + ","
         + "}";
     }

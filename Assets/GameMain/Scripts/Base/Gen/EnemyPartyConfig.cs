@@ -19,6 +19,8 @@ public sealed partial class EnemyPartyConfig : Luban.BeanBase
         Id = _buf.ReadInt();
         Name = _buf.ReadString();
         {int n0 = System.Math.Min(_buf.ReadSize(), _buf.Size);EnemyIds = new System.Collections.Generic.List<int>(n0);for(var i0 = 0 ; i0 < n0 ; i0++) { int _e0;  _e0 = _buf.ReadInt(); EnemyIds.Add(_e0);}}
+        ThreatConfig = (EnemyPartyThreatLevel)_buf.ReadInt();
+        ThreatConfig_Ref = null;
     }
 
     public static EnemyPartyConfig DeserializeEnemyPartyConfig(ByteBuf _buf)
@@ -38,6 +40,11 @@ public sealed partial class EnemyPartyConfig : Luban.BeanBase
     /// 按顺序进入战斗的敌人ID，最多4个
     /// </summary>
     public readonly System.Collections.Generic.List<int> EnemyIds;
+    /// <summary>
+    /// 威胁等级
+    /// </summary>
+    public readonly EnemyPartyThreatLevel ThreatConfig;
+    public ThreatLevelConfig ThreatConfig_Ref;
    
     public const int __ID__ = 1595792704;
     public override int GetTypeId() => __ID__;
@@ -47,6 +54,7 @@ public sealed partial class EnemyPartyConfig : Luban.BeanBase
         
         
         
+        ThreatConfig_Ref = tables.TbThreatLevelConfig.GetOrDefault(ThreatConfig);
     }
 
     public override string ToString()
@@ -55,6 +63,7 @@ public sealed partial class EnemyPartyConfig : Luban.BeanBase
         + "id:" + Id + ","
         + "name:" + Name + ","
         + "enemyIds:" + Luban.StringUtil.CollectionToString(EnemyIds) + ","
+        + "threatConfig:" + ThreatConfig + ","
         + "}";
     }
 }

@@ -61,7 +61,7 @@ namespace SepCore.CustomComponent
                 },
                 {
                     typeof(ThreatLevelConfig),
-                    Accessor(tables => id => tables.TbThreatLevelConfig.GetOrDefault(id),
+                    Accessor(tables => id => tables.TbThreatLevelConfig.GetOrDefault((EnemyPartyThreatLevel)id),
                         tables => tables.TbThreatLevelConfig.DataList)
                 },
                 {
@@ -101,7 +101,7 @@ namespace SepCore.CustomComponent
                 },
                 {
                     typeof(EntityConfig),
-                    Accessor(tables => id => tables.TbEntityConfig.GetOrDefault(id),
+                    StringAccessor(tables => key => tables.TbEntityConfig.GetOrDefault(key),
                         tables => tables.TbEntityConfig.DataList)
                 },
                 {

@@ -39,9 +39,29 @@ public partial class TbGlobalConfig
     /// </summary>
      public int ExtractionRevealTimeMs => _data.ExtractionRevealTimeMs;
     /// <summary>
+    /// 地图定义SO路径（相对于Assets/GameMain）
+    /// </summary>
+     public string MapDefinitionPath => _data.MapDefinitionPath;
+    /// <summary>
     /// 逃跑返回地图后的保护时间，毫秒
     /// </summary>
      public int EscapeProtectionMs => _data.EscapeProtectionMs;
+    /// <summary>
+    /// 低威胁敌人小队实体
+    /// </summary>
+     public string LowThreatEnemyPartyEntity => _data.LowThreatEnemyPartyEntity;
+    /// <summary>
+    /// 中威胁敌人小队实体
+    /// </summary>
+     public string MiddleThreatEnemyPartyEntity => _data.MiddleThreatEnemyPartyEntity;
+    /// <summary>
+    /// 高威胁敌人小队实体
+    /// </summary>
+     public string HighThreatEnemyPartyEntity => _data.HighThreatEnemyPartyEntity;
+    /// <summary>
+    /// 撤离点实体
+    /// </summary>
+     public string EvacuatePointEntity => _data.EvacuatePointEntity;
     /// <summary>
     /// 敌人丢失目标后返回巡逻的时间，毫秒
     /// </summary>

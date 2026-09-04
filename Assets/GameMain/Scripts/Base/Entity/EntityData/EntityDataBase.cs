@@ -13,33 +13,29 @@ namespace SepCore.Entity
     [Serializable]
     public abstract class EntityDataBase
     {
-        [SerializeField]
-        private int m_Id = 0;
+        [SerializeField] private string m_AssetName = string.Empty; 
+        
+        [SerializeField] private int m_Id = 0;
 
-        [SerializeField]
-        private int m_TypeId = 0;
+        [SerializeField] private Vector3 m_Position = Vector3.zero;
 
-        [SerializeField]
-        private Vector3 m_Position = Vector3.zero;
+        [SerializeField] private Quaternion m_Rotation = Quaternion.identity;
 
-        [SerializeField]
-        private Quaternion m_Rotation = Quaternion.identity;
-
-        public EntityDataBase(int entityId, int typeId)
+        public EntityDataBase(string assetName, int entityId)
         {
+            m_AssetName = assetName;
             m_Id = entityId;
-            m_TypeId = typeId;
         }
 
+        /// <summary>
+        /// 实体名称
+        /// </summary>
+        public string AssetName => m_AssetName;
+        
         /// <summary>
         /// 实体编号。
         /// </summary>
         public int Id => m_Id;
-
-        /// <summary>
-        /// 实体类型编号。
-        /// </summary>
-        public int TypeId => m_TypeId;
 
         /// <summary>
         /// 实体位置。

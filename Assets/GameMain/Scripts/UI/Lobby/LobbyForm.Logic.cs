@@ -135,7 +135,15 @@ namespace SepCore.UI
                 return;
             }
 
-            form.View.squadForm.RefreshCharacterList(save.characters);
+            if (form.View.squadForm != null)
+            {
+                form.View.squadForm.RefreshCharacterList(save.characters);
+            }
+
+            if (form.View.deploymentForm != null)
+            {
+                form.View.deploymentForm.Refresh();
+            }
         }
 
         private void RefreshWarehouse()

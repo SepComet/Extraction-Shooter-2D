@@ -4,7 +4,8 @@
     "name": "单敌人",
     "enemyIds": [
       3001
-    ]
+    ],
+    "threatConfig": 1
   },
   {
     "id": 4002,
@@ -12,7 +13,8 @@
     "enemyIds": [
       3001,
       3001
-    ]
+    ],
+    "threatConfig": 1
   },
   {
     "id": 4003,
@@ -20,7 +22,8 @@
     "enemyIds": [
       3001,
       3002
-    ]
+    ],
+    "threatConfig": 2
   },
   {
     "id": 4004,
@@ -28,7 +31,8 @@
     "enemyIds": [
       3002,
       3003
-    ]
+    ],
+    "threatConfig": 3
   },
   {
     "id": 4005,
@@ -38,6 +42,7 @@
       3002,
       3001,
       3002
-    ]
+    ],
+    "threatConfig": 3
   }
 ]

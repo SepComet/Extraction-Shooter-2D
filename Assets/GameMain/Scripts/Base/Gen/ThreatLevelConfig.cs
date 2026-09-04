@@ -16,7 +16,7 @@ public sealed partial class ThreatLevelConfig : Luban.BeanBase
 {
     public ThreatLevelConfig(ByteBuf _buf) 
     {
-        Id = _buf.ReadInt();
+        Id = (EnemyPartyThreatLevel)_buf.ReadInt();
         Name = _buf.ReadString();
         MaxViewDistanceMilli = _buf.ReadInt();
         AlertDecayPerSecondMilli = _buf.ReadInt();
@@ -31,7 +31,7 @@ public sealed partial class ThreatLevelConfig : Luban.BeanBase
     /// <summary>
     /// 威胁等级ID
     /// </summary>
-    public readonly int Id;
+    public readonly EnemyPartyThreatLevel Id;
     /// <summary>
     /// 显示名
     /// </summary>

@@ -1,34 +1,42 @@
 [
   {
-    "id": 10000,
-    "assetName": "PlayerShip"
+    "assetName": "ResourcePoint1",
+    "prefabPath": "ResourcePoint/ResourcePoint1.prefab"
   },
   {
-    "id": 10001,
-    "assetName": "EnemyShip"
+    "assetName": "ResourcePoint2",
+    "prefabPath": "ResourcePoint/ResourcePoint2.prefab"
   },
   {
-    "id": 20000,
-    "assetName": "PlayerEngine"
+    "assetName": "ResourcePoint3",
+    "prefabPath": "ResourcePoint/ResourcePoint3.prefab"
   },
   {
-    "id": 20001,
-    "assetName": "EnemyEngine"
+    "assetName": "ResourcePoint4",
+    "prefabPath": "ResourcePoint/ResourcePoint4.prefab"
   },
   {
-    "id": 30000,
-    "assetName": "DefaultWeapon"
+    "assetName": "ResourcePoint5",
+    "prefabPath": "ResourcePoint/ResourcePoint5.prefab"
   },
   {
-    "id": 40000,
-    "assetName": "DefaultArmor"
+    "assetName": "EnemyPartyLowThreat",
+    "prefabPath": "EnemyUnit/EnemyPartyLowThreat.prefab"
   },
   {
-    "id": 50000,
-    "assetName": "PlayerBolt"
+    "assetName": "EnemyPartyMiddleThreat",
+    "prefabPath": "EnemyUnit/EnemyPartyMiddleThreat.prefab"
   },
   {
-    "id": 50001,
-    "assetName": "EnemyBolt"
+    "assetName": "EnemyPartyHighThreat",
+    "prefabPath": "EnemyUnit/EnemyPartyHighThreat.prefab"
+  },
+  {
+    "assetName": "Character1",
+    "prefabPath": "Character/Character1.prefab"
+  },
+  {
+    "assetName": "EvacuatePoint",
+    "prefabPath": "Map/EvacuatePoint.prefab"
   }
 ]

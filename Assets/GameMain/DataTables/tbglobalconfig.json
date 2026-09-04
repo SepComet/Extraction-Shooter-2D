@@ -2,7 +2,12 @@
   {
     "runTimeLimitMs": 1500000,
     "extractionRevealTimeMs": 1200000,
+    "mapDefinitionPath": "MapDefinition.asset",
     "escapeProtectionMs": 2000,
+    "lowThreatEnemyPartyEntity": "EnemyPartyLowThreat",
+    "middleThreatEnemyPartyEntity": "EnemyPartyMiddleThreat",
+    "highThreatEnemyPartyEntity": "EnemyPartyHighThreat",
+    "evacuatePointEntity": "EvacuatePoint",
     "enemyLoseTargetMs": 3000,
     "enemyFrontViewAngle": 180,
     "alertMax": 1000,

@@ -10,6 +10,11 @@ namespace SepCore.Utility
 {
     public static class AssetUtility
     {
+        public static string GetGameMainAsset(string assetName)
+        {
+            return GameFramework.Utility.Text.Format("Assets/GameMain/{0}", assetName);
+        }
+
         public static string GetConfigAsset(string assetName, bool fromBytes)
         {
             return GameFramework.Utility.Text.Format("Assets/GameMain/Configs/{0}.{1}", assetName,
@@ -47,9 +52,9 @@ namespace SepCore.Utility
             return GameFramework.Utility.Text.Format("Assets/GameMain/Sounds/{0}.wav", assetName);
         }
 
-        public static string GetEntityAsset(string assetName)
+        public static string GetEntityAsset(string assetPath)
         {
-            return GameFramework.Utility.Text.Format("Assets/GameMain/Entities/{0}.prefab", assetName);
+            return GameFramework.Utility.Text.Format("Assets/GameMain/Entities/{0}", assetPath);
         }
 
         public static string GetUIFormAsset(string assetName)

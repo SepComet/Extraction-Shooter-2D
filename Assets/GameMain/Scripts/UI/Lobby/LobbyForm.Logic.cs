@@ -75,9 +75,9 @@ namespace SepCore.UI
             bool showCombatReadiness = page == LobbyPage.CombatReadiness;
             bool showWarehouse = page == LobbyPage.Warehouse;
 
-            if (View.combatRandinessForm != null)
+            if (View.combatReadinessForm != null)
             {
-                View.combatRandinessForm.gameObject.SetActive(showCombatReadiness);
+                View.combatReadinessForm.gameObject.SetActive(showCombatReadiness);
             }
 
             if (View.warehouseForm != null)
@@ -121,7 +121,7 @@ namespace SepCore.UI
 
         private void RefreshCombatReadiness()
         {
-            CombatReadinessForm form = View.combatRandinessForm;
+            CombatReadinessForm form = View.combatReadinessForm;
             if (form == null)
             {
                 Log.Warning("LobbyForm combat readiness form is not configured.");

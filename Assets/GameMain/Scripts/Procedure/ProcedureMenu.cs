@@ -2,6 +2,8 @@ using GameFramework.Fsm;
 using GameFramework.Procedure;
 using SepCore.Definition;
 using SepCore.UI;
+using UnityEngine;
+using UnityGameFramework.Runtime;
 
 namespace SepCore.Procedure
 {
@@ -17,6 +19,7 @@ namespace SepCore.Procedure
             base.OnEnter(procedureOwner);
 
             GameEntry.UI.OpenUIForm(UIFormType.LobbyForm);
+            Log.Info(Application.persistentDataPath);
         }
 
         protected override void OnUpdate(IFsm<IProcedureManager> procedureOwner, float elapseSeconds,

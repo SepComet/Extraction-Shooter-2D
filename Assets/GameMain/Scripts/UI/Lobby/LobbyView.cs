@@ -10,7 +10,7 @@ namespace SepCore.UI
         [SerializeField] public global::UnityEngine.RectTransform selectionMarkerObject;
         [SerializeField] public global::UnityEngine.UI.Toggle warehouseToggle;
         [SerializeField] public global::UnityEngine.UI.Toggle loadoutToggle;
-        [SerializeField] public global::SepCore.UI.CombatReadinessForm combatRandinessForm;
+        [SerializeField] public global::SepCore.UI.CombatReadinessForm combatReadinessForm;
         [SerializeField] public global::SepCore.UI.WarehouseForm warehouseForm;
     }
 }

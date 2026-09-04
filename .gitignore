@@ -88,3 +88,6 @@ Thumbs.db
 /Assets/Scripts/Gen.meta
 
 /Bundle/
+
+/Assets/StreamingAssets/*.dat
+/Assets/StreamingAssets/*.dat.meta

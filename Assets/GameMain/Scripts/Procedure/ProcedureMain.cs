@@ -2,6 +2,7 @@ using GameFramework.Fsm;
 using GameFramework.Procedure;
 using SepCore.Definition;
 using SepCore.Exploration;
+using SepCore.UI;
 using UnityEngine;
 using UnityGameFramework.Runtime;
 
@@ -115,6 +116,11 @@ namespace SepCore.Procedure
             BuildResult = null;
             PendingOutcome = null;
 
+            if (GameEntry.UI != null)
+            {
+                GameEntry.UI.CloseAllLoadedUIForms();
+            }
+
             Log.Info("[ProcedureMain] Procedure left.");
             base.OnLeave(procedureOwner, isShutdown);
         }
@@ -122,6 +128,32 @@ namespace SepCore.Procedure
         protected override void OnDestroy(IFsm<IProcedureManager> procedureOwner)
         {
             base.OnDestroy(procedureOwner);
+        }
+
+        /// <summary>
+        /// 打开虚拟摇杆与交互界面（JoystickForm）。
+        /// </summary>
+        public void OpenJoystickForm()
+        {
+            if (GameEntry.UI != null)
+            {
+                GameEntry.UI.OpenUIForm(UIFormType.JoystickForm);
+            }
+        }
+
+        /// <summary>
+        /// 关闭虚拟摇杆与交互界面（JoystickForm）。
+        /// </summary>
+        public void CloseJoystickForm()
+        {
+            if (GameEntry.UI != null)
+            {
+                UGuiForm joystickForm = GameEntry.UI.GetUIForm(UIFormType.JoystickForm);
+                if (joystickForm != null)
+                {
+                    GameEntry.UI.CloseUIForm(joystickForm);
+                }
+            }
         }
 
         /// <summary>

@@ -20,6 +20,8 @@ namespace SepCore.Procedure
             {
                 fsm.Owner.RunStartTimeUtcMs = System.DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             }
+
+            fsm.Owner.OpenJoystickForm();
         }
 
         protected override void OnUpdate(IFsm<ProcedureMain> fsm, float elapseSeconds, float realElapseSeconds)
@@ -63,6 +65,7 @@ namespace SepCore.Procedure
 
         protected override void OnLeave(IFsm<ProcedureMain> fsm, bool isShutdown)
         {
+            fsm.Owner.CloseJoystickForm();
             base.OnLeave(fsm, isShutdown);
         }
     }

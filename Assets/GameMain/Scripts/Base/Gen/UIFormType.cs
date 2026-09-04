@@ -40,6 +40,10 @@ namespace SepCore.Definition
         /// 战斗界面
         /// </summary>
         BattleForm = 103,
+        /// <summary>
+        /// 输入面板
+        /// </summary>
+        JoystickForm = 104,
     }
 
 } 

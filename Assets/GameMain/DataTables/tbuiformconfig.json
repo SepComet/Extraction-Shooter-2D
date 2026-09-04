@@ -30,8 +30,15 @@
   {
     "id": 103,
     "assetName": "BattleForm",
-    "UIGroupName": "Default",
+    "UIGroupName": "Battle",
     "allowMultiInstance": false,
     "pauseCoveredUIForm": true
+  },
+  {
+    "id": 104,
+    "assetName": "JoystickForm",
+    "UIGroupName": "Input",
+    "allowMultiInstance": false,
+    "pauseCoveredUIForm": false
   }
 ]

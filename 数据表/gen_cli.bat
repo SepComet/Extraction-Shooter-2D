@@ -11,21 +11,18 @@ set "CUSTOM_TEMPLATE_DIR=%SCRIPT_DIR%CustomTemplates"
 
 if not exist "%PATH_FILE%" (
     echo [ERROR] Missing output path file: %PATH_FILE%
-    popd
-    exit /b 1
+    goto :ON_ERROR
 )
 
 if not exist "%LUBAN_DLL%" (
     echo [ERROR] Missing Luban executable: %LUBAN_DLL%
-    popd
-    exit /b 1
+    goto :ON_ERROR
 )
 
 set /p "path_content="<"%PATH_FILE%"
 if not defined path_content (
     echo [ERROR] path.txt must contain a non-empty output directory.
-    popd
-    exit /b 1
+    goto :ON_ERROR
 )
 
 if defined LUBAN_OUTPUT_ROOT (
@@ -37,7 +34,7 @@ if defined LUBAN_OUTPUT_ROOT (
 for %%I in ("%SCRIPT_DIR%..") do set "PROJECT_ROOT=%%~fI"
 for %%I in ("%output_root_input%") do set "OUTPUT_ROOT=%%~fI"
 
-set "ASSET_ROOT=%PROJECT_ROOT%\Assets"
+set "ASSET_ROOT=%PROJECT_ROOT%\Assets\GameMain\Textures"
 set "PATH_DATA_ROOT=%OUTPUT_ROOT%\DataTables"
 set "PATH_GEN_CSHARP=%OUTPUT_ROOT%\Scripts\Base\Gen"
 set "PATH_DATA_JSON=%PATH_DATA_ROOT%"
@@ -58,13 +55,13 @@ dotnet "%LUBAN_DLL%" ^
     --conf "%CONF_FILE%" ^
     --customTemplateDir "%CUSTOM_TEMPLATE_DIR%" ^
     -x "cs-bin.outputCodeDir=%PATH_GEN_CSHARP%" ^
-    -x "pathValidator.rootDir=%ASSET_ROOT%"
+    -x "pathValidator.rootDir=%ASSET_ROOT%" ^
+    -x "lineEnding=lf"
 
 set "exit_code=%ERRORLEVEL%"
 if not "%exit_code%"=="0" (
     echo [ERROR] Luban C# export failed with exit code %exit_code%.
-    popd
-    exit /b %exit_code%
+    goto :ON_ERROR
 )
 
 rem DataTables also contains UGF assets, so do not let Luban clean it.
@@ -81,10 +78,22 @@ dotnet "%LUBAN_DLL%" ^
 set "exit_code=%ERRORLEVEL%"
 if not "%exit_code%"=="0" (
     echo [ERROR] Luban data export failed with exit code %exit_code%.
-    popd
-    exit /b %exit_code%
+    goto :ON_ERROR
 )
+
+rem Convert exported json files to LF line endings to prevent git workspace pollution.
+echo [INFO] Converting JSON files to LF line endings...
+powershell -NoProfile -Command "Get-ChildItem -Path '%PATH_DATA_JSON%\*.json' | ForEach-Object { $c = [System.IO.File]::ReadAllText($_.FullName); if ($c.Contains([char]13)) { [System.IO.File]::WriteAllText($_.FullName, $c.Replace([string][char]13, ''), (New-Object System.Text.UTF8Encoding($false))) } }"
 
 echo [INFO] Luban export completed.
 popd
-exit /b %exit_code%
+echo.
+pause
+exit /b 0
+
+:ON_ERROR
+popd
+echo.
+pause
+exit /b 1
+

@@ -57,7 +57,8 @@ dotnet "$LUBAN_DLL" \
     --conf "$CONF_FILE" \
     --customTemplateDir "$CUSTOM_TEMPLATE_DIR" \
     -x "cs-bin.outputCodeDir=$PATH_GEN_CSHARP" \
-    -x "pathValidator.rootDir=$ASSET_ROOT"
+    -x "pathValidator.rootDir=$ASSET_ROOT" \
+    -x "lineEnding=lf"
 
 # DataTables also contains UGF assets, so do not let Luban clean it.
 dotnet "$LUBAN_DLL" \

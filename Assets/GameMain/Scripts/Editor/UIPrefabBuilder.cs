@@ -1082,7 +1082,18 @@ namespace SepCore.Editor
 
         private static void EnsureFolder(string folder)
         {
-            string[] parts = folder.Split('/');
+            if (string.IsNullOrEmpty(folder))
+            {
+                return;
+            }
+
+            folder = folder.Replace('\\', '/');
+            string[] parts = folder.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+            if (parts.Length == 0)
+            {
+                return;
+            }
+
             string current = parts[0];
             for (int i = 1; i < parts.Length; i++)
             {

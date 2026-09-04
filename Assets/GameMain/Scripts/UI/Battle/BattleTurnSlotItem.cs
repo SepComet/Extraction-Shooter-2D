@@ -24,15 +24,7 @@ namespace SepCore.UI
         /// </summary>
         public void SetTurnSlot(BattleUnitView unit, bool isCurrentActor)
         {
-            if (unit == null)
-            {
-                return;
-            }
-
-            if (label != null)
-            {
-                label.text = BattleUnitViewHelper.GetDisplayName(unit);
-            }
+            label.text = BattleUnitViewHelper.GetDisplayName(unit);
 
             SetCurrentActor(isCurrentActor);
 
@@ -50,10 +42,7 @@ namespace SepCore.UI
         /// </summary>
         public void SetCurrentActor(bool isCurrentActor)
         {
-            if (activeMarker != null)
-            {
-                activeMarker.SetActive(isCurrentActor);
-            }
+            activeMarker.SetActive(isCurrentActor);
         }
 
         /// <summary>
@@ -64,7 +53,7 @@ namespace SepCore.UI
             SpriteConfig iconConfig = unit.Faction == BattleFactionType.Player
                 ? BattleUnitViewHelper.GetPlayerIconConfig(unit.ConfigId)
                 : BattleUnitViewHelper.GetEnemyIconConfig(unit.ConfigId);
-            if (iconConfig == null || icon == null)
+            if (iconConfig == null)
             {
                 return;
             }

@@ -54,14 +54,9 @@ namespace SepCore.UI
         /// </summary>
         public static bool IsStunned(BattleUnitView unit)
         {
-            if (unit == null || unit.States == null)
-            {
-                return false;
-            }
-
             foreach (BattleStateView state in unit.States)
             {
-                if (state != null && state.StatusType == BattleStateType.Stun)
+                if (state.StatusType == BattleStateType.Stun)
                 {
                     return true;
                 }

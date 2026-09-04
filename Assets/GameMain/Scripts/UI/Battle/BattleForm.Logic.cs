@@ -22,6 +22,7 @@ namespace SepCore.UI
         private BattleActionType _pendingCommandType = BattleActionType.None;
         private int _pendingActionConfigId;
         private int _displayedActorId;
+        private int _selectedTargetUnitId;
 
         /// <summary>
         /// 战斗结果展示停留时间（秒），之后非全灭结果自动关闭战斗界面。
@@ -56,6 +57,7 @@ namespace SepCore.UI
             _pendingCommandType = BattleActionType.None;
             _pendingActionConfigId = 0;
             _displayedActorId = 0;
+            _selectedTargetUnitId = 0;
             _turnSlots.Clear();
             _turnSlotUnitIds.Clear();
             _enemySlots.Clear();
@@ -77,6 +79,7 @@ namespace SepCore.UI
             _pendingCommandType = BattleActionType.None;
             _pendingActionConfigId = 0;
             _displayedActorId = 0;
+            _selectedTargetUnitId = 0;
 
             base.OnClose(isShutdown, userData);
         }
@@ -111,6 +114,7 @@ namespace SepCore.UI
 
             _pendingCommandType = BattleActionType.Attack;
             _pendingActionConfigId = attackActionId;
+            _selectedTargetUnitId = 0;
             RefreshActionPanel(view);
         }
 
@@ -150,6 +154,7 @@ namespace SepCore.UI
 
             _pendingCommandType = BattleActionType.Skill;
             _pendingActionConfigId = skillActionId;
+            _selectedTargetUnitId = 0;
             RefreshActionPanel(view);
         }
 
@@ -157,6 +162,24 @@ namespace SepCore.UI
         {
             _pendingCommandType = BattleActionType.None;
             _pendingActionConfigId = 0;
+            _selectedTargetUnitId = 0;
+        }
+
+        /// <summary>
+        /// 两步确认：首次点击合法目标只选中高亮，再次点击同一目标确认释放；
+        /// 点击非法目标不改变选中、不消耗行动。
+        /// </summary>
+        private void ConfirmOrSelectTarget(BattleViewState view, BattleUnitView actor, int targetUnitId,
+            List<int> submitTargets)
+        {
+            if (_selectedTargetUnitId == targetUnitId)
+            {
+                SubmitPendingCommand(actor.BattleUnitId, _pendingCommandType, _pendingActionConfigId, submitTargets);
+                return;
+            }
+
+            _selectedTargetUnitId = targetUnitId;
+            Refresh(view);
         }
 
         private void OnEnemySlotClick(int targetEnemyUnitId)
@@ -192,20 +215,18 @@ namespace SepCore.UI
                     return;
                 }
 
-                SubmitPendingCommand(actor.BattleUnitId, _pendingCommandType, _pendingActionConfigId,
-                    new List<int> { targetEnemyUnitId });
+                ConfirmOrSelectTarget(view, actor, targetEnemyUnitId, new List<int> { targetEnemyUnitId });
             }
             else if (action.TargetType == BattleTargetType.AllEnemies)
             {
-                // 全体目标：点击任意存活敌人确认释放，目标由内核自动展开
+                // 全体目标：点击任意存活敌人选中，再次点击确认释放，目标由内核自动展开
                 BattleUnitView target = FindUnit(view, targetEnemyUnitId);
                 if (target == null || target.Faction != BattleFactionType.Enemy || target.IsDefeated || target.IsEscaped)
                 {
                     return;
                 }
 
-                SubmitPendingCommand(actor.BattleUnitId, _pendingCommandType, _pendingActionConfigId,
-                    new List<int>());
+                ConfirmOrSelectTarget(view, actor, targetEnemyUnitId, new List<int>());
             }
         }
 
@@ -259,8 +280,7 @@ namespace SepCore.UI
                     return;
                 }
 
-                SubmitPendingCommand(actor.BattleUnitId, _pendingCommandType, _pendingActionConfigId,
-                    new List<int> { targetPlayerUnitId });
+                ConfirmOrSelectTarget(view, actor, targetPlayerUnitId, new List<int> { targetPlayerUnitId });
             }
             else if (action.TargetType == BattleTargetType.AllAllies)
             {
@@ -270,15 +290,13 @@ namespace SepCore.UI
                     return;
                 }
 
-                SubmitPendingCommand(actor.BattleUnitId, _pendingCommandType, _pendingActionConfigId,
-                    new List<int>());
+                ConfirmOrSelectTarget(view, actor, targetPlayerUnitId, new List<int>());
             }
             else if (action.TargetType == BattleTargetType.Self)
             {
                 if (targetPlayerUnitId == actor.BattleUnitId)
                 {
-                    SubmitPendingCommand(actor.BattleUnitId, _pendingCommandType, _pendingActionConfigId,
-                        new List<int> { actor.BattleUnitId });
+                    ConfirmOrSelectTarget(view, actor, targetPlayerUnitId, new List<int> { actor.BattleUnitId });
                 }
             }
         }
@@ -359,18 +377,8 @@ namespace SepCore.UI
         /// </summary>
         private void OverlayEventStates(IReadOnlyList<BattleEvent> events)
         {
-            if (events == null)
-            {
-                return;
-            }
-
             foreach (BattleEvent battleEvent in events)
             {
-                if (battleEvent == null)
-                {
-                    continue;
-                }
-
                 int hpDelta = battleEvent.AfterHp - battleEvent.BeforeHp;
                 if (hpDelta == 0)
                 {
@@ -386,7 +394,7 @@ namespace SepCore.UI
             for (int i = 0; i < 4; i++)
             {
                 BattleActorCardItem card = GetPlayerCard(i);
-                if (card != null && card.gameObject.activeSelf && card.CurrentUnitId == unitId)
+                if (card.gameObject.activeSelf && card.CurrentUnitId == unitId)
                 {
                     card.SpawnFloatText(text);
                     return;
@@ -395,7 +403,7 @@ namespace SepCore.UI
 
             foreach (BattleEnemySlotItem slot in _enemySlots)
             {
-                if (slot != null && slot.CurrentUnitId == unitId)
+                if (slot.CurrentUnitId == unitId)
                 {
                     slot.SpawnFloatText(text);
                     return;
@@ -428,12 +436,10 @@ namespace SepCore.UI
                 }
 
                 BattleActorCardItem card = GetPlayerCard(index);
-                if (card != null)
-                {
-                    card.gameObject.SetActive(true);
-                    card.SetOnClick(OnPlayerCardClick);
-                    card.SetUnit(unit, unit.BattleUnitId == view.CurrentActorUnitId);
-                }
+                card.gameObject.SetActive(true);
+                card.SetOnClick(OnPlayerCardClick);
+                card.SetUnit(unit, unit.BattleUnitId == view.CurrentActorUnitId,
+                    unit.BattleUnitId == _selectedTargetUnitId);
 
                 index++;
             }
@@ -441,21 +447,13 @@ namespace SepCore.UI
             for (int i = index; i < 4; i++)
             {
                 BattleActorCardItem card = GetPlayerCard(i);
-                if (card != null)
-                {
-                    card.gameObject.SetActive(false);
-                }
+                card.gameObject.SetActive(false);
             }
         }
 
         private void RefreshEnemySlots(BattleViewState view)
         {
             BattleEnemySlotItem template = View.battleEnemySlotTemplate;
-            if (template == null || View.enemySlotsRoot == null)
-            {
-                Log.Warning("BattleForm enemy slots are not configured.");
-                return;
-            }
 
             List<BattleUnitView> enemies = new List<BattleUnitView>();
             foreach (BattleUnitView unit in view.Units)
@@ -483,18 +481,14 @@ namespace SepCore.UI
             for (int i = 0; i < _enemySlots.Count; i++)
             {
                 _enemySlots[i].SetOnClick(OnEnemySlotClick);
-                _enemySlots[i].SetEnemy(enemies[i], enemies[i].BattleUnitId == view.CurrentActorUnitId);
+                _enemySlots[i].SetEnemy(enemies[i], enemies[i].BattleUnitId == view.CurrentActorUnitId,
+                    enemies[i].BattleUnitId == _selectedTargetUnitId);
             }
         }
 
         private void RefreshTurnSlots(BattleViewState view)
         {
             BattleTurnSlotItem template = View.battleTurnSlotTemplate;
-            if (template == null || View.turnSlotsRoot == null)
-            {
-                Log.Warning("BattleForm turn slots are not configured.");
-                return;
-            }
 
             if (view.RoundNumber != _displayedRound ||
                 (view.CurrentActorUnitId != 0 && !_turnSlotUnitIds.Contains(view.CurrentActorUnitId)) ||
@@ -519,7 +513,7 @@ namespace SepCore.UI
         /// </summary>
         private bool IsDisplayOrderChanged(BattleViewState view)
         {
-            if (view.CurrentActorUnitId == 0 || view.DisplayOrder == null)
+            if (view.CurrentActorUnitId == 0)
             {
                 return false;
             }
@@ -586,17 +580,14 @@ namespace SepCore.UI
                 View.attackButton.interactable = false;
                 View.skillButton.interactable = false;
                 View.escapeButton.interactable = false;
-                if (View.tipText != null)
-                {
-                    View.tipText.text = string.Empty;
-                }
+                View.tipText.text = string.Empty;
 
                 return;
             }
 
             BattleUnitView actor = FindUnit(view, view.CurrentActorUnitId);
             bool playerTurn = actor != null && actor.Faction == BattleFactionType.Player;
-            bool actorStunned = BattleUnitViewHelper.IsStunned(actor);
+            bool actorStunned = actor != null && BattleUnitViewHelper.IsStunned(actor);
 
             // 眩晕行动者不显示行动菜单：按钮禁用，提示跳过（其跳过由组件按延迟自动推进）
             if (actorStunned)
@@ -606,10 +597,7 @@ namespace SepCore.UI
                 View.escapeButton.interactable = false;
                 View.currentActorText.text = string.Format("第 {0} 轮  {1} 被眩晕，跳过行动",
                     view.RoundNumber, BattleUnitViewHelper.GetDisplayName(actor));
-                if (View.tipText != null)
-                {
-                    View.tipText.text = BattleUnitViewHelper.GetStateText(BattleStateType.Stun);
-                }
+                View.tipText.text = BattleUnitViewHelper.GetStateText(BattleStateType.Stun);
 
                 return;
             }
@@ -625,29 +613,20 @@ namespace SepCore.UI
             if (_pendingCommandType == BattleActionType.Escape)
             {
                 View.currentActorText.text = "【逃跑】待命中（再次点击取消）";
-                if (View.tipText != null)
-                {
-                    View.tipText.text = "点击自身角色卡片确认逃跑";
-                }
+                View.tipText.text = "点击自身角色卡片确认逃跑";
             }
             else if (_pendingCommandType != BattleActionType.None)
             {
                 BattleActionConfig pendingAction = GameEntry.Luban.Get<BattleActionConfig>(_pendingActionConfigId);
                 string actionName = pendingAction != null ? pendingAction.Name : (_pendingCommandType == BattleActionType.Attack ? "普通攻击" : "技能");
                 View.currentActorText.text = string.Format("【{0}】待命中（再次点击取消）", actionName);
-                if (View.tipText != null)
-                {
-                    View.tipText.text = GetPendingTip(pendingAction);
-                }
+                View.tipText.text = GetPendingTip(pendingAction);
             }
             else
             {
                 View.currentActorText.text = string.Format("第 {0} 轮  {1} 行动",
                     view.RoundNumber, actor != null ? BattleUnitViewHelper.GetDisplayName(actor) : string.Empty);
-                if (View.tipText != null)
-                {
-                    View.tipText.text = playerTurn ? "请选择行动：攻击或技能" : string.Empty;
-                }
+                View.tipText.text = playerTurn ? "请选择行动：攻击或技能" : string.Empty;
             }
         }
 
@@ -661,15 +640,15 @@ namespace SepCore.UI
             switch (action.TargetType)
             {
                 case BattleTargetType.SingleEnemy:
-                    return "请点击目标敌人释放";
+                    return "点击目标敌人选中，再次点击确认释放";
                 case BattleTargetType.AllEnemies:
-                    return "点击任意敌人确认释放全体攻击";
+                    return "点击任意敌人选中，再次点击确认释放全体攻击";
                 case BattleTargetType.SingleAlly:
-                    return "请点击目标友方（包含自身）释放";
+                    return "点击目标友方选中，再次点击确认释放";
                 case BattleTargetType.AllAllies:
-                    return "点击任意友方确认释放全体效果";
+                    return "点击任意友方选中，再次点击确认释放全体效果";
                 case BattleTargetType.Self:
-                    return "点击自身角色卡片确认释放";
+                    return "点击自身选中，再次点击确认释放";
                 default:
                     return "请选择目标";
             }
@@ -806,6 +785,7 @@ namespace SepCore.UI
 
             _pendingCommandType = BattleActionType.Escape;
             _pendingActionConfigId = 0;
+            _selectedTargetUnitId = 0;
             RefreshActionPanel(view);
         }
     }

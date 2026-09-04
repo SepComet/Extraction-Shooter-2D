@@ -30,21 +30,8 @@ namespace SepCore.UI
 
         private void Awake()
         {
-            EnsureButtonListener();
-        }
-
-        private void EnsureButtonListener()
-        {
-            if (_button == null)
-            {
-                _button = GetComponent<Button>();
-            }
-
-            if (_button != null)
-            {
-                _button.onClick.RemoveListener(OnCardButtonClick);
-                _button.onClick.AddListener(OnCardButtonClick);
-            }
+            _button.onClick.RemoveListener(OnCardButtonClick);
+            _button.onClick.AddListener(OnCardButtonClick);
         }
 
         private void OnCardButtonClick()
@@ -55,7 +42,8 @@ namespace SepCore.UI
         public void SetOnClick(Action<int> onClick)
         {
             _onClick = onClick;
-            EnsureButtonListener();
+            _button.onClick.RemoveListener(OnCardButtonClick);
+            _button.onClick.AddListener(OnCardButtonClick);
         }
 
         /// <summary>
@@ -64,49 +52,34 @@ namespace SepCore.UI
         /// </summary>
         public void SetUnit(BattleUnitView unit, bool isCurrentActor, bool isSelectedTarget = false)
         {
-            if (unit == null)
-            {
-                return;
-            }
+            _button.interactable = !unit.IsDefeated && !unit.IsEscaped;
 
-            if (_button == null)
-            {
-                _button = GetComponent<Button>();
-            }
+            _characterName.text = BattleUnitViewHelper.GetDisplayName(unit);
 
-            if (_button != null)
-            {
-                _button.interactable = !unit.IsDefeated && !unit.IsEscaped;
-            }
+            _hpText.Set(unit.CurrentHp, unit.MaxHp);
 
-            if (_characterName != null)
-            {
-                _characterName.text = BattleUnitViewHelper.GetDisplayName(unit);
-            }
-
-            if (_hpText != null)
-            {
-                _hpText.Set(unit.CurrentHp, unit.MaxHp);
-            }
-
-            if (_mpText != null)
-            {
-                _mpText.Set(unit.CurrentMp, unit.MaxMp);
-            }
+            _mpText.Set(unit.CurrentMp, unit.MaxMp);
 
             SetBar(_hpFill, unit.CurrentHp, unit.MaxHp);
             SetBar(_mpFill, unit.CurrentMp, unit.MaxMp);
 
-            if (_activeMarker != null)
-            {
-                _activeMarker.SetActive(isCurrentActor || isSelectedTarget);
-            }
+            _activeMarker.SetActive(isCurrentActor || isSelectedTarget);
 
-            // 状态模板只做飘字底板，不常驻显示（眩晕只在轮到该单位时飘一次）
-            if (_stateText != null)
+            // 状态模板：阵亡/逃跑常驻显示（终局状态），其余清空；眩晕等瞬时状态只在轮到时飘字
+            if (unit.IsDefeated)
+            {
+                _stateText.text = "阵亡";
+            }
+            else if (unit.IsEscaped)
+            {
+                _stateText.text = "逃跑";
+            }
+            else
             {
                 _stateText.text = string.Empty;
             }
+
+            _icon.color = unit.IsDefeated || unit.IsEscaped ? Color.gray : Color.white;
 
             if (_currentUnitId != unit.BattleUnitId)
             {
@@ -129,7 +102,7 @@ namespace SepCore.UI
         /// </summary>
         private async UniTaskVoid ShowIconAsync(SpriteConfig iconConfig, int iconVersion)
         {
-            if (iconConfig == null || _icon == null)
+            if (iconConfig == null)
             {
                 return;
             }
@@ -146,11 +119,6 @@ namespace SepCore.UI
 
         private static void SetBar(Image fill, int current, int max)
         {
-            if (fill == null)
-            {
-                return;
-            }
-
             float ratio = max > 0 ? Mathf.Clamp01((float)current / max) : 0f;
             fill.rectTransform.anchorMax = new Vector2(ratio, 1f);
         }

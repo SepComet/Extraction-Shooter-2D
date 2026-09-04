@@ -22,7 +22,7 @@ namespace SepCore.UI
         /// </summary>
         public static void Spawn(TextMeshProUGUI template, string text)
         {
-            if (template == null || string.IsNullOrEmpty(text) || !template.gameObject.activeInHierarchy)
+            if (string.IsNullOrEmpty(text) || !template.gameObject.activeInHierarchy)
             {
                 return;
             }
@@ -30,12 +30,6 @@ namespace SepCore.UI
             GameObject go = Instantiate(template.gameObject, template.transform.parent);
             go.name = template.gameObject.name + "_Float";
             TextMeshProUGUI label = go.GetComponent<TextMeshProUGUI>();
-            if (label == null)
-            {
-                Destroy(go);
-                return;
-            }
-
             label.raycastTarget = false;
             SepCore.Definition.GlobalConfig global = GameEntry.Luban.Global.Data;
             FloatText floatText = go.AddComponent<FloatText>();
@@ -55,12 +49,6 @@ namespace SepCore.UI
 
         private void Update()
         {
-            if (_label == null)
-            {
-                Destroy(gameObject);
-                return;
-            }
-
             _elapsed += Time.unscaledDeltaTime;
             float k = Mathf.Clamp01(_elapsed / _durationSeconds);
             _label.rectTransform.anchoredPosition = _basePos + Vector2.up * (_heightPx * k);

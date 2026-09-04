@@ -29,13 +29,10 @@ namespace SepCore.UI
         public void SetOnClick(Action<int> onClick)
         {
             _onClick = onClick;
-            if (targetButton != null)
+            targetButton.onClick.RemoveAllListeners();
+            if (_onClick != null)
             {
-                targetButton.onClick.RemoveAllListeners();
-                if (_onClick != null)
-                {
-                    targetButton.onClick.AddListener(() => _onClick(_currentUnitId));
-                }
+                targetButton.onClick.AddListener(() => _onClick(_currentUnitId));
             }
         }
 
@@ -45,38 +42,20 @@ namespace SepCore.UI
         /// </summary>
         public void SetEnemy(BattleUnitView unit, bool isCurrentActor, bool isSelectedTarget = false)
         {
-            if (unit == null)
-            {
-                return;
-            }
+            enemyName.text = BattleUnitViewHelper.GetDisplayName(unit);
 
-            if (enemyName != null)
-            {
-                enemyName.text = BattleUnitViewHelper.GetDisplayName(unit);
-            }
-
-            if (hpText != null)
-            {
-                hpText.text = unit.CurrentHp + " / " + unit.MaxHp;
-            }
+            hpText.text = unit.CurrentHp + " / " + unit.MaxHp;
 
             SetBar(hpFill, unit.CurrentHp, unit.MaxHp);
 
-            if (selectedMarker != null)
-            {
-                selectedMarker.SetActive(isCurrentActor || isSelectedTarget);
-            }
+            selectedMarker.SetActive(isCurrentActor || isSelectedTarget);
 
-            if (targetButton != null)
-            {
-                targetButton.interactable = !unit.IsDefeated && !unit.IsEscaped;
-            }
+            targetButton.interactable = !unit.IsDefeated && !unit.IsEscaped;
 
-            // 状态模板只做飘字底板，不常驻显示（眩晕只在轮到该单位时飘一次）
-            if (stateText != null)
-            {
-                stateText.text = string.Empty;
-            }
+            // 状态模板：阵亡常驻显示（终局状态），其余清空；眩晕等瞬时状态只在轮到时飘字
+            stateText.text = unit.IsDefeated ? "阵亡" : string.Empty;
+
+            icon.color = unit.IsDefeated || unit.IsEscaped ? Color.gray : Color.white;
 
             if (_currentUnitId != unit.BattleUnitId)
             {
@@ -99,7 +78,7 @@ namespace SepCore.UI
         /// </summary>
         private async UniTaskVoid ShowIconAsync(SpriteConfig iconConfig, int iconVersion)
         {
-            if (iconConfig == null || icon == null)
+            if (iconConfig == null)
             {
                 return;
             }
@@ -116,11 +95,6 @@ namespace SepCore.UI
 
         private static void SetBar(Image fill, int current, int max)
         {
-            if (fill == null)
-            {
-                return;
-            }
-
             float ratio = max > 0 ? Mathf.Clamp01((float)current / max) : 0f;
             fill.rectTransform.anchorMax = new Vector2(ratio, 1f);
         }

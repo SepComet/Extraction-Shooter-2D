@@ -28,6 +28,10 @@ public sealed partial class GlobalConfig : Luban.BeanBase
         HighThreatEnemyPartyEntity_Ref = null;
         EvacuatePointEntity = _buf.ReadString();
         EvacuatePointEntity_Ref = null;
+        CharacterLeaderEntity = _buf.ReadString();
+        CharacterLeaderEntity_Ref = null;
+        CharacterRetinueEntity = _buf.ReadString();
+        CharacterRetinueEntity_Ref = null;
         EnemyLoseTargetMs = _buf.ReadInt();
         EnemyFrontViewAngle = _buf.ReadInt();
         AlertMax = _buf.ReadInt();
@@ -92,6 +96,16 @@ public sealed partial class GlobalConfig : Luban.BeanBase
     /// </summary>
     public readonly string EvacuatePointEntity;
     public EntityConfig EvacuatePointEntity_Ref;
+    /// <summary>
+    /// 玩家队伍领队实体
+    /// </summary>
+    public readonly string CharacterLeaderEntity;
+    public EntityConfig CharacterLeaderEntity_Ref;
+    /// <summary>
+    /// 玩家队伍其他实体
+    /// </summary>
+    public readonly string CharacterRetinueEntity;
+    public EntityConfig CharacterRetinueEntity_Ref;
     /// <summary>
     /// 敌人丢失目标后返回巡逻的时间，毫秒
     /// </summary>
@@ -190,6 +204,8 @@ public sealed partial class GlobalConfig : Luban.BeanBase
         MiddleThreatEnemyPartyEntity_Ref = tables.TbEntityConfig.GetOrDefault(MiddleThreatEnemyPartyEntity);
         HighThreatEnemyPartyEntity_Ref = tables.TbEntityConfig.GetOrDefault(HighThreatEnemyPartyEntity);
         EvacuatePointEntity_Ref = tables.TbEntityConfig.GetOrDefault(EvacuatePointEntity);
+        CharacterLeaderEntity_Ref = tables.TbEntityConfig.GetOrDefault(CharacterLeaderEntity);
+        CharacterRetinueEntity_Ref = tables.TbEntityConfig.GetOrDefault(CharacterRetinueEntity);
         
         
         
@@ -224,6 +240,8 @@ public sealed partial class GlobalConfig : Luban.BeanBase
         + "middleThreatEnemyPartyEntity:" + MiddleThreatEnemyPartyEntity + ","
         + "highThreatEnemyPartyEntity:" + HighThreatEnemyPartyEntity + ","
         + "evacuatePointEntity:" + EvacuatePointEntity + ","
+        + "characterLeaderEntity:" + CharacterLeaderEntity + ","
+        + "CharacterRetinueEntity:" + CharacterRetinueEntity + ","
         + "enemyLoseTargetMs:" + EnemyLoseTargetMs + ","
         + "enemyFrontViewAngle:" + EnemyFrontViewAngle + ","
         + "alertMax:" + AlertMax + ","

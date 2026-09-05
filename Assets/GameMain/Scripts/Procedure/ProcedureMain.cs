@@ -1,6 +1,7 @@
 using GameFramework.Fsm;
 using GameFramework.Procedure;
 using SepCore.Definition;
+using SepCore.Entity;
 using SepCore.Exploration;
 using SepCore.UI;
 using UnityEngine;
@@ -56,6 +57,11 @@ namespace SepCore.Procedure
         public RunResultType? PendingOutcome { get; private set; }
 
         /// <summary>
+        /// 本局主摄像机实体逻辑引用。
+        /// </summary>
+        public MainCameraLogic MainCamera { get; set; }
+
+        /// <summary>
         /// 结算后是否自动返回大厅菜单（无结算 UI 时默认 true）。
         /// </summary>
         public bool AutoReturnToMenu { get; set; } = true;
@@ -81,6 +87,7 @@ namespace SepCore.Procedure
             PlayerSpawnPoint = Vector2.zero;
             IsExtractionPointRevealed = false;
             PendingOutcome = null;
+            MainCamera = null;
             RunStartTimeUtcMs = 0;
 
             Difficulty = DifficultyTier.Tier1;
@@ -115,6 +122,7 @@ namespace SepCore.Procedure
             _procedureOwner = null;
             BuildResult = null;
             PendingOutcome = null;
+            MainCamera = null;
 
             if (GameEntry.UI != null)
             {

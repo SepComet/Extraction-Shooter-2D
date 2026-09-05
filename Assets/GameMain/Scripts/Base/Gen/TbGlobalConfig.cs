@@ -63,6 +63,14 @@ public partial class TbGlobalConfig
     /// </summary>
      public string EvacuatePointEntity => _data.EvacuatePointEntity;
     /// <summary>
+    /// 玩家队伍领队实体
+    /// </summary>
+     public string CharacterLeaderEntity => _data.CharacterLeaderEntity;
+    /// <summary>
+    /// 玩家队伍其他实体
+    /// </summary>
+     public string CharacterRetinueEntity => _data.CharacterRetinueEntity;
+    /// <summary>
     /// 敌人丢失目标后返回巡逻的时间，毫秒
     /// </summary>
      public int EnemyLoseTargetMs => _data.EnemyLoseTargetMs;

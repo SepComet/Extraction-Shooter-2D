@@ -8,6 +8,8 @@
     "middleThreatEnemyPartyEntity": "EnemyPartyMiddleThreat",
     "highThreatEnemyPartyEntity": "EnemyPartyHighThreat",
     "evacuatePointEntity": "EvacuatePoint",
+    "characterLeaderEntity": "CharacterLeader",
+    "CharacterRetinueEntity": "CharacterRetinue",
     "enemyLoseTargetMs": 3000,
     "enemyFrontViewAngle": 180,
     "alertMax": 1000,
